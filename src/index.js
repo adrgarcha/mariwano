@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const { Client, IntentsBitField } = require('discord.js');
 function choose(){ // devuelve, de unos argumentos, uno al azar. como el random, pero elige uno de los argumentos
-	var index=floor(Math.random()*(arguments.length-1));
+	var index=floor(Math.random()*(arguments.length-1))};
 const client = new Client({
     intents: [
         IntentsBitField.Flags.Guilds,
@@ -35,8 +35,6 @@ client.on('messageCreate', (message) => {
                     'el tiempo sin ti es empo🙏🤟'];
         message.reply(arr[choose(0,1,2)]);
     }
-    
-    
 });
 
 client.login(process.env.DISCORD_TOKEN);
