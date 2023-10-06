@@ -32,9 +32,12 @@ client.on('messageCreate', (message) => {
     if(message.content === ('!frasejoker')){
         const arr = ['quien madruga se encuentra con todo cerrado😔🤙',
                     'para mi el locomotor es solo motor🥵😫',
-                    'el tiempo sin ti es empo🙏🤟'];
-        message.reply(arr[choose(0,1,2)]);
+                    'el tiempo sin ti es empo🙏🤟',
+                    'a veces me siento 🪑🤯'];
+        message.reply(arr[Math.floor(Math.random()*arr.length)]);
     }
+
+
 });
 
 client.login(process.env.DISCORD_TOKEN);
