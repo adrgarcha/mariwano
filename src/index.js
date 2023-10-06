@@ -33,7 +33,8 @@ client.on('messageCreate', (message) => {
         arr = ['quien madruga se encuentra con todo cerrado😔🤙',
                     'para mi el locomotor es solo motor🥵😫',
                     'el tiempo sin ti es empo🙏🤟',
-                    'a veces las personas más frías solo necesitan un sueter😯🥶'];
+                    'a veces las personas más frías solo necesitan un sueter😯🥶',
+                    'la piedad es la edad de los pies😔🤙'];
         message.reply(arr[Math.floor(Math.random()*arr.length)]);
     }
 
