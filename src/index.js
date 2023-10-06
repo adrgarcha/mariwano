@@ -41,6 +41,7 @@ client.on('messageCreate', (message) => {
         var arr2 = message.content.split(' ').shift().shift();
         var str = arr2.join(' ');
         arr.push(str);
+        message.reply("añadidisimo \'" +str+"\' a frases del joker")
     }
 });
 
