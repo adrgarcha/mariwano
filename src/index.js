@@ -15,7 +15,7 @@ const client = new Client({
 client.on('ready', (c) => {
     console.log(`🚬 ${c.user.tag} esta fumando.`);
 });
-
+var arr;
 client.on('messageCreate', (message) => {
     if(message.author.bot){
         return;
@@ -30,14 +30,19 @@ client.on('messageCreate', (message) => {
     }
 
     if(message.content === ('!frasejoker')){
-        const arr = ['quien madruga se encuentra con todo cerrado😔🤙',
+        arr = ['quien madruga se encuentra con todo cerrado😔🤙',
                     'para mi el locomotor es solo motor🥵😫',
                     'el tiempo sin ti es empo🙏🤟',
                     'a veces me siento 🪑🤯'];
         message.reply(arr[Math.floor(Math.random()*arr.length)]);
     }
 
-
+    if(message.content.includes('!frasejoker add')){
+        var arr2 = message.content.split(' ').shift().shift();
+        var str = arr2.join(' ');
+        arr.push(str);
+    }
 });
+
 
 client.login(process.env.DISCORD_TOKEN);
