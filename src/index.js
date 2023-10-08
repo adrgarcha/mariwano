@@ -39,7 +39,7 @@ client.on('messageCreate', async (message) => {
                     'el tiempo sin ti es empo🙏🤟',
                     'a veces las personas más frías solo necesitan un sueter😯🥶',
                     'la piedad es la edad de los pies😔🤙'];
-        message.reply(arr[Math.floor(Math.random()*arr.length)]);
+        message.reply(arr[Math.floor(Math.random()*frasesJoker.length)]);
     }
 
     if(message.content === "!lootbox" || message.content === "!lb"){
