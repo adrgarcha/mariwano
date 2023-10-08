@@ -34,6 +34,19 @@ const commands = [
             },
         ],
     },
+
+    {
+        name:'frasejoker',
+        description: 'Frases que diría el joker',
+        options: [
+            {
+                name: 'frase',
+                description: 'Frase que diría el joker',
+                type: ApplicationCommandOptionType.String,
+                required: true,
+            }
+        ]
+    }
 ];
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);

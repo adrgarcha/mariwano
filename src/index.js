@@ -19,7 +19,7 @@ const client = new Client({
 client.on('ready', (c) => {
     console.log(`🚬 ${c.user.tag} esta fumando.`);
 });
-var arr;
+var fraseJoker;
 client.on('messageCreate', async (message) => {
     if(message.author.bot){
         return;
@@ -34,7 +34,7 @@ client.on('messageCreate', async (message) => {
     }
 
     if(message.content === ('!frasejoker') || message.content === ('!fj')){
-        arr = ['quien madruga se encuentra con todo cerrado😔🤙',
+        fraseJoker = ['quien madruga se encuentra con todo cerrado😔🤙',
                     'para mi el locomotor es solo motor🥵😫',
                     'el tiempo sin ti es empo🙏🤟',
                     'a veces las personas más frías solo necesitan un sueter😯🥶',
@@ -74,6 +74,12 @@ client.on('interactionCreate', (interaction) => {
         const num2 = interaction.options.get('segundo-numero').value;
 
         interaction.reply(`Como no sabes sumar trozo de basura, aqui tienes la suma: ${num1 + num2}`);
+    }
+
+    if(interaction.commandName === 'frasejoker'){
+        const str = interaction.options.get('primer-numero').value;
+        fraseJoker.push(str);
+        interaction.reply('Añadida la frase \''+str+'\'');
     }
 });
 
