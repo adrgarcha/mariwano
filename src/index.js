@@ -19,7 +19,11 @@ const client = new Client({
 client.on('ready', (c) => {
     console.log(`🚬 ${c.user.tag} esta fumando.`);
 });
-var frasesJoker;
+var frasesJoker= ['quien madruga se encuentra con todo cerrado😔🤙',
+'para mi el locomotor es solo motor🥵😫',
+'el tiempo sin ti es empo🙏🤟',
+'a veces las personas más frías solo necesitan un sueter😯🥶',
+'la piedad es la edad de los pies😔🤙'];
 client.on('messageCreate', async (message) => {
     if(message.author.bot){
         return;
@@ -34,11 +38,7 @@ client.on('messageCreate', async (message) => {
     }
 
     if(message.content === ('!frasejoker') || message.content === ('!fj')){
-        frasesJoker = ['quien madruga se encuentra con todo cerrado😔🤙',
-                    'para mi el locomotor es solo motor🥵😫',
-                    'el tiempo sin ti es empo🙏🤟',
-                    'a veces las personas más frías solo necesitan un sueter😯🥶',
-                    'la piedad es la edad de los pies😔🤙'];
+        
         message.reply(frasesJoker[Math.floor(Math.random()*frasesJoker.length)]);
     }
     if(message.content === "!tfj"){
