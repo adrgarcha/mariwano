@@ -46,7 +46,7 @@ client.on('messageCreate', async (message) => {
     }
     if(message.content === "!lootbox" || message.content === "!lb"){
         const reply = await message.reply(
-"¿Abrir lootbox ahora mismo?\n\nPROBABILIDADES:\n\t⭐ 50% DROP RATE de un BAN (calidad: **común**)\n\t⭐ 49% DROP RATE de NADA (calidad: **raro**)\n\t⭐ 1% DROP RATE de UN BIZUM DE 100€ QUE TE HARÁ KERNEL (calidad: **legendaria**)");
+"¿Abrir lootbox ahora mismo?\n\nPROBABILIDADES:\n\t⭐ 50% DROP RATE de BANEO (calidad: **común**)\n\t⭐ 49% DROP RATE de NADA (calidad: **raro**)\n\t⭐ 1% DROP RATE de UN BIZUM DE 100€ QUE TE HARÁ KERNEL (calidad: **legendaria**)");
         reply.react("✅"); reply.react("❌");
     }
 });
@@ -55,6 +55,8 @@ client.on('messageReactionAdd', async (reaction) => {
     if(reaction.partial){
         await reaction.fetch();
     }
+
+    console.log(reaction);
 });
 
 
