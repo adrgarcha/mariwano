@@ -64,3 +64,17 @@ client.on('messageReactionAdd', async (reaction) => {
 
 
 client.login(process.env.DISCORD_TOKEN);
+client.on('interactionCreate', (interaction) => {
+    if(!interaction.isChatInputCommand()){
+        return;
+    }
+
+    if(interaction.commandName === 'sumar'){
+        const num1 = interaction.options.get('primer-numero').value;
+        const num2 = interaction.options.get('segundo-numero').value;
+
+        interaction.reply(`Como no sabes sumar trozo de basura, aqui tienes la suma: ${num1 + num2}`);
+    }
+});
+
+client.login(process.env.DISCORD_TOKEN);
