@@ -19,7 +19,7 @@ const client = new Client({
 client.on('ready', (c) => {
     console.log(`🚬 ${c.user.tag} esta fumando.`);
 });
-var fraseJoker;
+var frasesJoker;
 client.on('messageCreate', async (message) => {
     if(message.author.bot){
         return;
@@ -34,19 +34,12 @@ client.on('messageCreate', async (message) => {
     }
 
     if(message.content === ('!frasejoker') || message.content === ('!fj')){
-        fraseJoker = ['quien madruga se encuentra con todo cerrado😔🤙',
+        frasesJoker = ['quien madruga se encuentra con todo cerrado😔🤙',
                     'para mi el locomotor es solo motor🥵😫',
                     'el tiempo sin ti es empo🙏🤟',
                     'a veces las personas más frías solo necesitan un sueter😯🥶',
                     'la piedad es la edad de los pies😔🤙'];
         message.reply(arr[Math.floor(Math.random()*arr.length)]);
-    }
-
-    if(message.content.includes('!frasejoker add') || message.content.includes('!fj add')){
-        var arr2 = message.content.split(' ').shift().shift();
-        var str = arr2.join(' ');
-        arr.push(str);
-        message.reply("añadidisimo \'" +str+"\' a frases del joker");
     }
 
     if(message.content === "!lootbox" || message.content === "!lb"){
@@ -77,8 +70,9 @@ client.on('interactionCreate', (interaction) => {
     }
 
     if(interaction.commandName === 'frasejoker'){
-        const str = interaction.options.get('primer-numero').value;
-        fraseJoker.push(str);
+        var str = interaction.options.get('frase').value;
+        console.log(str);
+        frasesJoker.push(str);
         interaction.reply('Añadida la frase \''+str+'\'');
     }
 });
