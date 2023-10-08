@@ -79,6 +79,10 @@ client.on('interactionCreate', (interaction) => {
         frasesJoker.push(str);
         interaction.reply('Añadida la frase \''+str+'\'');
     }
+
+    if(interaction.reaction === '✅'){
+        interaction.MessageBox("Se viene baneo señores");
+    }
 });
 
 client.login(process.env.DISCORD_TOKEN);
