@@ -18,6 +18,7 @@ const client = new Client({
 
 client.on('ready', (c) => {
     console.log(`🚬 ${c.user.tag} esta fumando.`);
+    
 });
 var frasesJoker= ['quien madruga se encuentra con todo cerrado😔🤙',
 'para mi el locomotor es solo motor🥵😫',
@@ -45,24 +46,63 @@ client.on('messageCreate', async (message) => {
         message.reply(frasesJoker.join("\n"));
     }
     if(message.content === "!lootbox" || message.content === "!lb"){
-        const reply = await message.reply(
-"¿Abrir lootbox ahora mismo?\n\nPROBABILIDADES:\n\t⭐ 50% DROP RATE de BANEO (calidad: **común**)\n\t⭐ 49% DROP RATE de NADA (calidad: **raro**)\n\t⭐ 1% DROP RATE de UN BIZUM DE 100€ QUE TE HARÁ KERNEL (calidad: **legendaria**)");
-        reply.react("✅"); reply.react("❌");
+        const channel = client.channels.cache.get("1160575692455563365");
+
+        if(!channel){
+            console.log("Canal no encontrado, especifica una ID válida");
+            return;
+        }
+
+        const messages = await channel.messages.fetch();
+        const botMessages = messages.filter(
+            (message) => message.author.id === client.user.id
+        );
+
+        const first = botMessages.first();
+        const row = new ActionRowBuilder({
+            components:[
+                {
+                    custom_id: "si",
+                    label: "Abrir lootbox",
+                    style: TextInputStyle.Short,
+                    type: ComponentType.TextInput,
+                },
+                {
+                    custom_id: "no",
+                    label: "No abrir",
+                    style: TextInputStyle.Short,
+                    type: ComponentType.TextInput,
+                },
+
+            ],
+        });
+        
+
+         const messageObject = {
+            content: "¿Abrir lootbox ahora mismo?\n\nPROBABILIDADES:\n\t⭐ 50% DROP RATE de BANEO (calidad: **común**)\n\t⭐ 49% DROP RATE de NADA (calidad: **raro**)\n\t⭐ 1% DROP RATE de UN BIZUM DE 100€ QUE TE HARÁ KERNEL (calidad: **legendaria**)",
+            components: [row],
+        };
+        if(first){
+            first.edit(messageObject);
+        } else{
+            channel.send(messageObject);
+        }
     }
 });
 
 client.on('messageReactionAdd', async (reaction) => {
     if(reaction.partial){
+        
         await reaction.fetch();
+        
     }
-
-    console.log(reaction);
+    
 });
 
 
 client.login(process.env.DISCORD_TOKEN);
 client.on('interactionCreate', (interaction) => {
-    if(!interaction.isChatInputCommand()){
+    if(!interaction.isChatInputCommand() && !interaction.isButton()){
         return;
     }
 
@@ -80,9 +120,7 @@ client.on('interactionCreate', (interaction) => {
         interaction.reply('Añadida la frase \''+str+'\'');
     }
 
-    if(interaction.reaction === '✅'){
-        interaction.MessageBox("Se viene baneo señores");
-    }
+    
 });
 
 client.login(process.env.DISCORD_TOKEN);
