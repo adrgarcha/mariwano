@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const { Client, IntentsBitField } = require('discord.js');
+const { Client, IntentsBitField, EmbedBuilder, ActivityType } = require('discord.js');
 
 const client = new Client({
     intents: [
@@ -13,8 +13,16 @@ const client = new Client({
 
 client.on('ready', (c) => {
     console.log(`🚬 ${c.user.tag} esta fumando.`);
+
+    client.user.setActivity({
+        name: 'un buen peta',
+        type: ActivityType.Playing,
+        // La URL solo funciona con el tipo Streaming y puede ser de YouTube o Twitch.
+        //url: 'https://youtu.be/ATsJwGuiL8A?si=isRDznHtgLk-kmFW',
+    });
 });
 
+// MENSAJES
 client.on('messageCreate', (message) => {
     if(message.author.bot){
         return;
@@ -29,16 +37,62 @@ client.on('messageCreate', (message) => {
     }
 });
 
-client.on('interactionCreate', (interaction) => {
-    if(!interaction.isChatInputCommand()){
-        return;
+client.on('interactionCreate', async (interaction) => {
+    // COMANDOS
+    if(interaction.isChatInputCommand()){
+        if(interaction.commandName === 'sumar'){
+            const num1 = interaction.options.get('primer-numero').value;
+            const num2 = interaction.options.get('segundo-numero').value;
+    
+            interaction.reply(`Como no sabes sumar trozo de basura, aqui tienes la suma: ${num1 + num2}`);
+        }
+    
+        // EMBEDS
+        if(interaction.commandName === 'embed'){
+            const embed = new EmbedBuilder()
+            .setTitle('Titulo del embed')
+            .setDescription('Descripcion del embed')
+            .setColor('Random')
+            .addFields({
+                name: 'Titulo de campo 1',
+                value: 'Valor del campo 1',
+                inline: true
+            },
+            {
+                name: 'Titulo de campo 2',
+                value: 'Valor del campo 2',
+                inline: true
+            },
+            );
+    
+            interaction.reply({ embeds: [embed] });
+        }
     }
 
-    if(interaction.commandName === 'sumar'){
-        const num1 = interaction.options.get('primer-numero').value;
-        const num2 = interaction.options.get('segundo-numero').value;
+    // BOTONES
+    if(interaction.isButton()){
+        try {
+            await interaction.deferReply({ ephemeral: true });
 
-        interaction.reply(`Como no sabes sumar trozo de basura, aqui tienes la suma: ${num1 + num2}`);
+            const role = interaction.guild.roles.cache.get(interaction.customId);
+            if(!role){
+                interaction.reply({
+                    content: 'No se pudo encontrar este rol.',
+                });
+                return;
+            }
+
+            const hasRole = interaction.member.roles.cache.has(role.id);
+            if(hasRole) {
+                await interaction.member.roles.remove(role);
+                await interaction.editReply(`El rol ${role} ha sido eliminado.`);
+                return;
+            }
+            await interaction.member.roles.add(role);
+            await interaction.editReply(`El rol ${role} ha sido agregado.`);
+        } catch (error) {
+            console.log(`Ha habido un error: ${error}`);
+        }
     }
 });
 

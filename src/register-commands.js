@@ -10,20 +10,6 @@ const commands = [
                 name: 'primer-numero',
                 description: 'El primer numero que se suma',
                 type: ApplicationCommandOptionType.Number,
-                choices: [
-                    {
-                        name: 'one',
-                        value: 1,
-                    },
-                    {
-                        name: 'two',
-                        value: 2,
-                    },
-                    {
-                        name: 'three',
-                        value: 3,
-                    },
-                ],
                 required: true,
             },
             {
@@ -33,6 +19,11 @@ const commands = [
                 required: true,
             },
         ],
+    },
+    {
+        name: 'embed',
+        description: 'Envia un embed',
+        
     },
 ];
 
