@@ -1,6 +1,7 @@
 require('dotenv').config();
 
-const { Client, IntentsBitField, EmbedBuilder, ActivityType } = require('discord.js');
+const { Client, IntentsBitField, EmbedBuilder } = require('discord.js');
+const mongoose = require('mongoose');
 const eventHandler = require('./handlers/eventHandler');
 
 const client = new Client({
@@ -12,43 +13,22 @@ const client = new Client({
     ],
 });
 
-eventHandler(client);
+(async () => {
+    try {
+        await mongoose.connect(process.env.MONGODB_URI);
+        console.log('Conectado a la base de datos.');
 
-// client.on('ready', (c) => {
-//     console.log(`🚬 ${c.user.tag} esta fumando.`);
+        eventHandler(client);
 
-//     client.user.setActivity({
-//         name: 'un buen peta',
-//         type: ActivityType.Playing,
-//         // La URL solo funciona con el tipo Streaming y puede ser de YouTube o Twitch.
-//         //url: 'https://youtu.be/ATsJwGuiL8A?si=isRDznHtgLk-kmFW',
-//     });
-// });
-
-// // MENSAJES
-// client.on('messageCreate', (message) => {
-//     if(message.author.bot){
-//         return;
-//     }
-
-//     if(message.content === 'iyow'){
-//         message.reply('ke paza iyow');
-//     }
-
-//     if(message.content.includes('sale evento')){
-//         message.reply('el de mis huevos al viento');
-//     }
-// });
+        client.login(process.env.DISCORD_TOKEN);
+    } catch (error) {
+        console.log(`Hubo un error al conectar con la base de datos: ${error}`);
+    }
+})();
 
 // client.on('interactionCreate', async (interaction) => {
 //     // COMANDOS
 //     if(interaction.isChatInputCommand()){
-//         if(interaction.commandName === 'sumar'){
-//             const num1 = interaction.options.get('primer-numero').value;
-//             const num2 = interaction.options.get('segundo-numero').value;
-    
-//             interaction.reply(`Como no sabes sumar trozo de basura, aqui tienes la suma: ${num1 + num2}`);
-//         }
     
 //         // EMBEDS
 //         if(interaction.commandName === 'embed'){
@@ -98,5 +78,3 @@ eventHandler(client);
 //         }
 //     }
 // });
-
-client.login(process.env.DISCORD_TOKEN);
