@@ -1,8 +1,7 @@
 require('dotenv').config();
 
-const { Client, IntentsBitField, Partials } = require('discord.js');
-function choose(){ // devuelve, de unos argumentos, uno al azar. como el random, pero elige uno de los argumentos
-	var index=floor(Math.random()*(arguments.length-1))};
+const { Client, IntentsBitField, EmbedBuilder, ActivityType} = require('discord.js');
+
 const client = new Client({
     intents: [
         IntentsBitField.Flags.Guilds,
@@ -10,21 +9,12 @@ const client = new Client({
         IntentsBitField.Flags.GuildMessages,
         IntentsBitField.Flags.MessageContent,
     ],
-    partials: [
-        Partials.Message,
-        Partials.Reaction
-    ],
 });
 
 client.on('ready', (c) => {
     console.log(`🚬 ${c.user.tag} esta fumando.`);
-    
 });
-var frasesJoker= ['quien madruga se encuentra con todo cerrado😔🤙',
-'para mi el locomotor es solo motor🥵😫',
-'el tiempo sin ti es empo🙏🤟',
-'a veces las personas más frías solo necesitan un sueter😯🥶',
-'la piedad es la edad de los pies😔🤙'];
+
 client.on('messageCreate', async (message) => {
     if(message.author.bot){
         return;
@@ -88,6 +78,15 @@ client.on('messageCreate', async (message) => {
             channel.send(messageObject);
         }
     }
+
+    if(interaction.commandName === 'frasejoker'){
+        var str = interaction.options.get('frase').value;
+        console.log(str);
+        frasesJoker.push(str);
+        interaction.reply('Añadida la frase \''+str+'\'');
+    }
+
+    
 });
 
 client.on('messageReactionAdd', async (reaction) => {
@@ -119,7 +118,6 @@ client.on('interactionCreate', (interaction) => {
         frasesJoker.push(str);
         interaction.reply('Añadida la frase \''+str+'\'');
     }
-
     
 });
 
