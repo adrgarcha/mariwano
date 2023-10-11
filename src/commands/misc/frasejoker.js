@@ -34,7 +34,7 @@ module.exports = {
         },
         {
             name: "all",
-            description: "muestra todas las frases (no usar solo para el admin)",
+            description: "muestra todas las frases (no usar, solo para el admin)",
             type: ApplicationCommandOptionType.Boolean,
         }
     ],

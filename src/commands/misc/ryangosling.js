@@ -12,14 +12,12 @@ const ryanGoslingPhotos = ["https://media-cldnry.s-nbcnews.com/image/upload/t_fi
 ];
 module.exports = {
     callback: async (client, interaction) => {
-        await interaction.reply(ryanGoslingPhotos[0]);
-        for(var j = 0; j < 3; j++){
-            for(var i = 1; i < ryanGoslingPhotos.length; i++) {
-                await interaction.followUp(ryanGoslingPhotos[i]);
-            }   
-        }
+        
+        await interaction.reply(ryanGoslingPhotos[Math.floor(Math.random()*ryanGoslingPhotos.length)]);
+        
     
     },
-    name: "ryangosling",
+    name: "ryangoslin",
     description: "\"i drive\"",
+    
 }
