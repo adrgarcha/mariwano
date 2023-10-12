@@ -19,6 +19,7 @@
   "dependencies": {
     "canvacord": "^5.4.10",
     "discord.js": "^14.13.0",
+    "djs-commander": "^0.0.50",
     "dotenv": "^16.3.1",
     "mongodb": "^6.1.0",
     "mongoose": "^7.6.1",

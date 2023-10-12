@@ -1,7 +1,13 @@
-module.exports = (client, message) => {
-    if(message.author.bot){
-        return;
-    }
+const { Client, Message } = require("discord.js");
+
+/**
+ * 
+ * @param {Client} client 
+ * @param {Message} message 
+ * @returns 
+ */
+module.exports = (message, client) => {
+    if(message.author.bot) return;
         
     if(message.content === 'iyow'){
         message.reply('ke paza iyow');

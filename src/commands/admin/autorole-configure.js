@@ -1,13 +1,13 @@
-const { Client, Interaction, ApplicationCommandOptionType, PermissionFlagsBits } = require("discord.js");
+const { ApplicationCommandOptionType, PermissionFlagsBits, ChatInputCommandInteraction } = require("discord.js");
 const AutoRole = require('../../models/AutoRole');
 
 module.exports = {
     /**
      * 
-     * @param {Client} client 
-     * @param {Interaction} interaction 
+     * @param {Object} param0 
+     * @param {ChatInputCommandInteraction} param0.interaction
      */
-    callback: async (client, interaction) => {
+    run: async ({ interaction }) => {
         if(!interaction.inGuild){
             interaction.reply('Solo puedes ejecutar este comando en un servidor.');
             return;
@@ -40,16 +40,18 @@ module.exports = {
             console.log(`Hubo un error al configurar el auto-rol: ${error}`);
         }
     },
-    name: 'autorole-configure',
-    description: 'Configurar el auto-rol para este servidor.',
-    options: [
-        {
-            name: 'role',
-            description: 'El rol que quieres darle a nuevos usuarios.',
-            type: ApplicationCommandOptionType.Role,
-            required: true,
-        },
-    ],
-    permissionsRequired: [PermissionFlagsBits.Administrator],
-    botPermissions: [PermissionFlagsBits.ManageRoles],
+    data: {
+        name: 'autorole-configure',
+        description: 'Configurar el auto-rol para este servidor.',
+        options: [
+            {
+                name: 'role',
+                description: 'El rol que quieres darle a nuevos usuarios.',
+                type: ApplicationCommandOptionType.Role,
+                required: true,
+            },
+        ],
+        permissionsRequired: [PermissionFlagsBits.Administrator],
+        botPermissions: [PermissionFlagsBits.ManageRoles],
+    },
 }

@@ -1,4 +1,4 @@
-const { Client, Interaction, ApplicationCommandOptionType, AttachmentBuilder } = require("discord.js");
+const { ApplicationCommandOptionType, AttachmentBuilder, ChatInputCommandInteraction } = require("discord.js");
 const canvacord = require('canvacord');
 const calculateLevelXp = require('../../utils/calculateLevelXp');
 const Level = require('../../models/Level');
@@ -6,16 +6,14 @@ const Level = require('../../models/Level');
 module.exports = {
     /**
      * 
-     * @param {Client} client 
-     * @param {Interaction} interaction 
+     * @param {Object} param0 
+     * @param {ChatInputCommandInteraction} param0.interaction
      */
-    callback: async (client, interaction) => {
+    run: async ({ interaction }) => {
         if (!interaction.inGuild()){
-            interaction.reply('Solo puedes ejecutar este comando en un servidor.');
+            await interaction.reply('Solo puedes ejecutar este comando en un servidor.');
             return;
         }
-
-        await interaction.deferReply();
 
         const mentionedUserId = interaction.options.get('target-user')?.value;
         const targetUserId = mentionedUserId || interaction.member.id;
@@ -27,7 +25,7 @@ module.exports = {
         });
 
         if(!fetchedLevel){
-            interaction.editReply(
+            await interaction.reply(
                 mentionedUserId ? `${targetUserObj.user.tag} no tiene ningun nivel.` : 'No tienes ningun nivel todavia.'
             );
             return;
@@ -58,16 +56,17 @@ module.exports = {
 
         const data = await rank.build();
         const attachment = new AttachmentBuilder(data);
-        interaction.editReply({ files: [attachment] });
+        await interaction.reply({ files: [attachment] });
     },
-
-    name: 'level',
-    description: 'Muestra tu nivel o el de otra persona.',
-    options: [
-        {
-            name: 'target-user',
-            description: 'El usuario que quieres ver su nivel.',
-            type: ApplicationCommandOptionType.Mentionable,
-        },
-    ],
+    data: {
+        name: 'level',
+        description: 'Muestra tu nivel o el de otra persona.',
+        options: [
+            {
+                name: 'target-user',
+                description: 'El usuario que quieres ver su nivel.',
+                type: ApplicationCommandOptionType.Mentionable,
+            },
+        ],
+    },
 }
