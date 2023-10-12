@@ -42,6 +42,6 @@ module.exports = async (client) => {
             }
         }
     } catch (error) {
-        console.log(`Hubo un error: ${error}`);
+        console.log(`Hubo un error al registrar el comando: ${error}`);
     }
 }
