@@ -14,10 +14,7 @@ module.exports = {
     callback: async (client, interaction) => {
         
         await interaction.reply(ryanGoslingPhotos[Math.floor(Math.random()*ryanGoslingPhotos.length)]);
-        
-    
     },
     name: "ryangoslin",
     description: "\"i drive\"",
-    
 }
