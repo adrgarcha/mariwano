@@ -11,10 +11,12 @@ const ryanGoslingPhotos = ["https://media-cldnry.s-nbcnews.com/image/upload/t_fi
 "https://assets.mycast.io/actor_images/actor-ryan-gosling-579626_small.jpg"
 ];
 module.exports = {
-    callback: async (client, interaction) => {
+    run: async ({ interaction }) => {
         
         await interaction.reply(ryanGoslingPhotos[Math.floor(Math.random()*ryanGoslingPhotos.length)]);
-    },
-    name: "ryangoslin",
+    },data: {
+        name: "ryangoslin",
     description: "\"i drive\"",
+    }
+    
 }

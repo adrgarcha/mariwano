@@ -6,7 +6,7 @@ const frasesJoker = ['quien madruga se encuentra con todo cerrado😔🤙',
         'la piedad es la edad de los pies😔🤙'];
 module.exports = {
 
-    callback: async (client, interaction) => {
+    run: async ({ interaction }) => {
         await interaction.deferReply();
         
         const fraseAgregada = interaction.options.get("add")?.value;
@@ -23,7 +23,7 @@ module.exports = {
         }
         const fraseJoker = frasesJoker[Math.floor(Math.random() * frasesJoker.length)];
         interaction.editReply(`${fraseJoker}`);
-    },
+    }, data: {
     name: "frasejoker", 
     description: "Dropea una frase aleatoria que diría el joker",
     options: [
@@ -38,4 +38,4 @@ module.exports = {
             type: ApplicationCommandOptionType.Boolean,
         }
     ],
-}
+}}
