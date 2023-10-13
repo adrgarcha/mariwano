@@ -10,12 +10,10 @@ module.exports = {
         try {
             const imageObject = await Jimp.read(url);
             if(efecto){
-
-            
             try{
                 switch (efecto) {
                     case 1:
-                        imageObject.flip();
+                        imageObject.flip(false,true);
                         break;
                     case 2:
                         imageObject.blur(5);
