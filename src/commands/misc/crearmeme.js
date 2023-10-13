@@ -6,9 +6,34 @@ module.exports = {
         const textoSuperior = interaction.options.getString("textoarriba");
         const textoInferior = interaction.options.getString("textoabajo");
         const url = interaction.options.getString("urlimagen");
-
+        const efecto = interaction.options.get("efectos").value;
         try {
             const imageObject = await Jimp.read(url);
+            if(efecto){
+
+            
+            try{
+                switch (efecto) {
+                    case 1:
+                        imageObject.flip();
+                        break;
+                    case 2:
+                        imageObject.blur(5);
+                        break;
+                    case 3:
+                        imageObject.fisheye();
+                        break;
+                    case 4:
+                        imageObject.invert();
+                        break;
+                    case 5:
+                        imageObject.rotate(90);
+                        break;
+                }
+            }catch(err){
+                console.error(err);
+                await interaction.reply(`Hubo un error al añadir efecto: ${err.message}`);
+            }}
             const font = await Jimp.loadFont("./roboto.fnt");
 
             imageObject.print(
@@ -61,6 +86,33 @@ module.exports = {
                 description: "URL de la imagen",
                 type: ApplicationCommandOptionType.String,
                 required: true,
+            },
+            {
+                name: "efectos",
+                description: "añadir efectos a la imagen",
+                type: ApplicationCommandOptionType.Integer,
+                choices:[
+                    {
+                        name: "invertir",
+                        value: 1,
+                    },
+                    {
+                        name: "desenfocar",
+                        value: 2,
+                    },
+                    {
+                        name: "esferizar",
+                        value: 3,
+                    },
+                    {
+                        name: "invertir_color",
+                        value: 4,
+                    },
+                    {
+                        name:"rotar",
+                        value: 5,
+                    },
+                ],
             }
         ],
     }
