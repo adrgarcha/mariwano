@@ -17,7 +17,7 @@ module.exports = {
             });
             return;
         }
-
+        var lastDailyDate; var currentDate;
         try {
             await interaction.deferReply();
 
@@ -29,8 +29,8 @@ module.exports = {
             let user = await User.findOne(query);
 
             if(user){
-                const lastDailyDate = user.lastDaily.toDateString();
-                const currentDate = new Date().toDateString();
+                lastDailyDate = user.lastDaily.toDateString();
+                currentDate = new Date().toDateString();
 
                 if(lastDailyDate === currentDate){
                     interaction.editReply(`Ya has recolectado las diarias de hoy.`);
@@ -47,6 +47,7 @@ module.exports = {
             await user.save();
 
             interaction.editReply(`${dailyAmount} fueron agregados a tu cuenta para comprar marihuana. Ahora mismo tienes ${user.balance}`);
+            currentDate = lastDailyDate.toDateString();
         } catch (error) {
             console.log(`Ha ocurrido un error con las diarias: ${error}`);
         }
