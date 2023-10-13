@@ -1,12 +1,12 @@
-const { Client, Interaction, ApplicationCommandOptionType, PermissionFlagsBits } = require('discord.js');
+const { ApplicationCommandOptionType, PermissionFlagsBits, ChatInputCommandInteraction } = require('discord.js');
 
 module.exports = {
     /**
      * 
-     * @param {Client} client 
-     * @param {Interaction} interaction 
+     * @param {Object} param0 
+     * @param {ChatInputCommandInteraction} param0.interaction
      */
-    callback: async (client, interaction) => {
+    run: async ({ interaction }) => {
         const targetUserId = interaction.options.get('target-user').value;
         const reason = interactions.options.get('reason')?.value || 'No se proporcionó una razón';
 
@@ -45,22 +45,23 @@ module.exports = {
             console.log(`Hubo un error al banear al usuario: ${error}`);
         }
     },
-
-    name: 'ban',
-    description: 'Banea un miembro.',
-    options: [
-        {
-            name: 'target-user',
-            description: 'El usuario que quieres banear.',
-            type: ApplicationCommandOptionType.Mentionable,
-            required: true,
-        },
-        {
-            name: 'reason',
-            description: 'La razon del baneo.',
-            type: ApplicationCommandOptionType.String,
-        },
-    ],
-    permissionsRequired: [PermissionFlagsBits.BanMembers],
-    botPermissions: [PermissionFlagsBits.BanMembers],
+    data: {
+        name: 'ban',
+        description: 'Banea un miembro.',
+        options: [
+            {
+                name: 'target-user',
+                description: 'El usuario que quieres banear.',
+                type: ApplicationCommandOptionType.Mentionable,
+                required: true,
+            },
+            {
+                name: 'reason',
+                description: 'La razon del baneo.',
+                type: ApplicationCommandOptionType.String,
+            },
+        ],
+        permissionsRequired: [PermissionFlagsBits.BanMembers],
+        botPermissions: [PermissionFlagsBits.BanMembers],
+    },
 }

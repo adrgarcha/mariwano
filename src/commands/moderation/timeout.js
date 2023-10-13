@@ -1,13 +1,13 @@
-const { Client, Interaction, ApplicationCommandOptionType, PermissionFlagsBits } = require("discord.js");
+const { ApplicationCommandOptionType, PermissionFlagsBits, ChatInputCommandInteraction } = require("discord.js");
 const ms = require('ms');
 
 module.exports = {
     /**
      * 
-     * @param {Client} client 
-     * @param {Interaction} interaction 
+     * @param {Object} param0 
+     * @param {ChatInputCommandInteraction} param0.interaction
      */
-    callback: async (client, interaction) => {
+    run: async ({ interaction }) => {
         const mentionable = interaction.options.get('target-user').value;
         const duration = interaction.options.get('duration').value;
         const reason = interaction.options.get('reason')?.value || 'No se proporcionó ninguna razón.';
@@ -65,27 +65,29 @@ module.exports = {
             console.log(`Hubo un error al hacer timeout: ${error}`);
         }
     },
-    name: 'timeout',
-    description: 'Realiza un timeout a un miembro.',
-    options: [
-        {
-            name: 'target-user',
-            description: 'El miembro que vayas a hacer timeout.',
-            type: ApplicationCommandOptionType.Mentionable,
-            required: true,
-        },
-        {
-            name: 'duration',
-            description: 'La duracion del timeout (30m, 1h, 1 day).',
-            type: ApplicationCommandOptionType.String,
-            required: true,
-        },
-        {
-            name: 'reason',
-            description: 'La razon del timeout.',
-            type: ApplicationCommandOptionType.String,
-        },
-    ],
-    permissionsRequired: [PermissionFlagsBits.MuteMembers],
-    botPermissions: [PermissionFlagsBits.MuteMembers],
+    data: {
+        name: 'timeout',
+        description: 'Realiza un timeout a un miembro.',
+        options: [
+            {
+                name: 'target-user',
+                description: 'El miembro que vayas a hacer timeout.',
+                type: ApplicationCommandOptionType.Mentionable,
+                required: true,
+            },
+            {
+                name: 'duration',
+                description: 'La duracion del timeout (30m, 1h, 1 day).',
+                type: ApplicationCommandOptionType.String,
+                required: true,
+            },
+            {
+                name: 'reason',
+                description: 'La razon del timeout.',
+                type: ApplicationCommandOptionType.String,
+            },
+        ],
+        permissionsRequired: [PermissionFlagsBits.MuteMembers],
+        botPermissions: [PermissionFlagsBits.MuteMembers],
+    },
 }

@@ -1,13 +1,13 @@
-const { Client, Interaction, ApplicationCommandOptionType, PermissionFlagsBits } = require("discord.js");
+const { PermissionFlagsBits, ChatInputCommandInteraction } = require("discord.js");
 const AutoRole = require('../../models/AutoRole');
 
 module.exports = {
     /**
      * 
-     * @param {Client} client 
-     * @param {Interaction} interaction 
+     * @param {Object} param0 
+     * @param {ChatInputCommandInteraction} param0.interaction
      */
-    callback: async (client, interaction) =>{
+    run: async ({ interaction }) =>{
         try {
             await interaction.deferReply();
 
@@ -22,7 +22,9 @@ module.exports = {
             console.log(`Hubo un error al deshabilitar el auto-rol: ${error}`);
         }
     },
-    name: 'autorole-disable',
-    description: 'Deshabilita el auto-rol para este servidor.',
-    permissionsRequired: [PermissionFlagsBits.Administrator],
+    data: {
+        name: 'autorole-disable',
+        description: 'Deshabilita el auto-rol para este servidor.',
+        permissionsRequired: [PermissionFlagsBits.Administrator],
+    },
 }

@@ -1,18 +1,15 @@
-const { Client, Interaction } = require('discord.js');
+const { ChatInputCommandInteraction } = require('discord.js');
 const User = require('../../models/User');
 
 const dailyAmount = 10000;
 
 module.exports = {
-    name: 'daily',
-    description: 'Recolecta tus diarias.',
-
     /**
      * 
-     * @param {Client} client 
-     * @param {Interaction} interaction 
+     * @param {Object} param0 
+     * @param {ChatInputCommandInteraction} param0.interaction
      */
-    callback: async (client, interaction) => {
+    run: async ({ interaction }) => {
         if(!interaction.inGuild){
             interaction.reply({
                 content: "Solo puedes ejecutar este comando en un servidor.",
@@ -53,5 +50,9 @@ module.exports = {
         } catch (error) {
             console.log(`Ha ocurrido un error con las diarias: ${error}`);
         }
+    },
+    data: {
+        name: 'daily',
+        description: 'Recolecta tus diarias.',
     },
 }
