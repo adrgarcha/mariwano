@@ -1,7 +1,7 @@
 const { Client, Interaction } = require('discord.js');
 const User = require('../../models/User');
 
-const dailyAmount = 1000;
+const dailyAmount = 10000;
 
 module.exports = {
     name: 'daily',
