@@ -1,7 +1,7 @@
 const { ChatInputCommandInteraction } = require("discord.js");
 const User = require("../../models/User");
 
-const dailyAmount = 10000;
+const dailyAmount = 1000;
 
 module.exports = {
   /**
