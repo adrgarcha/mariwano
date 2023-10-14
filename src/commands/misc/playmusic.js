@@ -30,7 +30,7 @@ module.exports = {
               const player = createAudioPlayer();
               connection.subscribe(player);
               player.play(resource);
-              console.log(VoiceConnectionStatus.Ready);
+              console.log(VoiceConnectionStatus.Connecting);
         
               player.on('error', (error) => {
                 console.error(error);
