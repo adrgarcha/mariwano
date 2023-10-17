@@ -1,6 +1,5 @@
 const { Interaction } = require("discord.js");
 const Suggestion = require("../../models/Suggestion");
-const formatResults = require("../../utils/formatResults");
 
 /**
  *
@@ -43,7 +42,7 @@ module.exports = async (interaction) => {
 
       targetMessage.edit({
         embeds: [targetMessageEmbed],
-        components: [targetMessage.components[0]],
+        components: [],
       });
       return;
     }
@@ -67,7 +66,7 @@ module.exports = async (interaction) => {
 
       targetMessage.edit({
         embeds: [targetMessageEmbed],
-        components: [targetMessage.components[0]],
+        components: [],
       });
       return;
     }
@@ -88,10 +87,7 @@ module.exports = async (interaction) => {
 
       interaction.editReply("Sugerencia votada a favor.");
 
-      targetMessageEmbed.fields[2].value = formatResults(
-        targetSuggestion.upvotes,
-        targetSuggestion.downvotes
-      );
+      targetMessageEmbed.fields[2].value = `A favor: ${targetSuggestion.upvotes.length} | En contra: ${targetSuggestion.downvotes.length}`;
 
       targetMessage.edit({
         embeds: [targetMessageEmbed],
@@ -114,10 +110,7 @@ module.exports = async (interaction) => {
 
       interaction.editReply("Sugerencia votada en contra.");
 
-      targetMessageEmbed.fields[2].value = formatResults(
-        targetSuggestion.upvotes,
-        targetSuggestion.downvotes
-      );
+      targetMessageEmbed.fields[2].value = `A favor: ${targetSuggestion.upvotes.length} | En contra: ${targetSuggestion.downvotes.length}`;
 
       targetMessage.edit({
         embeds: [targetMessageEmbed],
