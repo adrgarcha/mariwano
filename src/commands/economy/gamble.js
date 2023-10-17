@@ -34,7 +34,7 @@ module.exports = {
     }
 
     if (amount > user.balance) {
-      interaction.reply("No tienes suficiente plata para apostar.");
+      interaction.reply("No tienes suficientes gramos de cocaína para apostar.");
       return;
     }
 
@@ -56,7 +56,7 @@ module.exports = {
     await user.save();
 
     interaction.reply(
-      `🎉 Has ganado ${amountWon} 🎊.\nTu plata actual es: ${user.balance}.`
+      `🎉 Has ganado ${amountWon} 🎊.\nAhora mismo tienes ${user.balance} gramos.`
     );
   },
   data: {

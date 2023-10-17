@@ -48,7 +48,7 @@ module.exports = {
       await user.save();
 
       interaction.editReply(
-        `${dailyAmount} fueron agregados a tu cuenta para comprar marihuana. Ahora mismo tienes ${user.balance}`
+        `${dailyAmount} gramos de cocaína fueron agregadas a tu inventario. Ahora mismo tienes ${user.balance}`
       );
     } catch (error) {
       console.log(`Ha ocurrido un error con las diarias: ${error}`);

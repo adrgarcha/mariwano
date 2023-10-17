@@ -26,16 +26,16 @@ module.exports = {
         }
 
         await interaction.reply(
-            targetUserId === interaction.member.id ? `La plata que tienes es ${user.balance}.` : `La plata de <@${targetUserId}> es ${user.balance}.`
+            targetUserId === interaction.member.id ? `Tienes ${user.balance} gramos de cocaína, la moneda oficial de Porreria.` : `Los gramos de cocaína de <@${targetUserId}> son ${user.balance}.`
         );
     },
     data: {
         name: 'balance',
-        description: 'La plata de tu cuenta o el de otro usuario.',
+        description: 'Los gramos de cocaina de tu cuenta o el de otro usuario.',
         options: [
             {
                 name: 'user',
-                description: 'El usuario del que quieres saber cuanta plata tiene.',
+                description: 'El usuario del que quieres saber cuantos gramos tiene.',
                 type: ApplicationCommandOptionType.Mentionable,
             },
         ],
