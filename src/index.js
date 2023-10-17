@@ -35,7 +35,7 @@
         commandsPath: path.join(__dirname, "commands"),
         eventsPath: path.join(__dirname, "events"),
         validationsPath: path.join(__dirname, "validations"),
-        testServer: process.env.GUILD_ID, // Eliminar esta linea cuando el bot se haga publico.
+        // testServer: process.env.GUILD_ID,
       });
 
       client.login(process.env.DISCORD_TOKEN);
