@@ -10,7 +10,6 @@ const {
 } = require("discord.js");
 const GuildConfiguration = require("../../models/GuildConfiguration");
 const Suggestion = require("../../models/Suggestion");
-const formatResults = require("../../utils/formatResults");
 
 module.exports = {
   /**
@@ -105,7 +104,10 @@ module.exports = {
         .addFields([
           { name: "Sugerencia", value: suggestionText },
           { name: "Estado", value: "⏳ En espera" },
-          { name: "Votos", value: formatResults() },
+          {
+            name: "Votos",
+            value: `A favor: ${newSuggestion.upvotes.length} | En contra: ${newSuggestion.downvotes.length}`,
+          },
         ])
         .setColor("Yellow");
 
