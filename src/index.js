@@ -1,7 +1,7 @@
 (async () => {
   require("dotenv").config();
 
-  const { Client, IntentsBitField } = require("discord.js");
+  const { Client, GatewayIntentBits } = require("discord.js");
   const { CommandHandler } = require("djs-commander");
   const { Player } = require("discord-player");
   const mongoose = require("mongoose");
@@ -9,12 +9,12 @@
 
   const client = new Client({
     intents: [
-      IntentsBitField.Flags.Guilds,
-      IntentsBitField.Flags.GuildMembers,
-      IntentsBitField.Flags.GuildMessages,
-      IntentsBitField.Flags.GuildPresences,
-      IntentsBitField.Flags.GuildVoiceStates,
-      IntentsBitField.Flags.MessageContent,
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMembers,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildPresences,
+      GatewayIntentBits.GuildVoiceStates,
+      GatewayIntentBits.MessageContent,
     ],
   });
 
