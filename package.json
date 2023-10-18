@@ -4,8 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "sudo apt-get update && sudo apt-get install ffmpeg && ffmpeg && npm install && nodemon"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -24,6 +23,7 @@
     "discord.js": "^14.13.0",
     "djs-commander": "^0.0.50",
     "dotenv": "^16.3.1",
+    "ffmpeg-static": "^5.2.0",
     "jimp": "^0.22.10",
     "mediaplex": "^0.0.8",
     "mongodb": "^6.1.0",
