@@ -11,8 +11,9 @@ WORKDIR /mariwano-discord-bot
 COPY package*.json ./
 COPY . .
 
-# Install dependencies from package-lock.json
+# Install dependencies
 RUN npm ci
+RUN npm install
 
 # Startup command to run the bot
 CMD ["node", "src/index.js"]
