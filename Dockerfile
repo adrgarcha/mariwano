@@ -14,8 +14,5 @@ COPY . .
 # Install dependencies from package-lock.json
 RUN npm ci
 
-# Listen to the port
-EXPOSE $PORT
-
 # Startup command to run the bot
 CMD ["node", "src/index.js"]
