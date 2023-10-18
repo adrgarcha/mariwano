@@ -9,13 +9,13 @@ WORKDIR /mariwano-discord-bot
 
 # Copy the source files into the image
 COPY package*.json ./
-COPY . ./src/
+COPY . .
 
 # Install dependencies from package-lock.json
 RUN npm ci
 
-# Listen to the port 8080
-EXPOSE 8080
+# Listen to the port
+EXPOSE $PORT
 
 # Startup command to run the bot
-CMD node .
+CMD ["node", "src/index.js"]
