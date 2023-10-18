@@ -13,7 +13,6 @@ COPY . .
 
 # Install dependencies
 RUN npm ci
-RUN npm install
 
 # Startup command to run the bot
 CMD ["node", "src/index.js"]
