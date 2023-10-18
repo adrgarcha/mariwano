@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "apt-get update && apt-get upgrade && apt-get install ffmpeg && ffmpeg && npm install && nodemon"
+    "deploy": "sudo apt-get update && sudo apt-get install ffmpeg && ffmpeg && npm install && nodemon"
   },
   "repository": {
     "type": "git",
