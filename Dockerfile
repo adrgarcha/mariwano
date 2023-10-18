@@ -9,7 +9,7 @@ WORKDIR /mariwano-discord-bot
 
 # Copy the source files into the image
 COPY package*.json ./
-COPY . /mariwano-discord-bot/
+COPY . ./src/
 
 # Install dependencies from package-lock.json
 RUN npm ci
