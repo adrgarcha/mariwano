@@ -20,9 +20,9 @@
   "dependencies": {
     "@discord-player/extractor": "^4.4.4",
     "canvacord": "^5.4.10",
+    "commandkit": "^0.1.6",
     "discord-player": "^6.6.4",
     "discord.js": "^14.13.0",
-    "djs-commander": "^0.0.50",
     "dotenv": "^16.3.1",
     "ffmpeg-static": "^5.2.0",
     "jimp": "^0.22.10",
