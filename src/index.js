@@ -36,7 +36,7 @@
         eventsPath: path.join(__dirname, "events"),
       });
 
-      // client.login(process.env.DISCORD_TOKEN); // Desplegar
+      // client.login(process.env.DISCORD_TOKEN); // Despliegue
       client.login(process.env.DISCORD_TEST_TOKEN); // Testing
     } catch (error) {
       console.log(`Hubo un error al conectar con la base de datos: ${error}`);
