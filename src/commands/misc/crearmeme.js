@@ -4,7 +4,7 @@ const {
   ApplicationCommandOptionType,
 } = require("discord.js");
 const Jimp = require("jimp");
-
+function right(text,n){return set_string(is_string(text)?text.substr(text.length-n):"")};
 module.exports = {
   run: async ({ interaction, client }) => {
     const textoSuperior = interaction.options.getString("textoarriba");
@@ -66,8 +66,13 @@ module.exports = {
         imageObject.getWidth(),
         imageObject.getHeight()
       );
-
-      const memeBuffer = await imageObject.getBufferAsync(Jimp.MIME_PNG);
+      
+      var memeBuffer;
+      if(url.includes('.gif') || right(url,4) === '.gif'){
+        memeBuffer = await imageObject.getBufferAsync(Jimp.MIME_GIF);
+      } else {
+        memeBuffer = await imageObject.getBufferAsync(Jimp.MIME_PNG);
+      }
       await interaction.reply({ files: [memeBuffer] });
     } catch (e) {
       console.error(e);
