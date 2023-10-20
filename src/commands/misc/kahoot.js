@@ -76,9 +76,9 @@ module.exports = {
       let user = await User.findOne(query);
 
       if (user) {
-        await interaction.reply(preguntas.pregunta1.pregunta);
+        await interaction.reply(preguntas.pregunta2.pregunta);
 
-        const respuestasReply = [preguntas.pregunta1.respuesta,preguntas.pregunta1.r1,preguntas.pregunta1.r2,preguntas.pregunta1.r3];
+        const respuestasReply = [preguntas.pregunta2.respuesta,preguntas.pregunta2.r1,preguntas.pregunta2.r2,preguntas.pregunta2.r3];
         const respuestasDef = shuffle(respuestasReply);
         for(var i = 0; i < respuestasReply.length; i++){
             await interaction.followUp("\n" + String.fromCharCode(i+65) + ") " + respuestasDef[i]);
