@@ -34,8 +34,6 @@
         client,
         commandsPath: path.join(__dirname, "commands"),
         eventsPath: path.join(__dirname, "events"),
-        devGuildIds: [process.env.GUILD_ID], // Testing
-        devUserIds: [process.env.DEV_ID_1, process.env.DEV_ID_2], // Testing
       });
 
       // client.login(process.env.DISCORD_TOKEN); // Desplegar
