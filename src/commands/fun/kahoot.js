@@ -11,7 +11,7 @@ var preguntas = {
     },
     pregunta2: {
         pregunta: "¿Qué ocurre si no aciertas esta pregunta?",
-        respuesta: "No gano cocaína",
+        respuesta: "No gano cocaina",
         r1: "Se me quema la casa",
         r2: "Mojang me notifica que no emigré la cuenta a Microsoft",
         r3: "Me hacen tp a latinoamérica",
@@ -67,7 +67,7 @@ module.exports = {
 
     try {
         var acertado = false;
-
+        var botPr = preguntas.pregunta1;
       let query = {
         userId: interaction.member.id,
         guildId: interaction.guild.id,
@@ -76,9 +76,9 @@ module.exports = {
       let user = await User.findOne(query);
 
       if (user) {
-        await interaction.reply(preguntas.pregunta2.pregunta);
+        await interaction.reply(botPr.pregunta);
 
-        const respuestasReply = [preguntas.pregunta2.respuesta,preguntas.pregunta2.r1,preguntas.pregunta2.r2,preguntas.pregunta2.r3];
+        const respuestasReply = [botPr.respuesta,botPr.r1,botPr.r2,botPr.r3];
         const respuestasDef = shuffle(respuestasReply);
         for(var i = 0; i < respuestasReply.length; i++){
             await interaction.followUp("\n" + String.fromCharCode(i+65) + ") " + respuestasDef[i]);
@@ -92,7 +92,7 @@ module.exports = {
         collector.on('collect', (response) => {
           const respuestaUsuario = response.content;
     
-          if (respuestaUsuario.toLowerCase().includes(preguntas.pregunta1.respuesta.toLowerCase())) {
+          if (respuestaUsuario.toLowerCase().includes(botPr.respuesta.toLowerCase())) {
             interaction.followUp('¡Respuesta correcta!');
             user.balance += 0;
           
@@ -105,7 +105,7 @@ module.exports = {
             acertado = true;
             
           } else {
-            interaction.followUp(`Perdiste. La respuesta correcta era ${preguntas.pregunta1.respuesta}.`);
+            interaction.followUp(`Perdiste. La respuesta correcta era ${botPr.respuesta}.`);
              return;
           }
     
@@ -115,7 +115,6 @@ module.exports = {
         collector.on('end', (collected, reason) => {
           if (reason === 'time') {
             interaction.followUp('¡Tiempo agotado!');
-            maricon();
               
             return;
           }
