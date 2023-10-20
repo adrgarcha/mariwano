@@ -1,4 +1,4 @@
-const { ChatInputCommandInteraction } = require("discord.js");
+const { ChatInputCommandInteraction, EmbedBuilder } = require("discord.js");
 const User = require("../../models/User");
 
 var preguntas = {
@@ -18,17 +18,31 @@ var preguntas = {
     },
     pregunta3: {
         pregunta: "¿Qué dinero tenía Porreria en el banco cuando el admin baneó a Porrero, en lingotes de oro?",
-        respuesta: "30 000",
-        r1: "122 600",
-        r2: "7 100",
-        r3: "Nada"
+        respuesta: "30000",
+        r1: "122600",
+        r2: "7100",
+        r3: "Nada",
     }, 
     pregunta4: {
         pregunta: "¿Quién causó la segunda guerra mundial?",
         respuesta: "Hitler",
         r1: "Mi padre borracho",
         r2: "Churchill",
-        r3: "Antonio"
+        r3: "Un francés",
+    },
+    pregunta5: {
+        pregunta: "¿Cuáles son los países que saqueó Porrero en mcatlas (cuyo saqueo provocó que el admin lo banease)?",
+        respuesta: "Irlanda y Cuba",
+        r1: "Benín, Burkina Faso, Cabo Verde, Costa de Marfil, Gambia, Ghana, Guinea, Guinea-Bissau, Liberia, Mali, Níger, Nigeria, Senegal, Sierra Leona, Togo, Comoras, Yibuti, Etiopía, Eritrea, Kenia, Madagascar, Mauricio, Uganda, Ruanda, Seychelles, Somalia, Sudán del Sur, Sudán y Tanzania",
+        r2: "Francia y Reino Unido",
+        r3: "Marruecos y Polonia",
+    },
+    pregunta6: {
+      pregunta: "¿Qué carrera estudió Jordi Wild?",
+      respuesta: "Psicología",
+      r1:"Pornografía",
+      r2:"Filología",
+      r3:"Magisterio",
     }
 }
 
@@ -37,12 +51,8 @@ function shuffle(array) {
   
     
     while (currentIndex > 0) {
-  
-      
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
-  
-      
       [array[currentIndex], array[randomIndex]] = [
         array[randomIndex], array[currentIndex]];
     }
@@ -67,26 +77,35 @@ module.exports = {
 
     try {
         var acertado = false;
-        var botPr = preguntas.pregunta1;
+        var botPr = preguntas.pregunta2;
       let query = {
         userId: interaction.member.id,
         guildId: interaction.guild.id,
       };
-
+      
       let user = await User.findOne(query);
 
       if (user) {
-        await interaction.reply(botPr.pregunta);
-
         const respuestasReply = [botPr.respuesta,botPr.r1,botPr.r2,botPr.r3];
         const respuestasDef = shuffle(respuestasReply);
+
+        
+        let leaderboardEmbed = new EmbedBuilder()
+      .setTitle(`${botPr.pregunta}`)
+      .setColor(0x45d6fd)
+      .setFooter({ text: "Escribe en tu siguiente mensaje la respuesta y no la letra (da igual si es mayúsculas o minúsculas)" });
+
+        var data = "";
         for(var i = 0; i < respuestasReply.length; i++){
-            await interaction.followUp("\n" + String.fromCharCode(i+65) + ") " + respuestasDef[i]);
+            data += ("\n" + String.fromCharCode(i+65) + ") " + respuestasDef[i]);
         }
+        leaderboardEmbed.setDescription(data);
+
+        await interaction.reply({ embeds: [leaderboardEmbed] });
         const filter = (response) => response.author.id === interaction.member.id;
         const collector = interaction.channel.createMessageCollector({
           filter,
-          time: 10000, // Tiempo en milisegundos (10 segundos en este caso)
+          time: 15000, // Tiempo en milisegundos (15 segundos )
         });
     
         collector.on('collect', (response) => {
@@ -94,12 +113,12 @@ module.exports = {
     
           if (respuestaUsuario.toLowerCase().includes(botPr.respuesta.toLowerCase())) {
             interaction.followUp('¡Respuesta correcta!');
-            user.balance += 0;
+            user.balance += 175;
           
             user.save();
     
             interaction.followUp(
-            `0 gramos de cocaína fueron agregadas a tu inventario. Ahora mismo tienes ${user.balance}`
+            `175 gramos de cocaína fueron agregadas a tu inventario. Ahora mismo tienes ${user.balance}`
           );
           acertado = false;
             acertado = true;
