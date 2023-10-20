@@ -35,7 +35,7 @@ module.exports = {
         } catch (err) {
           console.error(err);
           await interaction.reply(
-            `Hubo un error al añadir efecto: ${err.message}`
+            `Parece que ha ocurrido un error al crear el efecto.`
           );
         }
       }
@@ -76,7 +76,9 @@ module.exports = {
       await interaction.reply({ files: [memeBuffer] });
     } catch (e) {
       console.error(e);
-      await interaction.reply(`Hubo un error al crear el meme: ${e.message}`);
+      await interaction.reply(
+        `Parece que ha ocurrido un error al crear el meme. Intenta poner una URL válida que tenga un formato de imagen.`
+      );
     }
   },
   data: {
