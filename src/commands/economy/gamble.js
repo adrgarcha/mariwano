@@ -25,6 +25,7 @@ module.exports = {
 
     let user = await User.findOne({
       userId: interaction.user.id,
+      guildId: interaction.guild.id,
     });
 
     if (!user) {
@@ -34,7 +35,9 @@ module.exports = {
     }
 
     if (amount > user.balance) {
-      interaction.reply("No tienes suficientes gramos de cocaína para apostar.");
+      interaction.reply(
+        "No tienes suficientes gramos de cocaína para apostar."
+      );
       return;
     }
 

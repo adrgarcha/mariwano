@@ -2,7 +2,7 @@
   require("dotenv").config();
 
   const { Client, GatewayIntentBits } = require("discord.js");
-  const { CommandHandler } = require("djs-commander");
+  const { CommandKit } = require("commandkit");
   const { Player } = require("discord-player");
   const mongoose = require("mongoose");
   const path = require("path");
@@ -30,15 +30,16 @@
       await mongoose.connect(process.env.MONGODB_URI);
       console.log("Conectado a la base de datos.");
 
-      new CommandHandler({
+      new CommandKit({
         client,
         commandsPath: path.join(__dirname, "commands"),
         eventsPath: path.join(__dirname, "events"),
-        validationsPath: path.join(__dirname, "validations"),
-        // testServer: process.env.GUILD_ID,
+        devGuildIds: [process.env.GUILD_ID],
+        devUserIds: [process.env.DEV_ID_1, process.env.DEV_ID_2],
       });
 
-      client.login(process.env.DISCORD_TOKEN);
+      // client.login(process.env.DISCORD_TOKEN); // Desplegar
+      client.login(process.env.DISCORD_TEST_TOKEN); // Testing
     } catch (error) {
       console.log(`Hubo un error al conectar con la base de datos: ${error}`);
     }
