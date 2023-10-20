@@ -23,19 +23,22 @@ module.exports = {
         guildId: interaction.guildId,
       });
       if (!guildConfiguration?.suggestionChannelIds.length) {
-        await interaction.reply(
-          `Este servidor todavia no ha sido configurado con un canal de sugerencias.`
-        );
+        await interaction.reply({
+          content: `Este servidor todavia no ha sido configurado con un canal de sugerencias.`,
+          ephemeral: true,
+        });
         return;
       }
 
       if (
         !guildConfiguration.suggestionChannelIds.includes(interaction.channelId)
       ) {
-        await interaction.reply(`Este canal no se ha configurado como canal de sugerencias.\nUsa uno de estos canales 
-            en su lugar: ${guildConfiguration.suggestionChannelIds
-              .map((id) => `<#${id}>`)
-              .join(", ")}`);
+        await interaction.reply({
+          content: `Este canal no se ha configurado como canal de sugerencias.\nUsa uno de estos canales en su lugar: ${guildConfiguration.suggestionChannelIds
+            .map((id) => `<#${id}>`)
+            .join(", ")}`,
+          ephemeral: true,
+        });
         return;
       }
 
