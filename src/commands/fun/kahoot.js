@@ -13,7 +13,7 @@ var preguntas = {
         pregunta: "¿Qué ocurre si no aciertas esta pregunta?",
         respuesta: "No gano cocaina",
         r1: "Se me quema la casa",
-        r2: "Mojang me notifica que no emigré la cuenta a Microsoft",
+        r2: "Mojang me notifica que no emigraste la cuenta a Microsoft",
         r3: "Me hacen tp a latinoamérica",
     },
     pregunta3: {
@@ -45,11 +45,10 @@ var preguntas = {
       r3:"Magisterio",
     }
 }
-
+// funciones necesarias:
+// ordenar los elementos de un array aleatoriamente
 function shuffle(array) {
     let currentIndex = array.length,  randomIndex;
-  
-    
     while (currentIndex > 0) {
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
@@ -59,7 +58,12 @@ function shuffle(array) {
   
     return array;
   }
-
+// escoger una propiedad de un objeto aleatoriamente
+  function randomProperty(obj) {
+    var keys = Object.keys(obj);
+    return obj[keys[ keys.length * Math.random() << 0]];
+};
+// fin funciones
 module.exports = {
   /**
    *
@@ -77,7 +81,7 @@ module.exports = {
 
     try {
         var acertado = false;
-        var botPr = preguntas.pregunta2;
+        var botPr = randomProperty(preguntas);
       let query = {
         userId: interaction.member.id,
         guildId: interaction.guild.id,
