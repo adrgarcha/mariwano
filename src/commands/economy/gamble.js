@@ -19,7 +19,7 @@ module.exports = {
     const amount = interaction.options.get("amount").value;
 
     if (amount < 100) {
-      interaction.reply("Debes apostar al menos 10 de plata.");
+      interaction.reply("Debes apostar al menos 100 gramos de cocaína.");
       return;
     }
 
@@ -48,7 +48,7 @@ module.exports = {
       await user.save();
 
       interaction.reply(
-        "No has ganado nada. Pero recuerda que el 90% de la gente siempre lo deja antes de recuperarlo todo."
+        `No has ganado nada, pero recuerda que el 90% de la gente siempre lo deja antes de recuperarlo todo 🤑.\nAhora mismo tienes ${user.balance} gramos.`
       );
       return;
     }

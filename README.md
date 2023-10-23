@@ -1,13 +1,26 @@
-# Mariwano
-Mariwano is a Discord bot that can be used for various purposes like moderation, music, create memes... It is built using the Discord.js v14 library and the Discord-Player library for the music feature.
+<h1 align="center">
+    <br>
+    Mariwano - An open-source Discord bot
+    <br><br>
+    <img src="./assets/mariwano-icon.jpg" alt="Mariwano icon">
+    <br><br>
+</h1>
 
-## Setup Guide
-1. Clone this repository: `git clone https://github.com/adrgarcha/discord-bot.git`
-2. Install dependencies: `npm install`
-3. Run the bot: `nodemon`
+<h3 align="center">
+    🤖 An open-source Discord bot for various purposes like moderation, music, create memes... and more!
+</h3>
 
-## Usage
-In the future, we will update this section so it has all the commands available and how to use them correctly.
+## Main libraries 📚
+It is built using the [Discord.js v14](https://discord.js.org/) library and the [Discord-Player](https://discord-player.js.org/) library for the music feature.
 
-## Contributing
-Pull requests are welcome. If you want to add a major update, first create an issue to discuss exactly what it would change.
+## Setup Guide ⚙
+1. Clone this repository: `git clone https://github.com/adrgarcha/discord-bot.git`.
+2. Make sure you have [FFmpeg](https://ffmpeg.org/download.html) installed on your computer, and add it to your PATH.
+3. Install dependencies: `npm install`.
+4. Run the bot: `nodemon`.
+
+## Get help and support 💬
+Did you encounter an issue? Open an issue in this repository for assistance.
+
+## Contributing 💻
+Pull requests are welcome 👍. If you want to add a major update, first create an issue to discuss exactly what it would change.

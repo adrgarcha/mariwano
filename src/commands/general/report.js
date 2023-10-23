@@ -23,19 +23,22 @@ module.exports = {
         guildId: interaction.guildId,
       });
       if (!guildConfiguration?.reportChannelIds.length) {
-        await interaction.reply(
-          `Este servidor todavia no ha sido configurado con un canal de informes.`
-        );
+        await interaction.reply({
+          content: `Este servidor todavia no ha sido configurado con un canal de informes.`,
+          ephemeral: true,
+        });
         return;
       }
 
       if (
         !guildConfiguration.reportChannelIds.includes(interaction.channelId)
       ) {
-        await interaction.reply(`Este canal no se ha configurado como canal de informes.\nUsa uno de estos canales 
-                      en su lugar: ${guildConfiguration.reportChannelIds
-                        .map((id) => `<#${id}>`)
-                        .join(", ")}`);
+        await interaction.reply({
+          content: `Este canal no se ha configurado como canal de informes.\nUsa uno de estos canales en su lugar: ${guildConfiguration.reportChannelIds
+            .map((id) => `<#${id}>`)
+            .join(", ")}`,
+          ephemeral: true,
+        });
         return;
       }
 
