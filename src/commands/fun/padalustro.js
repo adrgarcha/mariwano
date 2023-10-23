@@ -1,6 +1,4 @@
-const { Client, GatewayIntentBits, Intents, ApplicationCommandOptionType} = require('discord.js');
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
+const {ApplicationCommandOptionType} = require('discord.js');
 module.exports = {
   run: async ({ interaction }) => {
     await interaction.reply("Tenga cuidado con el consumo de cannabis, un sólo porro contiene:\n"+

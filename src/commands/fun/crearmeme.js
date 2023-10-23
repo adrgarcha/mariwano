@@ -4,7 +4,7 @@ const {
   ApplicationCommandOptionType,
 } = require("discord.js");
 const Jimp = require("jimp");
-function right(text,n){return set_string(is_string(text)?text.substr(text.length-n):"")};
+function right(text,n){return ((text).toString()?text.substr(text.length-n):"")};
 module.exports = {
   run: async ({ interaction, client }) => {
     const textoSuperior = interaction.options.getString("textoarriba");
@@ -39,7 +39,7 @@ module.exports = {
           );
         }
       }
-      const font = await Jimp.loadFont("./roboto.fnt");
+      const font = await Jimp.loadFont("./src/utils/roboto.fnt");
 
       imageObject.print(
         font,

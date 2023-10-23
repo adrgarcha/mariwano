@@ -1,14 +1,25 @@
-const { Client, GatewayIntentBits, Intents, ApplicationCommandOptionType } = require('discord.js');
-const axios = require('axios');
-const fs = require('fs');
-const FakeYou = require('fakeyou.js');
+const {
+  Client,
+  GatewayIntentBits,
+  Intents,
+  ApplicationCommandOptionType,
+} = require("discord.js");
+const axios = require("axios");
+const fs = require("fs");
+const FakeYou = require("fakeyou.js");
 
 module.exports = {
   run: async ({ interaction }) => {
-    
     const textoAVoz = interaction.options.getString("textardo").toString();
-    const tipoDeVoz = interaction.options.getString("voz").toString();
-   
+    const tipoDeVoz = interaction.options
+      .getString("voz")
+      .toString()
+      .toLowerCase();
+    const vocesProhibidas = ["xokas"];
+    if (vocesProhibidas.includes(tipoDeVoz.toLowerCase())) {
+      interaction.reply("No puedes utilizar esa voz, lo siento");
+    }
+
     /*
     const voices = [
         {
@@ -58,50 +69,45 @@ module.exports = {
           interaction.followUp('Error al realizar la solicitud:', error);
         });
 */
-        const FakeYou = require('fakeyou.js');
-        const fy = new FakeYou.Client({
-        usernameOrEmail: 'porrazo',
-        password: 'code100Todo'
-        });
-        await fy.start(); //required    
-        let model = fy.searchModel(tipoDeVoz).first(); 
-        if(!model){
-            interaction.reply("Cagaste porque el modelo ni existe");
-        }
-        interaction.reply("Cargando el audio");
-        
-        const result = await model.request(textoAVoz);
-        
-        
-        
+    const FakeYou = require("fakeyou.js");
+    const fy = new FakeYou.Client({
+      usernameOrEmail: "porrazo",
+      password: "code100Todo",
+    });
+    await fy.start(); //required
+    let model = fy.searchModel(tipoDeVoz).first();
+    if (!model) {
+      interaction.reply("Ha ocurrido un error: modelo no encontrado");
+    }
+    interaction.reply("Cargando el audio");
 
-       await interaction.followUp(result.audioURL());
+    const result = await model.request(textoAVoz);
+    //await interaction.followUp(result.audioURL());
 
+    const audioBuffer = Buffer.from(await result.getAudio(), "binary");
+    fs.writeFileSync("tts_audio.mp3", audioBuffer);
 
-        const audioBuffer = Buffer.from(await result.getAudio(), 'binary');
-        fs.writeFileSync('tts_audio.mp3', audioBuffer);
-
-        await interaction.followUp({
-            files: ['tts_audio.mp3'],
-          });
-        
+    await interaction.followUp({
+      files: ["tts_audio.mp3"],
+    });
   },
   data: {
     name: "fakeyou",
-    description: 'Genera un audio con la voz de tu youtuber favorito',
+    description: "Genera un audio con la voz de tu youtuber favorito",
     options: [
-        {
-          name: "voz",
-          description: "voz de tu youtuber favorito",
-          type: ApplicationCommandOptionType.String,
-          required: true,
-        },
-        {
-          name: "textardo",
-          description: "muestra todas las frases ",
-          type: ApplicationCommandOptionType.String,
-          required: true,
-        },
+      {
+        name: "voz",
+        description:
+          "Pon el nombre de la persona que quieres que recite el texto, dan igual las mayúsculas o cómo lo escribas, el bot escogerá el primer resultado que encaje con ese nombre",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+      },
+      {
+        name: "textardo",
+        description: "muestra todas las frases ",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+      },
     ],
   },
 };
