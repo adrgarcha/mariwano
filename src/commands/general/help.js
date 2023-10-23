@@ -22,9 +22,10 @@ module.exports = {
       admin: "⚙",
       economy: "💲",
       fun: "😂",
-      general: "ℹ",
+      general: "🌐",
       moderation: "🛠",
       music: "🎵",
+      rpg: "⚔",
     };
 
     const formatString = (str) =>
