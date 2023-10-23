@@ -16,7 +16,7 @@ module.exports = {
   run: async ({ interaction }) => {
     if (!interaction.inGuild()) {
       await interaction.reply(
-        "Solo puedes ejecutar este comando en un servidor."
+        "Sólo puedes ejecutar este comando en un servidor."
       );
       return;
     }
@@ -33,8 +33,8 @@ module.exports = {
     if (!fetchedLevel) {
       await interaction.reply(
         mentionedUserId
-          ? `${targetUserObj.user.tag} no tiene ningun nivel.`
-          : "No tienes ningun nivel todavia."
+          ? `${targetUserObj.user.tag} no tiene ningún nivel.`
+          : "No tienes ningún nivel todavía. Intenta hablar un poco más."
       );
       return;
     }

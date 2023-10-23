@@ -15,7 +15,7 @@ module.exports = async (interaction) => {
 
     if (type !== "report") return;
 
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
 
     const targetReport = await Report.findOne({ reportId });
     const targetMessage = await interaction.channel.messages.fetch(
