@@ -98,7 +98,7 @@ module.exports = {
       {
         name: "voz",
         description:
-          "Pon el nombre de la persona que quieres que recite el texto, dan igual las mayúsculas o cómo lo escribas, el bot escogerá el primer resultado que encaje con ese nombre",
+          "Pon el nombre de la persona que quieres que recite el texto",
         type: ApplicationCommandOptionType.String,
         required: true,
       },
