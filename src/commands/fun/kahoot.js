@@ -1,20 +1,22 @@
-const { ChatInputCommandInteraction, EmbedBuilder } = require("discord.js");
+const { ChatInputCommandInteraction, EmbedBuilder, ApplicationCommandOptionType } = require("discord.js");
 const User = require("../../models/User");
 
 var preguntas = {
   pregunta1: {
     pregunta: "¿Cuál es el nombre original de Godfrey?",
-    respuesta: "Hoarah Lorux",
+    respuesta: "Hoarah Loux",
     r1: "Malenia",
-    r2: "Horux Lorux",
+    r2: "Horux Loux",
     r3: "JPelirrojo",
+    dificultad: 1,
   },
   pregunta2: {
-    pregunta: "¿Qué ocurre si no aciertas esta pregunta?",
-    respuesta: "No gano cocaina",
-    r1: "Se me quema la casa",
-    r2: "Mojang me notifica que no emigraste la cuenta a Microsoft",
-    r3: "Me hacen tp a latinoamérica",
+    pregunta: "¿En qué juego fue la primera aparición de Waluigi?",
+    respuesta: "Mario Tenis",
+    r1: "Mario Party 3",
+    r2: "Mario Golf: Toadstool Tour",
+    r3: "Mario Kart: Double Dash",
+    dificultad: 4,
   },
   pregunta3: {
     pregunta:
@@ -23,6 +25,7 @@ var preguntas = {
     r1: "122600",
     r2: "7100",
     r3: "Nada",
+    dificultad: 1,
   },
   pregunta4: {
     pregunta: "¿Quién causó la segunda guerra mundial?",
@@ -30,6 +33,7 @@ var preguntas = {
     r1: "Mi padre borracho",
     r2: "Churchill",
     r3: "Un francés",
+    dificultad: 1,
   },
   pregunta5: {
     pregunta:
@@ -38,6 +42,7 @@ var preguntas = {
     r1: "Benín, Burkina Faso, Cabo Verde, Costa de Marfil, Gambia, Ghana, Guinea, Guinea-Bissau, Liberia, Mali, Níger, Nigeria, Senegal, Sierra Leona, Togo, Comoras, Yibuti, Etiopía, Eritrea, Kenia, Madagascar, Mauricio, Uganda, Ruanda, Seychelles, Somalia, Sudán del Sur, Sudán y Tanzania",
     r2: "Francia y Reino Unido",
     r3: "Marruecos y Polonia",
+    dificultad: 1,
   },
   pregunta6: {
     pregunta: "¿Qué carrera estudió Jordi Wild?",
@@ -45,7 +50,36 @@ var preguntas = {
     r1: "Pornografía",
     r2: "Filología",
     r3: "Magisterio",
+    dificultad: 1,
   },
+  pregunta7: {
+    pregunta: "¿Qué método se emplea para la visualización de la estructura de una proteína?",
+    respuesta: "Cristalografía",
+    r1: "HSQC",
+    r2: "SEXS",
+    r3: "Citometría de flujo",
+    dificultad: 4,
+  },
+  pregunta8: {
+    pregunta: "¿Cuál es el método que emplearías para la transgénesis en una célula germinal?",
+    respuesta: "Lentivirus",
+    r1: "CRISPR-Cas9",
+    r2: "Un cubo lleno de líquido blanco sospechoso que te ha dado un vagabundo",
+    r3: "Un polla de latex modelo Folagor",
+    dificultad: 2,
+  },
+  pregunta9: {
+    pregunta: "¿Dónde se halla Malenia?",
+    respuesta: "El árbol Hierático",
+    r1: "Leyndell",
+    r2: "Liurnia",
+    r3: "Picos de los Gigantes",
+    dificultad: 2,
+  },
+  pregunta10: {
+    pregunta: ""
+  },
+  
 };
 // funciones necesarias:
 // ordenar los elementos de un array aleatoriamente
@@ -64,9 +98,23 @@ function shuffle(array) {
   return array;
 }
 // escoger una propiedad de un objeto aleatoriamente
-function randomProperty(obj) {
+function randomProperty(obj,hardcored) {
   var keys = Object.keys(obj);
-  return obj[keys[(keys.length * Math.random()) << 0]];
+  if(!hardcored){
+    return obj[keys[(keys.length * Math.random()) << 0]];
+  } else {
+    var validKeys = keys.filter(function(key) {
+      return obj[key].dificultad > 1;
+    });
+  
+    if (validKeys.length === 0) {
+      return undefined; // Devuelve undefined si no hay propiedades con dificultad mayor que 1
+    }
+  
+    var randomKey = validKeys[(validKeys.length * Math.random()) << 0];
+    return obj[randomKey];
+  }
+  
 }
 // fin funciones
 module.exports = {
@@ -83,20 +131,28 @@ module.exports = {
       });
       return;
     }
-
     try {
-      var acertado = false;
-      var botPr = randomProperty(preguntas);
+      var botPr = randomProperty(preguntas,interaction.options.getBoolean("hardcore"));
       let query = {
         userId: interaction.member.id,
         guildId: interaction.guild.id,
       };
 
       let user = await User.findOne(query);
-
+      
+  
+        
       if (user) {
         const respuestasReply = [botPr.respuesta, botPr.r1, botPr.r2, botPr.r3];
         const respuestasDef = shuffle(respuestasReply);
+        user.kahootLimit -= 1;
+        await user.save();
+        var kahootUserCount = user.kahootLimit;
+        console.log(kahootUserCount);
+        if (kahootUserCount <= 0) {
+          interaction.reply(`Has excedido el límite de tiradas del kahoot. Cómprale a Porrero más intentos en /kahootrecarga por sólo 475 gramos`);
+          return;
+        }
 
         let leaderboardEmbed = new EmbedBuilder()
           .setTitle(`${botPr.pregunta}`)
@@ -125,21 +181,20 @@ module.exports = {
           if (
             respuestaUsuario
               .toLowerCase()
-              .includes(botPr.respuesta.toLowerCase())
+              .trim()
+              .includes(botPr.respuesta.trim().toLowerCase())
           ) {
             interaction.followUp("¡Respuesta correcta!");
-            user.balance += 175;
-
+            user.balance += 175*botPr.dificultad;
             user.save();
 
             interaction.followUp(
-              `175 gramos de cocaína fueron agregadas a tu inventario. Ahora mismo tienes ${user.balance}`
+              `${175*botPr.dificultad} gramos de cocaína fueron agregadas a tu inventario.`
             );
-            acertado = false;
-            acertado = true;
+            
           } else {
             interaction.followUp(
-              `Perdiste. La respuesta correcta era ${botPr.respuesta}.`
+              `Perdiste. Ahora sabes cuál no es la correcta socio`
             );
             return;
           }
@@ -150,14 +205,13 @@ module.exports = {
         collector.on("end", (collected, reason) => {
           if (reason === "time") {
             interaction.followUp("¡Tiempo agotado!");
-
             return;
           }
         });
       } else {
         user = new User({
           ...query,
-          lastDaily: new Date(),
+          kahootLimit: 5,
         });
       }
     } catch (error) {
@@ -168,5 +222,13 @@ module.exports = {
     name: "kahoot",
     description:
       "Si aciertas una pregunta de cultura clásica, serás recompensado con gramos de cocaina",
+    options: [
+      {
+        name: "hardcore",
+        description:"Preguntas más difíciles pero ganas más gramos",
+        type: ApplicationCommandOptionType.Boolean,
+        required: true,
+      },
+    ],
   },
 };

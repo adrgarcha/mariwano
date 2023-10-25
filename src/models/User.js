@@ -15,8 +15,12 @@ const userSchema = new Schema({
     },
     lastDaily: {
         type: Date,
-        required: true,
     },
+    kahootLimit:{
+        type: Number,
+        default: 0,
+        required: true,
+    }
 });
 
 module.exports = model('User', userSchema);
