@@ -1,4 +1,8 @@
-const { ChatInputCommandInteraction, EmbedBuilder, ApplicationCommandOptionType } = require("discord.js");
+const {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  ApplicationCommandOptionType,
+} = require("discord.js");
 const User = require("../../models/User");
 
 var preguntas = {
@@ -53,7 +57,8 @@ var preguntas = {
     dificultad: 1,
   },
   pregunta7: {
-    pregunta: "¿Qué método se emplea para la visualización de la estructura de una proteína?",
+    pregunta:
+      "¿Qué método se emplea para la visualización de la estructura de una proteína?",
     respuesta: "Cristalografía",
     r1: "HSQC",
     r2: "SEXS",
@@ -61,7 +66,8 @@ var preguntas = {
     dificultad: 4,
   },
   pregunta8: {
-    pregunta: "¿Cuál es el método que emplearías para la transgénesis en una célula germinal?",
+    pregunta:
+      "¿Cuál es el método que emplearías para la transgénesis en una célula germinal?",
     respuesta: "Lentivirus",
     r1: "CRISPR-Cas9",
     r2: "Un cubo lleno de líquido blanco sospechoso que te ha dado un vagabundo",
@@ -77,9 +83,8 @@ var preguntas = {
     dificultad: 2,
   },
   pregunta10: {
-    pregunta: ""
+    pregunta: "",
   },
-  
 };
 // funciones necesarias:
 // ordenar los elementos de un array aleatoriamente
@@ -98,23 +103,22 @@ function shuffle(array) {
   return array;
 }
 // escoger una propiedad de un objeto aleatoriamente
-function randomProperty(obj,hardcored) {
+function randomProperty(obj, hardcored) {
   var keys = Object.keys(obj);
-  if(!hardcored){
+  if (!hardcored) {
     return obj[keys[(keys.length * Math.random()) << 0]];
   } else {
-    var validKeys = keys.filter(function(key) {
+    var validKeys = keys.filter(function (key) {
       return obj[key].dificultad > 1;
     });
-  
+
     if (validKeys.length === 0) {
       return undefined; // Devuelve undefined si no hay propiedades con dificultad mayor que 1
     }
-  
+
     var randomKey = validKeys[(validKeys.length * Math.random()) << 0];
     return obj[randomKey];
   }
-  
 }
 // fin funciones
 module.exports = {
@@ -132,16 +136,16 @@ module.exports = {
       return;
     }
     try {
-      var botPr = randomProperty(preguntas,interaction.options.getBoolean("hardcore"));
+      var botPr = randomProperty(
+        preguntas,
+        interaction.options.getBoolean("hardcore")
+      );
       let query = {
         userId: interaction.member.id,
         guildId: interaction.guild.id,
       };
 
       let user = await User.findOne(query);
-      
-  
-        
       if (user) {
         const respuestasReply = [botPr.respuesta, botPr.r1, botPr.r2, botPr.r3];
         const respuestasDef = shuffle(respuestasReply);
@@ -150,7 +154,9 @@ module.exports = {
         var kahootUserCount = user.kahootLimit;
         console.log(kahootUserCount);
         if (kahootUserCount <= 0) {
-          interaction.reply(`Has excedido el límite de tiradas del kahoot. Cómprale a Porrero más intentos en /kahootrecarga por sólo 475 gramos`);
+          interaction.reply(
+            `Has excedido el límite de tiradas del kahoot. Cómprale a Porrero más intentos en /kahootrecarga por sólo 475 gramos`
+          );
           return;
         }
 
@@ -185,13 +191,14 @@ module.exports = {
               .includes(botPr.respuesta.trim().toLowerCase())
           ) {
             interaction.followUp("¡Respuesta correcta!");
-            user.balance += 175*botPr.dificultad;
+            user.balance += 175 * botPr.dificultad;
             user.save();
 
             interaction.followUp(
-              `${175*botPr.dificultad} gramos de cocaína fueron agregadas a tu inventario.`
+              `${
+                175 * botPr.dificultad
+              } gramos de cocaína fueron agregadas a tu inventario.`
             );
-            
           } else {
             interaction.followUp(
               `Perdiste. Ahora sabes cuál no es la correcta socio`
@@ -225,7 +232,7 @@ module.exports = {
     options: [
       {
         name: "hardcore",
-        description:"Preguntas más difíciles pero ganas más gramos",
+        description: "Preguntas más difíciles pero ganas más gramos",
         type: ApplicationCommandOptionType.Boolean,
         required: true,
       },

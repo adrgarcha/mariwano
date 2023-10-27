@@ -30,13 +30,12 @@ module.exports = {
       let porrazo = await User.findOne(porrero);
       if (user) {
         const userBalance = user.balance;
-
-        if (userBalance < 475) {
-          interaction.editReply(`No tienes suficientes gramos.`);
+        const userKahootLimit = user.kahootLimit;
+        if (userKahootLimit <= 4) {
+          interaction.editReply(
+            `No puedes devolver menos de 5 tiradas del kahoot`
+          );
           return;
-        }
-        if(user.userId == "526530738586255360"){
-            interaction.editReply("No hay tiradas para ti, primero devuelve los gramos, ladrón");
         }
       } else {
         user = new User({
@@ -44,23 +43,24 @@ module.exports = {
           kahootLimit: 0,
         });
       }
+      const cantidadADevolver = (user.kahootLimit / 5) * 475;
+      user.balance += cantidadADevolver;
+      user.kahootLimit %= 5;
 
-      user.kahootLimit += 5;
-      user.balance -= 475;
       await user.save();
 
-      porrazo.balance += 475;
+      porrazo.balance -= cantidadADevolver;
       await porrazo.save();
 
       interaction.editReply(
-        `Has comprado a Porrero exitosamente 5 intentos del kahoot. Número de intentos actuales: ${user.kahootLimit}`
+        `Has sido devuelto ${cantidadADevolver} gramos. Número de intentos actuales: ${user.kahootLimit}`
       );
     } catch (error) {
       console.log(`Ha ocurrido un error con las diarias: ${error}`);
     }
   },
   data: {
-    name: "kahootrecarga",
+    name: "kahootreset",
     description: "Recarga 5 intentos del kahoot por 475 gramos",
   },
 };

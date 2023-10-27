@@ -19,7 +19,9 @@ const userSchema = new Schema({
     kahootLimit:{
         type: Number,
         default: 0,
-        required: true,
+    },
+    lastKahoot:{
+        type: Date,
     }
 });
 
