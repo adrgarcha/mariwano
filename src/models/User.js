@@ -22,6 +22,18 @@ const userSchema = new Schema({
     },
     lastKahoot:{
         type: Date,
+    },
+    investFactor:{
+        type: Number,
+        default: 1,
+    },
+    investBankFactor: {
+        type: Number,
+        default: 0,
+    },
+    invested:{
+        type: Number,
+        default: 0,
     }
 });
 

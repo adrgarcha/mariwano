@@ -57,6 +57,7 @@ module.exports = {
 
     user.balance += amountWon;
     await user.save();
+    
 
     interaction.reply(
       `🎉 Has ganado ${amountWon} 🎊.\nAhora mismo tienes ${user.balance} gramos.`

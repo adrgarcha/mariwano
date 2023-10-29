@@ -37,6 +37,7 @@ module.exports = {
         ? `Tienes ${user.balance} gramos de cocaína.`
         : `Los gramos de cocaína de <@${targetUserId}> son ${user.balance}.`
     );
+    
   },
   data: {
     name: "balance",

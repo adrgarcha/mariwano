@@ -15,15 +15,22 @@ module.exports = {
       });
       return;
     }
-    const cantidad = interaction.options.get("cantidad")?.value;
+    // funciones necesarias
+    function factorial(num) {
+      if (num <= 0) {
+        return 1;
+      }
+      return num * factorial(num - 1);
+    }
+    //fin funciones
+
+    var cantidad = isNaN(interaction.options.get("cantidad")?.value) ? 0 : interaction.options.get("cantidad")?.value;
     const targetUserId =
       interaction.options.get("usuario")?.value || interaction.member.id;
+    
     try {
       await interaction.deferReply();
-        if(cantidad === undefined || targetUserId === undefined){
-            interaction.reply("Inverte en el usuario una cantidad mínima de 10 000 gramos. Cuanto más ganancias logre el usuario que ha"+
-            " embolsado tu dinero, más remuneras en tu cuenta");
-        }
+       
       let query = {
         userId: interaction.member.id,
         guildId: interaction.guild.id,
@@ -32,11 +39,52 @@ module.exports = {
         userId: targetUserId,
         guildId: interaction.guild.id,
       };
+      
       let user = await User.findOne(query);
       let porrazo = await User.findOne(porrero);
       if (user) {
+        console.log(`${user.invested},${user.investBankFactor},${user.investFactor}`);
+        console.log(`targetUserId: ${targetUserId}`);
+        console.log(`cantidad: ${cantidad}`);
+        
         const userBalance = user.balance;
-
+        console.log(`balance: ${userBalance}`);
+        console.log(user.investBankFactor == 0 && ((cantidad === 0)));
+        console.log(user.investBankFactor != 0);
+        console.log(( userBalance - user.investBankFactor) > 0);
+        console.log(( userBalance - user.investBankFactor) < 0);
+        if(user.investBankFactor == 0 && ((cantidad === 0))){
+          interaction.editReply("Invierte en un usuario que esté en un canal. Cuanto más gramos ganéis (y tengáis), más beneficios generáis entre tú y el usuario y más rentable hacéis el canal"+
+          "\n\nCuanto más rentable sea el canal, más gramos se podrán ganar. Si el canal está en déficit, no podréis ganar nada (aunque generéis beneficios) pero podréis sacar al canal del déficit"+
+          "\n\nPara recargar los beneficios/maleficios vuelve a poner el comando /invertir sin opciones. Si sale este mensaje es que no has generado beneficios ni pérdidas");
+          return;
+        }
+        else if(user.investBankFactor != 0){
+          if(( userBalance - user.investBankFactor) > 0) {
+            var ganancias = user.invested + (userBalance - user.investBankFactor)*(factorial(user.investFactor+1)) + parseInt((user.balance/user.invested)*user.investFactor+1);
+            interaction.editReply(`Has ganado ${ganancias} a causa de las ganancias del canal.\n\n`+
+            `${user.investFactor < 0 ? "El canal es más rentable, pero sigue en déficit" : "El canal ahora es más rentable"}`);
+            user.balance += ganancias;
+            user.investFactor += 2;
+            user.investBankFactor = 0;
+            user.invested = 0;
+  
+            await user.save();
+            return;
+          } else if(( userBalance - user.investBankFactor) < 0) {
+            console.log(-user.invested - (userBalance - user.investBankFactor)*(factorial(user.investFactor)));
+            var ganancias = -user.invested - (userBalance - user.investBankFactor)*(factorial(user.investFactor));
+            interaction.editReply(`Has perdido ${ganancias > 0 ? ganancias : -ganancias} a causa de las pérdidas del canal.\n\n`+
+            `${user.investFactor < 0 ? "El canal está ahora en déficit" : "El canal ahora es menos rentable, pero no está en déficit"}`);
+            user.balance += ganancias;
+            user.investFactor -= 1;
+            user.investBankFactor = 0;
+            user.invested = 0;
+            
+            await user.save();
+            return;
+          }
+        }
         if (userBalance < 10000 || cantidad < 10000) {
           interaction.editReply(`Como mínimo tienes que invertir 10 000 gramos de cocaína.`);
           return;
@@ -44,18 +92,21 @@ module.exports = {
       } else {
         user = new User({
           ...query,
-          kahootLimit: 0,
         });
       }
-
-      user.kahootLimit -= cantidad;
+        
+        user.balance -= cantidad;
         await user.save();
 
-        porrazo.balance += cantidad;
+        porrazo.invested += cantidad;
         await porrazo.save();
 
-        interaction.editReply(`Acabas de invertir ${cantidad} en <@${targetUserId}>`);
-          
+        user.investBankFactor = user.balance;
+        user.invested = cantidad;
+        await user.save();
+
+        interaction.editReply(`Has invertido ${cantidad} en <#${user.guildId}>`);
+      
     } catch (error) {
       console.log(`Ha ocurrido un error: ${error}`);
     }

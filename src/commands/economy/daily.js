@@ -46,7 +46,7 @@ module.exports = {
       user.balance += dailyAmount;
       user.lastDaily = new Date();
       await user.save();
-
+      
       interaction.editReply(
         `${dailyAmount} gramos de cocaína fueron agregadas a tu inventario. Ahora mismo tienes ${user.balance}`
       );
