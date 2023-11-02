@@ -13,7 +13,7 @@ module.exports = {
   run: async ({ interaction }) => {
     if (!interaction.inGuild) {
       await interaction.reply({
-        content: "Solo puedes ejecutar este comando dentro de un servidor.",
+        content: "Sólo puedes ejecutar este comando dentro de un servidor.",
         ephemeral: true,
       });
       return;
@@ -28,7 +28,9 @@ module.exports = {
     });
 
     if (!user) {
-      await interaction.reply(`<@${targetUserId}> no tiene un perfil todavía.`);
+      await interaction.reply(
+        `<@${targetUserId}> no tiene un perfil todavía. Usa /daily para reclamar la paga diaria.`
+      );
       return;
     }
 

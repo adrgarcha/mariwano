@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose");
 
 const userSchema = new Schema({
     userId: {
@@ -34,7 +34,11 @@ const userSchema = new Schema({
     invested:{
         type: Number,
         default: 0,
-    }
+    },
+  customRoleId: {
+    type: String,
+    default: "",
+  },
 });
 
-module.exports = model('User', userSchema);
+module.exports = model("User", userSchema);
