@@ -65,7 +65,7 @@ module.exports = {
             interaction.editReply(`Has ganado ${ganancias} a causa de las ganancias del canal.\n\n`+
             `${user.investFactor < 0 ? "El canal es más rentable, pero sigue en déficit" : "El canal ahora es más rentable"}`);
             user.balance += ganancias;
-            user.investFactor += 2;
+            user.investFactor += user.investFactor > 6 ? 0 : 1;
             user.investBankFactor = 0;
             user.invested = 0;
   
@@ -73,11 +73,11 @@ module.exports = {
             return;
           } else if(( userBalance - user.investBankFactor) < 0) {
             console.log(-user.invested - (userBalance - user.investBankFactor)*(factorial(user.investFactor)));
-            var ganancias = -user.invested - (userBalance - user.investBankFactor)*(factorial(user.investFactor));
+            var ganancias = -user.invested - (userBalance - user.investBankFactor)*(factorial(Math.abs(user.investFactor)));
             interaction.editReply(`Has perdido ${ganancias > 0 ? ganancias : -ganancias} a causa de las pérdidas del canal.\n\n`+
             `${user.investFactor < 0 ? "El canal está ahora en déficit" : "El canal ahora es menos rentable, pero no está en déficit"}`);
             user.balance += ganancias;
-            user.investFactor -= 1;
+            user.investFactor -= 2;
             user.investBankFactor = 0;
             user.invested = 0;
             
@@ -87,6 +87,10 @@ module.exports = {
         }
         if (userBalance < 10000 || cantidad < 10000) {
           interaction.editReply(`Como mínimo tienes que invertir 10 000 gramos de cocaína.`);
+          return;
+        }
+        else if (cantidad > 10000000){
+          interaction.editReply(`No puedes invertir tantos gramos, si no sale rentable podrías quedarte en banca rota.`);
           return;
         }
       } else {
@@ -125,6 +129,7 @@ module.exports = {
             description: "La cantidad de dinero que vas a invertir. Tiene que ser más de 10 000",
             type: ApplicationCommandOptionType.Number,
             min_length: 5,
+            max_length: 7,
         },
     ],
   },
