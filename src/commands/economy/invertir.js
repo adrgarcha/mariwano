@@ -66,6 +66,7 @@ module.exports = {
             `${user.investFactor < 0 ? "El canal es más rentable, pero sigue en déficit" : "El canal ahora es más rentable"}`);
             user.balance += ganancias;
             user.investFactor += user.investFactor > 6 ? 0 : 1;
+            if(user.investFactor > 6) user.investFactor = 6;
             user.investBankFactor = 0;
             user.invested = 0;
   

@@ -49,8 +49,7 @@ module.exports = {
 
       await user.save();
 
-      porrazo.balance -= cantidadADevolver;
-      await porrazo.save();
+     
 
       interaction.editReply(
         `Has sido devuelto ${cantidadADevolver} gramos. Número de intentos actuales: ${user.kahootLimit}`
@@ -61,6 +60,6 @@ module.exports = {
   },
   data: {
     name: "kahootreset",
-    description: "Recarga 5 intentos del kahoot por 475 gramos",
+    description: "Devuelve los intentos del kahoot en gramos",
   },
 };

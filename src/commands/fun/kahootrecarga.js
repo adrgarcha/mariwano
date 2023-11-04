@@ -14,7 +14,7 @@ module.exports = {
       });
       return;
     }
-
+    
     try {
       await interaction.deferReply();
 
@@ -49,9 +49,6 @@ module.exports = {
       user.balance -= 475;
       await user.save();
 
-      porrazo.balance += 475;
-      await porrazo.save();
-
       interaction.editReply(
         `Has comprado a Porrero exitosamente 5 intentos del kahoot. Número de intentos actuales: ${user.kahootLimit}`
       );
@@ -62,5 +59,6 @@ module.exports = {
   data: {
     name: "kahootrecarga",
     description: "Recarga 5 intentos del kahoot por 475 gramos",
+   
   },
 };

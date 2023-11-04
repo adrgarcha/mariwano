@@ -35,9 +35,9 @@ const userSchema = new Schema({
         type: Number,
         default: 0,
     },
-  customRoleId: {
-    type: String,
-    default: "",
+    customRoleId: {
+        type: String,
+        default: "",
   },
 });
 
