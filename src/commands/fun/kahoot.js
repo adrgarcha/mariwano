@@ -7,12 +7,13 @@ const User = require("../../models/User");
 
 var preguntas = {
   pregunta1: {
-    pregunta: "¿Cuál es el nombre original de Godfrey?",
-    respuesta: "Hoarah Loux",
-    r1: "Malenia",
-    r2: "Horux Loux",
-    r3: "JPelirrojo",
-    dificultad: 1,
+    pregunta:
+      "En la película de FNAF, ¿qué dice William Afton antes de volver a ponerse su traje?",
+    respuesta: '"Yo siempre vuelvo"',
+    r1: '"Yo soy el Five Nights at Freddy\'s"',
+    r2: "Nada",
+    r3: '"O cholera czy to Freddy Fazbear?"',
+    dificultad: 2,
   },
   pregunta2: {
     pregunta: "¿En qué juego fue la primera aparición de Waluigi?",
@@ -73,17 +74,6 @@ var preguntas = {
     r2: "Un cubo lleno de líquido blanco sospechoso que te ha dado un vagabundo",
     r3: "Un polla de latex modelo Folagor",
     dificultad: 2,
-  },
-  pregunta9: {
-    pregunta: "¿Dónde se halla Malenia?",
-    respuesta: "El árbol Hierático",
-    r1: "Leyndell",
-    r2: "Liurnia",
-    r3: "Picos de los Gigantes",
-    dificultad: 2,
-  },
-  pregunta10: {
-    pregunta: "",
   },
 };
 // funciones necesarias:
@@ -147,18 +137,34 @@ module.exports = {
 
       let user = await User.findOne(query);
       if (user) {
+        if (user) {
+          const lastKahootDate = user.lastKahoot;
+          const currentDate = new Date();
+          var kahootUserCount = user.kahootLimit;
+          if (lastKahootDate.toDateString() !== currentDate.toDateString()) {
+            user.kahootLimit = 5;
+            await user.save();
+          }
+          if (kahootUserCount <= 0) {
+            interaction.reply(
+              `Has excedido el límite de preguntas por hoy. El límite diario es de 5 preguntas`
+            );
+            return;
+          }
+        } else {
+          user = new User({
+            ...query,
+            lastKahoot: new Date(),
+            kahootLimit: 5,
+          });
+        }
         const respuestasReply = [botPr.respuesta, botPr.r1, botPr.r2, botPr.r3];
         const respuestasDef = shuffle(respuestasReply);
         user.kahootLimit -= 1;
+        user.lastKahoot = new Date();
         await user.save();
-        var kahootUserCount = user.kahootLimit;
+
         console.log(kahootUserCount);
-        if (kahootUserCount <= 0) {
-          interaction.reply(
-            `Has excedido el límite de tiradas del kahoot. Cómprale a Porrero más intentos en /kahootrecarga por sólo 475 gramos`
-          );
-          return;
-        }
 
         let leaderboardEmbed = new EmbedBuilder()
           .setTitle(`${botPr.pregunta}`)

@@ -38,6 +38,7 @@ module.exports = {
 
       user.balance = 0;
       user.investFactor = 0;
+      user.kahootLimit = 5;
       await user.save();
       
       interaction.editReply(

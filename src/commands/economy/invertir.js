@@ -47,6 +47,7 @@ module.exports = {
       let user = await User.findOne(query);
       let porrazo = await User.findOne(porrero);
       if (user) {
+        
         console.log(
           `${user.invested},${user.investBankFactor},${user.investFactor}` // cantidad invertida, cantidad de dinero que tenía cuando invirtió y la rentabilidad del canal
         );
@@ -153,7 +154,7 @@ module.exports = {
   data: {
     name: "invertir",
     description:
-      "Dona dinero a alguien. Si aumenta ganancias, tu también y si no, ambos perdéis dinero",
+      "Invierte en un usuario que esté en un canal para maximizar beneficios",
     options: [
       {
         name: "usuario",
