@@ -49,7 +49,7 @@ module.exports = {
     }
   },
   data: {
-    name: "bancarota",
+    name: "bancarrota",
     description: "Restablece tus gramos a 0 (solo para admins)",
   },
 };

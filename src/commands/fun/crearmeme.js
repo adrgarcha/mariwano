@@ -1,8 +1,4 @@
-const {
-  Client,
-  GatewayIntentBits,
-  ApplicationCommandOptionType, MessageAttachment, MessageActionRow
-} = require("discord.js");
+const {ApplicationCommandOptionType} = require("discord.js");
 const Jimp = require("jimp");
 function right(text,n){return ((text).toString()?text.substr(text.length-n):"")};
 module.exports = {

@@ -27,7 +27,6 @@
     "dotenv": "^16.3.1",
     "fakeyou": "^0.1.0",
     "fakeyou.js": "^1.1.1",
-    "ffmpeg": "^0.0.4",
     "ffmpeg-static": "^5.2.0",
     "jimp": "^0.22.10",
     "mediaplex": "^0.0.8",
