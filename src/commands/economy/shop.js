@@ -15,6 +15,7 @@ module.exports = {
    * @param {ChatInputCommandInteraction} param0.interaction
    */
   run: async ({ interaction }) => {
+    try{
     const { balance, customRoleId } = await User.findOne({
       userId: interaction.user.id,
       guildId: interaction.guild.id,
@@ -143,6 +144,9 @@ module.exports = {
 
       await interaction.editReply(`Tu rol personalizado ha sido eliminado.`);
     }
+  }catch(e){
+    console.log(e);
+  }
   },
   data: new SlashCommandBuilder()
     .setName("shop")

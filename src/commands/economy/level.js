@@ -14,64 +14,68 @@ module.exports = {
    * @param {ChatInputCommandInteraction} param0.interaction
    */
   run: async ({ interaction }) => {
-    if (!interaction.inGuild()) {
-      await interaction.reply(
-        "Sólo puedes ejecutar este comando en un servidor."
-      );
-      return;
-    }
-
-    const mentionedUserId = interaction.options.get("target-user")?.value;
-    const targetUserId = mentionedUserId || interaction.member.id;
-    const targetUserObj = await interaction.guild.members.fetch(targetUserId);
-
-    const fetchedLevel = await Level.findOne({
-      userId: targetUserId,
-      guildId: interaction.guild.id,
-    });
-
-    if (!fetchedLevel) {
-      await interaction.reply(
-        mentionedUserId
-          ? `${targetUserObj.user.tag} no tiene ningún nivel.`
-          : "No tienes ningún nivel todavía. Intenta hablar un poco más."
-      );
-      return;
-    }
-
-    let allLevels = await Level.find({ guildId: interaction.guild.id }).select(
-      "-_id userId level xp"
-    );
-
-    allLevels.sort((a, b) => {
-      if (a.level === b.level) {
-        return b.xp - a.xp;
-      } else {
-        return b.level - a.level;
+    try {
+      if (!interaction.inGuild()) {
+        await interaction.reply(
+          "Sólo puedes ejecutar este comando en un servidor."
+        );
+        return;
       }
-    });
 
-    let currentRank =
-      allLevels.findIndex((lvl) => lvl.userId === targetUserId) + 1;
+      const mentionedUserId = interaction.options.get("target-user")?.value;
+      const targetUserId = mentionedUserId || interaction.member.id;
+      const targetUserObj = await interaction.guild.members.fetch(targetUserId);
 
-    const rank = new canvacord.Rank()
-      .setAvatar(targetUserObj.user.displayAvatarURL({ size: 256 }))
-      .setRank(currentRank)
-      .setLevel(fetchedLevel.level)
-      .setCurrentXP(fetchedLevel.xp)
-      .setRequiredXP(calculateLevelXp(fetchedLevel.level))
-      .setStatus(
-        targetUserObj.presence !== null
-          ? targetUserObj.presence.status
-          : "offline"
-      )
-      .setProgressBar("#FFC300", "COLOR")
-      .setUsername(targetUserObj.user.username)
-      .setDiscriminator(targetUserObj.user.discriminator);
+      const fetchedLevel = await Level.findOne({
+        userId: targetUserId,
+        guildId: interaction.guild.id,
+      });
 
-    const data = await rank.build();
-    const attachment = new AttachmentBuilder(data);
-    await interaction.reply({ files: [attachment] });
+      if (!fetchedLevel) {
+        await interaction.reply(
+          mentionedUserId
+            ? `${targetUserObj.user.tag} no tiene ningún nivel.`
+            : "No tienes ningún nivel todavía. Intenta hablar un poco más."
+        );
+        return;
+      }
+
+      let allLevels = await Level.find({
+        guildId: interaction.guild.id,
+      }).select("-_id userId level xp");
+
+      allLevels.sort((a, b) => {
+        if (a.level === b.level) {
+          return b.xp - a.xp;
+        } else {
+          return b.level - a.level;
+        }
+      });
+
+      let currentRank =
+        allLevels.findIndex((lvl) => lvl.userId === targetUserId) + 1;
+
+      const rank = new canvacord.Rank()
+        .setAvatar(targetUserObj.user.displayAvatarURL({ size: 256 }))
+        .setRank(currentRank)
+        .setLevel(fetchedLevel.level)
+        .setCurrentXP(fetchedLevel.xp)
+        .setRequiredXP(calculateLevelXp(fetchedLevel.level))
+        .setStatus(
+          targetUserObj.presence !== null
+            ? targetUserObj.presence.status
+            : "offline"
+        )
+        .setProgressBar("#FFC300", "COLOR")
+        .setUsername(targetUserObj.user.username)
+        .setDiscriminator(targetUserObj.user.discriminator);
+
+      const data = await rank.build();
+      const attachment = new AttachmentBuilder(data);
+      await interaction.reply({ files: [attachment] });
+    } catch (e) {
+      console.error(e);
+    }
   },
   data: {
     name: "level",
