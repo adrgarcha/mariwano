@@ -2,7 +2,7 @@
     <br>
     Mariwano - An open-source Discord bot
     <br><br>
-    <img src="./assets/mariwano-icon.jpg" alt="Mariwano icon">
+    <img src="./assets/mariwano-icon.png" alt="Mariwano icon" width="256" height="256">
     <br><br>
 </h1>
 
