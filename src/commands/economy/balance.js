@@ -11,34 +11,38 @@ module.exports = {
    * @param {ChatInputCommandInteraction} param0.interaction
    */
   run: async ({ interaction }) => {
-    if (!interaction.inGuild) {
-      await interaction.reply({
-        content: "Sólo puedes ejecutar este comando dentro de un servidor.",
-        ephemeral: true,
+    try {
+      if (!interaction.inGuild) {
+        await interaction.reply({
+          content: "Sólo puedes ejecutar este comando dentro de un servidor.",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const targetUserId =
+        interaction.options.get("user")?.value || interaction.member.id;
+
+      const user = await User.findOne({
+        userId: targetUserId,
+        guildId: interaction.guild.id,
       });
-      return;
-    }
 
-    const targetUserId =
-      interaction.options.get("user")?.value || interaction.member.id;
+      if (!user) {
+        await interaction.reply(
+          `<@${targetUserId}> no tiene un perfil todavía. Usa /daily para reclamar la paga diaria.`
+        );
+        return;
+      }
 
-    const user = await User.findOne({
-      userId: targetUserId,
-      guildId: interaction.guild.id,
-    });
-
-    if (!user) {
       await interaction.reply(
-        `<@${targetUserId}> no tiene un perfil todavía. Usa /daily para reclamar la paga diaria.`
+        targetUserId === interaction.member.id
+          ? `Tienes ${user.balance} gramos de cocaína.`
+          : `Los gramos de cocaína de <@${targetUserId}> son ${user.balance}.`
       );
-      return;
+    } catch (err) {
+      console.log(err);
     }
-
-    await interaction.reply(
-      targetUserId === interaction.member.id
-        ? `Tienes ${user.balance} gramos de cocaína.`
-        : `Los gramos de cocaína de <@${targetUserId}> son ${user.balance}.`
-    );
   },
   data: {
     name: "balance",

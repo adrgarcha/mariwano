@@ -11,68 +11,73 @@ module.exports = {
    * @param {ChatInputCommandInteraction} param0.interaction
    */
   run: async ({ interaction }) => {
-    const receiveUser = interaction.options.getMentionable("user");
-    const donateAmount = interaction.options.getNumber("amount");
+    try {
+      const receiveUser = interaction.options.getMentionable("user");
+      const donateAmount = interaction.options.getNumber("amount");
 
-    const { balance } = await User.findOne({
-      userId: interaction.user.id,
-      guildId: interaction.guild.id,
-    });
-
-    if (balance < donateAmount) {
-      await interaction.reply({
-        content: `No tienes ${donateAmount} gramos.`,
-        ephemeral: true,
-      });
-      return;
-    }
-
-    if (donateAmount < 1) {
-      await interaction.reply({
-        content: `Tienes que donar como mínimo 1 gramo de cocaína. No seas rata.`,
-        ephemeral: true,
-      });
-      return;
-    }
-
-    const receiveUserData = await User.findOneAndUpdate(
-      {
-        userId: receiveUser.id,
-        guildId: interaction.guild.id,
-      },
-      {
-        $inc: {
-          balance: donateAmount,
-        },
-      }
-    );
-
-    if (!receiveUserData) {
-      await interaction.reply({
-        content: `${receiveUser.username} no está en el sistema monetario.`,
-        ephemeral: true,
-      });
-      return;
-    }
-
-    await interaction.deferReply();
-
-    await User.findOneAndUpdate(
-      {
+      const { balance } = await User.findOne({
         userId: interaction.user.id,
         guildId: interaction.guild.id,
-      },
-      {
-        $inc: {
-          balance: -donateAmount,
-        },
-      }
-    );
+      });
 
-    interaction.editReply(
-      `Has donado ${donateAmount} gramos de cocaína al pobre de <@${receiveUser.id}>.`
-    );
+      if (balance < donateAmount) {
+        await interaction.reply({
+          content: `No tienes ${donateAmount} gramos.`,
+          ephemeral: true,
+        });
+        return;
+      }
+
+      if (donateAmount < 1) {
+        await interaction.reply({
+          content: `Tienes que donar como mínimo 1 gramo de cocaína. No seas rata.`,
+          ephemeral: true,
+        });
+        return;
+      }
+
+      const receiveUserData = await User.findOneAndUpdate(
+        {
+          userId: receiveUser.id,
+          guildId: interaction.guild.id,
+        },
+        {
+          $inc: {
+            balance: donateAmount,
+          },
+        }
+      );
+
+      if (!receiveUserData) {
+        await interaction.reply({
+          content: `${receiveUser.username} no está en el sistema monetario.`,
+          ephemeral: true,
+        });
+        return;
+      }
+
+      await interaction.deferReply();
+
+      await User.findOneAndUpdate(
+        {
+          userId: interaction.user.id,
+          guildId: interaction.guild.id,
+        },
+        {
+          $inc: {
+            balance: -donateAmount,
+          },
+        }
+      );
+
+      interaction.editReply(
+        `Has donado ${donateAmount} gramos de cocaína al pobre de <@${receiveUser.id}>.`
+      );
+    } catch (e) {
+      console.log(e);
+    }
   },
+
   data: {
     name: "donate",
     description: "Donale a un miembro pobre asqueroso.",
