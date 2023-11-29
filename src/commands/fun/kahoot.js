@@ -136,7 +136,7 @@ var preguntas = {
     respuesta: "4",
     r1: "0",
     r2: "1",
-    r2: "8",
+    r3: "8",
     dificultad: 3,
   },
   pregunta17: {
