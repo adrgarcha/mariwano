@@ -48,7 +48,7 @@ module.exports = {
 
       const textInput = new TextInputBuilder()
         .setCustomId("suggestion-input")
-        .setLabel("Cual es tu sugerencia?")
+        .setLabel("¿Cuál es tu sugerencia?")
         .setStyle(TextInputStyle.Paragraph)
         .setRequired(true)
         .setMaxLength(1000);

@@ -18,22 +18,11 @@ const userSchema = new Schema({
   },
   kahootLimit: {
     type: Number,
-    default: 0,
+    default: 5,
   },
   lastKahoot: {
     type: Date,
-  },
-  investFactor: {
-    type: Number,
-    default: 1,
-  },
-  investBankFactor: {
-    type: Number,
-    default: 0,
-  },
-  invested: {
-    type: Number,
-    default: 0,
+    default: new Date(),
   },
   customRoleId: {
     type: String,

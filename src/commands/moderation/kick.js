@@ -61,8 +61,8 @@ module.exports = {
       } catch (error) {
         console.log(`Hubo un error al expulsar al usuario: ${error}`);
       }
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(`Hubo un error al ejecutar el comando 'kick': ${error}`);
     }
   },
   data: {
