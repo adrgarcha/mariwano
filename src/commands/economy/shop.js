@@ -15,65 +15,107 @@ module.exports = {
    * @param {ChatInputCommandInteraction} param0.interaction
    */
   run: async ({ interaction }) => {
-    const { balance, customRoleId } = await User.findOne({
-      userId: interaction.user.id,
-      guildId: interaction.guild.id,
-    });
-    const shopCommand = interaction.options.getSubcommand();
+    try {
+      const { balance, customRoleId } = await User.findOne({
+        userId: interaction.user.id,
+        guildId: interaction.guild.id,
+      });
+      const shopCommand = interaction.options.getSubcommand();
 
-    if (shopCommand === "custom-role") {
-      const action = interaction.options.getString("action");
-      const name = interaction.options.getString("name");
-      const color = interaction.options.getString("color");
+      if (shopCommand === "custom-role") {
+        const action = interaction.options.getString("action");
+        const name = interaction.options.getString("name");
+        const color = interaction.options.getString("color");
 
-      if (action === "buy") {
-        if (customRoleId !== "") {
-          await interaction.reply({
-            content: "Ya tienes un rol personalizado.",
-            ephemeral: true,
-          });
-          return;
-        }
-
-        if (balance < customRoleCost) {
-          await interaction.reply({
-            content: `Necesitas ${customRoleCost} gramos para comprar un rol personalizado.`,
-            ephemeral: true,
-          });
-          return;
-        }
-
-        await interaction.deferReply();
-
-        const customRole = await interaction.guild.roles.create({
-          name,
-          permissions: [],
-          color,
-        });
-
-        interaction.member.roles.add(customRole);
-
-        await User.findOneAndUpdate(
-          {
-            userId: interaction.user.id,
-            guildId: interaction.guild.id,
-          },
-          {
-            $set: {
-              customRoleId: customRole.id,
-            },
-            $inc: {
-              balance: -customRoleCost,
-            },
+        if (action === "buy") {
+          if (customRoleId !== "") {
+            await interaction.reply({
+              content: "Ya tienes un rol personalizado.",
+              ephemeral: true,
+            });
+            return;
           }
-        );
 
-        await interaction.editReply(
-          `Se ha completado correctamente la compra del rol ${name} por ${customRoleCost} gramos 🤑💸.`
-        );
+          if (balance < customRoleCost) {
+            await interaction.reply({
+              content: `Necesitas ${customRoleCost} gramos para comprar un rol personalizado.`,
+              ephemeral: true,
+            });
+            return;
+          }
+
+          await interaction.deferReply({ ephemeral: true });
+
+          const customRole = await interaction.guild.roles.create({
+            name,
+            permissions: [],
+            color,
+          });
+
+          interaction.member.roles.add(customRole);
+
+          await User.findOneAndUpdate(
+            {
+              userId: interaction.user.id,
+              guildId: interaction.guild.id,
+            },
+            {
+              $set: {
+                customRoleId: customRole.id,
+              },
+              $inc: {
+                balance: -customRoleCost,
+              },
+            }
+          );
+
+          await interaction.editReply(
+            `Se ha completado correctamente la compra del rol ${name} por ${customRoleCost} gramos 🤑💸.`
+          );
+        }
+
+        if (action === "edit") {
+          if (customRoleId === "") {
+            await interaction.reply({
+              content: "Necesitas comprar un rol personalizado primero.",
+              ephemeral: true,
+            });
+            return;
+          }
+
+          if (balance < customRoleEditCost) {
+            await interaction.reply({
+              content: `Necesitas ${customRoleEditCost} gramos para editar tu rol personalizado.`,
+              ephemeral: true,
+            });
+            return;
+          }
+
+          await interaction.deferReply({ ephemeral: true });
+
+          const customRole = await interaction.guild.roles.fetch(customRoleId);
+
+          customRole.edit({ name, color });
+
+          await User.findOneAndUpdate(
+            {
+              userId: interaction.user.id,
+              guildId: interaction.guild.id,
+            },
+            {
+              $inc: {
+                balance: -customRoleEditCost,
+              },
+            }
+          );
+
+          await interaction.editReply(
+            `Se ha completado correctamente la edición del rol a ${name} por ${customRoleEditCost} gramos 🤑💸.`
+          );
+        }
       }
 
-      if (action === "edit") {
+      if (shopCommand === "custom-role-remove") {
         if (customRoleId === "") {
           await interaction.reply({
             content: "Necesitas comprar un rol personalizado primero.",
@@ -82,19 +124,11 @@ module.exports = {
           return;
         }
 
-        if (balance < customRoleEditCost) {
-          await interaction.reply({
-            content: `Necesitas ${customRoleEditCost} gramos para editar tu rol personalizado.`,
-            ephemeral: true,
-          });
-          return;
-        }
-
-        await interaction.deferReply();
+        await interaction.deferReply({ ephemeral: true });
 
         const customRole = await interaction.guild.roles.fetch(customRoleId);
 
-        customRole.edit({ name, color });
+        customRole.delete();
 
         await User.findOneAndUpdate(
           {
@@ -102,46 +136,16 @@ module.exports = {
             guildId: interaction.guild.id,
           },
           {
-            $inc: {
-              balance: -customRoleEditCost,
+            $set: {
+              customRoleId: "",
             },
           }
         );
 
-        await interaction.editReply(
-          `Se ha completado correctamente la edición del rol a ${name} por ${customRoleEditCost} gramos 🤑💸.`
-        );
+        await interaction.editReply(`Tu rol personalizado ha sido eliminado.`);
       }
-    }
-
-    if (shopCommand === "custom-role-remove") {
-      if (customRoleId === "") {
-        await interaction.reply({
-          content: "Necesitas comprar un rol personalizado primero.",
-          ephemeral: true,
-        });
-        return;
-      }
-
-      await interaction.deferReply();
-
-      const customRole = await interaction.guild.roles.fetch(customRoleId);
-
-      customRole.delete();
-
-      await User.findOneAndUpdate(
-        {
-          userId: interaction.user.id,
-          guildId: interaction.guild.id,
-        },
-        {
-          $set: {
-            customRoleId: "",
-          },
-        }
-      );
-
-      await interaction.editReply(`Tu rol personalizado ha sido eliminado.`);
+    } catch (error) {
+      console.log(`Ha ocurrido un error con el comando 'shop': ${error}`);
     }
   },
   data: new SlashCommandBuilder()

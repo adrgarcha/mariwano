@@ -15,7 +15,14 @@ const userSchema = new Schema({
   },
   lastDaily: {
     type: Date,
-    required: true,
+  },
+  kahootLimit: {
+    type: Number,
+    default: 5,
+  },
+  lastKahoot: {
+    type: Date,
+    default: new Date(),
   },
   customRoleId: {
     type: String,

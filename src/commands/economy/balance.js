@@ -11,34 +11,40 @@ module.exports = {
    * @param {ChatInputCommandInteraction} param0.interaction
    */
   run: async ({ interaction }) => {
-    if (!interaction.inGuild) {
-      await interaction.reply({
-        content: "Sólo puedes ejecutar este comando dentro de un servidor.",
-        ephemeral: true,
+    try {
+      if (!interaction.inGuild) {
+        await interaction.reply({
+          content: "Sólo puedes ejecutar este comando dentro de un servidor.",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      await interaction.deferReply({ ephemeral: true });
+
+      const targetUserId =
+        interaction.options.get("user")?.value || interaction.member.id;
+
+      const user = await User.findOne({
+        userId: targetUserId,
+        guildId: interaction.guild.id,
       });
-      return;
-    }
 
-    const targetUserId =
-      interaction.options.get("user")?.value || interaction.member.id;
+      if (!user) {
+        interaction.editReply(
+          `<@${targetUserId}> no tiene un perfil todavía. Usa /daily para reclamar la paga diaria.`
+        );
+        return;
+      }
 
-    const user = await User.findOne({
-      userId: targetUserId,
-      guildId: interaction.guild.id,
-    });
-
-    if (!user) {
-      await interaction.reply(
-        `<@${targetUserId}> no tiene un perfil todavía. Usa /daily para reclamar la paga diaria.`
+      interaction.editReply(
+        targetUserId === interaction.member.id
+          ? `Tienes ${user.balance} gramos de cocaína.`
+          : `Los gramos de cocaína de <@${targetUserId}> son ${user.balance}.`
       );
-      return;
+    } catch (error) {
+      console.log(`Hubo un error al ejecutar el comando 'balance': ${error}`);
     }
-
-    await interaction.reply(
-      targetUserId === interaction.member.id
-        ? `Tienes ${user.balance} gramos de cocaína.`
-        : `Los gramos de cocaína de <@${targetUserId}> son ${user.balance}.`
-    );
   },
   data: {
     name: "balance",

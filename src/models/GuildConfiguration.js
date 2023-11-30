@@ -13,6 +13,10 @@ const guildConfigurationSchema = new Schema({
     type: [String],
     default: [],
   },
+  welcomeChannelIds: {
+    type: [String],
+    default: [],
+  },
 });
 
 module.exports = model("GuildConfiguration", guildConfigurationSchema);
