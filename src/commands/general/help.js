@@ -18,16 +18,17 @@ module.exports = {
    * @param {Client} param0.client
    */
   run: async ({ interaction, client }) => {
-    const emojis = {
-      admin: "⚙",
-      economy: "💲",
-      fun: "😂",
-      general: "🌐",
-      moderation: "🛠",
-      music: "🎵",
-      rpg: "⚔",
-    };
     try {
+      const emojis = {
+        admin: "⚙",
+        economy: "💰",
+        fun: "😂",
+        general: "🌐",
+        moderation: "🛠",
+        music: "🎵",
+        rpg: "⚔",
+      };
+
       const formatString = (str) =>
         `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`;
 
@@ -63,7 +64,7 @@ module.exports = {
                   .setLabel(category)
                   .setValue(category.toLowerCase())
                   .setDescription(`Comandos de la categoría ${category}`)
-                  .setEmoji(emojis[category.toLowerCase()]);
+                  .setEmoji(emojis[category.toLowerCase()] || "❓");
               })
             )
         ),
@@ -110,8 +111,8 @@ module.exports = {
       collector.on("end", () => {
         initialMessage.edit({ components: components(true) });
       });
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.log(`Hubo un error al ejecutar el comando 'help': ${error}`);
     }
   },
   data: {

@@ -32,11 +32,12 @@ module.exports = {
       });
 
       if (!fetchedLevel) {
-        await interaction.reply(
-          mentionedUserId
+        await interaction.reply({
+          content: mentionedUserId
             ? `${targetUserObj.user.tag} no tiene ningún nivel.`
-            : "No tienes ningún nivel todavía. Intenta hablar un poco más."
-        );
+            : "No tienes ningún nivel todavía. Intenta hablar un poco más.",
+          ephemeral: true,
+        });
         return;
       }
 
@@ -73,8 +74,8 @@ module.exports = {
       const data = await rank.build();
       const attachment = new AttachmentBuilder(data);
       await interaction.reply({ files: [attachment] });
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.log(`Ha ocurrido un error con el comando 'level': ${error}`);
     }
   },
   data: {

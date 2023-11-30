@@ -10,16 +10,16 @@ module.exports = {
    * @param {ChatInputCommandInteraction} param0.interaction
    */
   run: async ({ interaction }) => {
-    if (!interaction.inGuild) {
-      interaction.reply({
-        content: "Solo puedes ejecutar este comando en un servidor.",
-        ephemeral: true,
-      });
-      return;
-    }
-
     try {
-      await interaction.deferReply();
+      if (!interaction.inGuild) {
+        interaction.reply({
+          content: "Solo puedes ejecutar este comando en un servidor.",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      await interaction.deferReply({ ephemeral: true });
 
       let query = {
         userId: interaction.member.id,
@@ -46,7 +46,7 @@ module.exports = {
       user.balance += dailyAmount;
       user.lastDaily = new Date();
       await user.save();
-      
+
       interaction.editReply(
         `${dailyAmount} gramos de cocaína fueron agregadas a tu inventario. Ahora mismo tienes ${user.balance}`
       );

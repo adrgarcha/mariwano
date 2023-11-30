@@ -20,6 +20,8 @@ module.exports = {
         return;
       }
 
+      await interaction.deferReply({ ephemeral: true });
+
       const targetUserId =
         interaction.options.get("user")?.value || interaction.member.id;
 
@@ -29,19 +31,19 @@ module.exports = {
       });
 
       if (!user) {
-        await interaction.reply(
+        interaction.editReply(
           `<@${targetUserId}> no tiene un perfil todavía. Usa /daily para reclamar la paga diaria.`
         );
         return;
       }
 
-      await interaction.reply(
+      interaction.editReply(
         targetUserId === interaction.member.id
           ? `Tienes ${user.balance} gramos de cocaína.`
           : `Los gramos de cocaína de <@${targetUserId}> son ${user.balance}.`
       );
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(`Hubo un error al ejecutar el comando 'balance': ${error}`);
     }
   },
   data: {

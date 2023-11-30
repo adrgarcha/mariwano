@@ -67,8 +67,10 @@ module.exports = {
       });
 
       interaction.reply({ embeds: [serverInfoEmbed] });
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.log(
+        `Hubo un error al ejecutar el comando 'server-info': ${error}`
+      );
     }
   },
   data: {

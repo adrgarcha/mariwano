@@ -20,7 +20,10 @@ module.exports = {
       const amount = interaction.options.get("amount").value;
 
       if (amount < 100) {
-        interaction.reply("Debes apostar al menos 100 gramos de cocaína.");
+        interaction.reply({
+          content: "Debes apostar al menos 100 gramos de cocaína.",
+          ephemeral: true,
+        });
         return;
       }
 
@@ -36,9 +39,10 @@ module.exports = {
       }
 
       if (amount > user.balance) {
-        interaction.reply(
-          "No tienes suficientes gramos de cocaína para apostar."
-        );
+        interaction.reply({
+          content: "No tienes suficientes gramos de cocaína para apostar.",
+          ephemeral: true,
+        });
         return;
       }
 
@@ -62,8 +66,8 @@ module.exports = {
       interaction.reply(
         `🎉 Has ganado ${amountWon} 🎊.\nAhora mismo tienes ${user.balance} gramos.`
       );
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.log(`Ha ocurrido un error con el comando 'gamble': ${error}`);
     }
   },
   data: {

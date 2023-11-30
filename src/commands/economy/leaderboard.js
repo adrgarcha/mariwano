@@ -44,12 +44,12 @@ module.exports = {
       for (let i = 0; i < topTen.length; i++) {
         let { user } = await interaction.guild.members.fetch(topTen[i].userId);
 
-        if (!user) return;
+        if (!user) continue;
+
+        if (description.includes(`<@${user.id}>`)) continue;
 
         let userBalance = topTen[i].balance;
-        description += `**${i + 1}) <@${
-          user.id
-        }>:** ${userBalance} gramos de cocaína\n`;
+        description += `**${i + 1}) <@${user.id}>:** ${userBalance} gramos de cocaína\n`;
       }
 
       if (description !== "") {
@@ -57,8 +57,8 @@ module.exports = {
       }
 
       await interaction.editReply({ embeds: [leaderboardEmbed] });
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.log(`Hubo un error al ejecutar el comando 'leaderboard': ${error}`);
     }
   },
   data: {
