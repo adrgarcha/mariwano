@@ -1,12 +1,9 @@
-const {
-  Client,
-  GatewayIntentBits,
-  ApplicationCommandOptionType,
-} = require("discord.js");
+const {ApplicationCommandOptionType} = require("discord.js");
 const Jimp = require("jimp");
 function right(text,n){return ((text).toString()?text.substr(text.length-n):"")};
 module.exports = {
   run: async ({ interaction, client }) => {
+
     const textoSuperior = interaction.options.getString("textoarriba");
     const textoInferior = interaction.options.getString("textoabajo");
     const url = interaction.options.getString("urlimagen");
