@@ -50,7 +50,7 @@ module.exports = {
 
       if (!receiveUserData) {
         await interaction.reply({
-          content: `${receiveUser.username} no está en el sistema monetario.`,
+          content: `<@${receiveUser.id}> no está en el sistema monetario.`,
           ephemeral: true,
         });
         return;
@@ -73,8 +73,8 @@ module.exports = {
       interaction.editReply(
         `Has donado ${donateAmount} gramos de cocaína al pobre de <@${receiveUser.id}>.`
       );
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.log(`Ha ocurrido un error con el comando 'donate': ${error}`);
     }
   },
 

@@ -1,14 +1,16 @@
-const {ApplicationCommandOptionType} = require("discord.js");
+const { ApplicationCommandOptionType } = require("discord.js");
 const Jimp = require("jimp");
-function right(text,n){return ((text).toString()?text.substr(text.length-n):"")};
+function right(text, n) {
+  return text.toString() ? text.substr(text.length - n) : "";
+}
 module.exports = {
   run: async ({ interaction, client }) => {
-
-    const textoSuperior = interaction.options.getString("textoarriba");
-    const textoInferior = interaction.options.getString("textoabajo");
-    const url = interaction.options.getString("urlimagen");
-    const efecto = interaction.options.get("efectos")?.value;
     try {
+      const textoSuperior = interaction.options.getString("textoarriba");
+      const textoInferior = interaction.options.getString("textoabajo");
+      const url = interaction.options.getString("urlimagen");
+      const efecto = interaction.options.get("efectos")?.value;
+
       const imageObject = await Jimp.read(url);
       if (efecto) {
         try {
@@ -63,16 +65,16 @@ module.exports = {
         imageObject.getWidth(),
         imageObject.getHeight()
       );
-      
+
       var memeBuffer;
-      if(url.includes('.gif') || right(url,4) === '.gif'){
+      if (url.includes(".gif") || right(url, 4) === ".gif") {
         memeBuffer = await imageObject.getBufferAsync(Jimp.MIME_GIF);
       } else {
         memeBuffer = await imageObject.getBufferAsync(Jimp.MIME_PNG);
       }
       await interaction.reply({ files: [memeBuffer] });
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.log(`Ha ocurrido un error con el comando 'crearmeme': ${error}`);
       await interaction.reply(
         `Parece que ha ocurrido un error al crear el meme. Intenta poner una URL válida que tenga un formato de imagen.`
       );

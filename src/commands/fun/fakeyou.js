@@ -1,95 +1,55 @@
 const {
-  Client,
-  GatewayIntentBits,
-  Intents,
   ApplicationCommandOptionType,
+  ChatInputCommandInteraction,
 } = require("discord.js");
-const axios = require("axios");
 const fs = require("fs");
 const FakeYou = require("fakeyou.js");
 
 module.exports = {
+  /**
+   * 
+   * @param {Object} param0
+   * @param {ChatInputCommandInteraction} param0.interaction
+   */
   run: async ({ interaction }) => {
-    const textoAVoz = interaction.options.getString("textardo").toString();
-    const tipoDeVoz = interaction.options
-      .getString("voz")
-      .toString()
-      .toLowerCase();
-    const vocesProhibidas = ["xokas"];
-    if (vocesProhibidas.includes(tipoDeVoz.toLowerCase())) {
-      interaction.reply("No puedes utilizar esa voz, lo siento");
-    }
+    try {
 
-    /*
-    const voices = [
-        {
-          modelToken: 'TM:7wbtjphx8h8v',
-          title: 'Mario Bros Paid Actor',
-        },
-        // agrega más voces según la respuesta de la solicitud 'GET https://api.fakeyou.com/tts/list'
-      ];
-      // busca por la voz existente
-      const selectedVoice = voices.find(voice => voice.modelToken === voices[tipoDeVoz].modelToken);
-      // si la voz no existe entonces a la verga
-      if (!selectedVoice) {
-        await interaction.reply("Hubo un error al encontrar la voz, la voz " + voices[tipoDeVoz].title + " no está disponible");
-        return;
+      await interaction.deferReply({ ephemeral: true });
+
+      const textoAVoz = interaction.options.getString("textardo").toString();
+      const tipoDeVoz = interaction.options
+        .getString("voz")
+        .toString()
+        .toLowerCase();
+      const vocesProhibidas = ["xokas"];
+      if (vocesProhibidas.includes(tipoDeVoz.toLowerCase())) {
+        interaction.editReply("No puedes utilizar esa voz, lo siento.");
       }
-      // parámetros necesarios para realizar la solicitud
-      const apiUrl = 'https://api.fakeyou.com/tts/inference';
-      const requestData = {
-        uuid_idempotency_token: 'entropy',
-        tts_model_token: 'TM:7wbtjphx8h8v',
-        inference_text: textoAVoz,
-      };
 
-      // Realizar una solicitud a la API de "fakeyou" 
-      axios.post(apiEndpoint, requestData, {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        }
-      })
-        .then(response => {
-          // la respuesta de la solicitud se almacena en response.data pero esto aún no es el audio
-          /*
-          van a haber 2 variables en el json de response.data y son:
+      const fy = new FakeYou.Client({
+        usernameOrEmail: "porrazo",
+        password: "code100Todo",
+      });
 
-          "success": un valor booleano que indica si LA SOLICITUD se ha enviado con éxito
+      await fy.start();
+      
+      let model = fy.searchModel(tipoDeVoz).first();
+      if (!model) {
+        interaction.editReply("Modelo no encontrado.");
+      }
+      interaction.editReply("Cargando el audio...");
 
-          "inference_job_token": un string con un token para realizar otra solicitud
+      const result = await model.request(textoAVoz);
 
+      const audioBuffer = Buffer.from(await result.getAudio(), "binary");
+      fs.writeFileSync("tts_audio.mp3", audioBuffer);
 
-          
-          
-          const jsonResponse = response.data;
-          console.log('Respuesta JSON:', jsonResponse);
-        })
-        .catch(error => {
-          interaction.followUp('Error al realizar la solicitud:', error);
-        });
-*/
-    const FakeYou = require("fakeyou.js");
-    const fy = new FakeYou.Client({
-      usernameOrEmail: "porrazo",
-      password: "code100Todo",
-    });
-    await fy.start(); //required
-    let model = fy.searchModel(tipoDeVoz).first();
-    if (!model) {
-      interaction.reply("Ha ocurrido un error: modelo no encontrado");
+      await interaction.followUp({
+        files: ["tts_audio.mp3"],
+      });
+    } catch (error) {
+      console.log(`Ha ocurrido un error con el comando 'fakeyou': ${error}`);
     }
-    interaction.reply("Cargando el audio");
-
-    const result = await model.request(textoAVoz);
-    //await interaction.followUp(result.audioURL());
-
-    const audioBuffer = Buffer.from(await result.getAudio(), "binary");
-    fs.writeFileSync("tts_audio.mp3", audioBuffer);
-
-    await interaction.followUp({
-      files: ["tts_audio.mp3"],
-    });
   },
   data: {
     name: "fakeyou",

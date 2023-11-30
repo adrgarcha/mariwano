@@ -50,7 +50,7 @@ module.exports = {
         .setCustomId("command-input")
         .setRequired(true)
         .setPlaceholder("Solo introduzca el nombre del comando")
-        .setLabel("Cuál comando tiene un bug y/o ha sido abusado")
+        .setLabel("Comando tiene un bug y/o ha sido abusado")
         .setStyle(TextInputStyle.Short);
 
       const descriptionText = new TextInputBuilder()
