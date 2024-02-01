@@ -16,6 +16,9 @@ const userSchema = new Schema({
   lastDaily: {
     type: Date,
   },
+  lastWordle: {
+    type: Date,
+  },
   kahootLimit: {
     type: Number,
     default: 5,

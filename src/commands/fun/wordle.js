@@ -4,6 +4,32 @@ const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
   run: async ({ interaction }) => {
+    if (!interaction.inGuild) {
+      interaction.reply({
+        content: "Solo puedes ejecutar este comando en un servidor.",
+        ephemeral: true,
+      });
+      return;
+    }
+    let query = {
+      userId: interaction.member.id,
+      guildId: interaction.guild.id,
+    };
+
+    let user = await User.findOne(query);
+
+    if (!user) {
+      user = new User({
+        ...query,
+        lastDaily: new Date(),
+      });
+    } else {
+      const lastWordleDate = user.lastWordle.toDateString();
+      const currentDate = new Date().toDateString();
+      if (lastWordleDate === currentDate) {
+        interaction.editReply(`Ya has recolectado las diarias de hoy.`);
+        return;
+      }
     const Game = new Wordle({
       message: interaction,
       isSlashGame: false,
@@ -20,9 +46,12 @@ module.exports = {
     });
 
     Game.startGame();
+    user.lastWordle = new Date();
+    await user.save();
     Game.on('gameOver', result => {
       return;
     })
+  }
   },
   data: {
     name: "wordle",
