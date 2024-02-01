@@ -1,9 +1,16 @@
 const { Wordle } = require('discord-gamecord');
 const { SlashCommandBuilder } = require('discord.js');
 
+const User = require("../../models/User");
 
 module.exports = {
+  /**
+   *
+   * @param {Object} param0
+   * @param {ChatInputCommandInteraction} param0.interaction
+   */
   run: async ({ interaction }) => {
+    try{
     if (!interaction.inGuild) {
       interaction.reply({
         content: "Solo puedes ejecutar este comando en un servidor.",
@@ -51,6 +58,8 @@ module.exports = {
     Game.on('gameOver', result => {
       return;
     })
+  }}catch (e) {
+    console.error(e);
   }
   },
   data: {
