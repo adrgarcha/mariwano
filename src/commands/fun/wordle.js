@@ -1,5 +1,5 @@
 const { Wordle } = require('discord-gamecord');
-const { SlashCommandBuilder } = require('discord.js');
+const { ChatInputCommandInteraction } = require('discord.js');
 
 const User = require("../../models/User");
 
@@ -28,13 +28,13 @@ module.exports = {
     if (!user) {
       user = new User({
         ...query,
-        lastDaily: new Date(),
+        lastWordle: new Date(),
       });
     } else {
       const lastWordleDate = user.lastWordle.toDateString();
       const currentDate = new Date().toDateString();
       if (lastWordleDate === currentDate) {
-        interaction.editReply(`Sólo puedes jugar al Wordle una vez al día.`);
+        interaction.reply(`Sólo puedes jugar al Wordle una vez al día.`);
         return;
       }
     const Game = new Wordle({
