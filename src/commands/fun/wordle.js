@@ -27,7 +27,7 @@ module.exports = {
       const lastWordleDate = user.lastWordle.toDateString();
       const currentDate = new Date().toDateString();
       if (lastWordleDate === currentDate) {
-        interaction.editReply(`Ya has recolectado las diarias de hoy.`);
+        interaction.editReply(`Sólo puedes jugar al Wordle una vez al día.`);
         return;
       }
     const Game = new Wordle({
