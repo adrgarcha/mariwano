@@ -19,7 +19,6 @@
   "homepage": "https://github.com/adrgarcha/discord-bot#readme",
   "dependencies": {
     "@discord-player/extractor": "^4.4.4",
-    "axios": "^1.6.2",
     "canvacord": "^5.4.10",
     "commandkit": "^0.1.6",
     "discord-canvas": "^1.5.2",
