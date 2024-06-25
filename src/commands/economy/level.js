@@ -3,9 +3,10 @@ const {
   AttachmentBuilder,
   ChatInputCommandInteraction,
 } = require("discord.js");
-const canvacord = require("canvacord");
 const calculateLevelXp = require("../../utils/calculateLevelXp");
 const Level = require("../../models/Level");
+const { RankCardBuilder } = require("canvacord");
+require('canvacord').Font.loadDefault();
 
 module.exports = {
   /**
@@ -56,7 +57,7 @@ module.exports = {
       let currentRank =
         allLevels.findIndex((lvl) => lvl.userId === targetUserId) + 1;
 
-      const rank = new canvacord.Rank()
+      const rank = new RankCardBuilder()
         .setAvatar(targetUserObj.user.displayAvatarURL({ size: 256 }))
         .setRank(currentRank)
         .setLevel(fetchedLevel.level)
@@ -67,9 +68,7 @@ module.exports = {
             ? targetUserObj.presence.status
             : "offline"
         )
-        .setProgressBar("#FFC300", "COLOR")
-        .setUsername(targetUserObj.user.username)
-        .setDiscriminator(targetUserObj.user.discriminator);
+        .setUsername(targetUserObj.user.username);
 
       const data = await rank.build();
       const attachment = new AttachmentBuilder(data);
