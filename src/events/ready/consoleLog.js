@@ -1,3 +1,3 @@
 module.exports = (client) => {
-    console.log(`🚬 ${client.user.tag} esta fumando.`);
+    console.log(`🚬 ${client.user.username} esta fumando.`);
 }

@@ -30,7 +30,7 @@ module.exports = {
       if (
         interaction.guild.members.me.voice.channelId &&
         interaction.member.voice.channelId !==
-          interaction.guild.members.me.voice.channelId
+        interaction.guild.members.me.voice.channelId
       ) {
         await interaction.followUp({
           content: "No te encuentras en el mismo canal de voz que yo.",
@@ -39,33 +39,22 @@ module.exports = {
         return;
       }
 
-      const searchResult = await player.search(query, {
-        requestedBy: interaction.user,
-        searchEngine: QueryType.AUTO,
-      });
+      const searchResult = await player.search(query, { requestedBy: interaction.user });
 
-      if (
-        !searchResult ||
-        searchResult.tracks.length == 0 ||
-        !searchResult.tracks
-      ) {
+      if (!searchResult.hasTracks()) {
         interaction.followUp({
-          content: `Parece que no he podido encontrar la cancion que has pedido.`,
+          content: `No se ha podido encontrar la cancion que has pedido.`,
           ephemeral: true,
         });
         return;
       }
 
       const res = await player.play(
-        interaction.member.voice.channel.id,
+        interaction.member.voice.channelId,
         searchResult,
         {
           nodeOptions: {
-            metadata: {
-              channel: interaction.channel,
-              client: interaction.guild.members.me,
-              requestedBy: interaction.user,
-            },
+            metadata: interaction,
             bufferingTimeout: 15000,
             leaveOnStop: true,
             leaveOnStopCooldown: 5000,
@@ -85,6 +74,7 @@ module.exports = {
       interaction.followUp({
         content: message,
       });
+
       return;
     } catch (error) {
       console.log(`Hubo un error al reproducir musica: ${error}`);
@@ -109,12 +99,13 @@ module.exports = {
       if (result.playlist) {
         const title =
           result.playlist.title.length > 100
-            ? result.playlist.title.substring(0, 90) + "..(truncated).."
+            ? result.playlist.title.substring(0, 90) + "..."
             : result.playlist.title;
         returnData.push({ name: `${title} | Playlist`, value: query });
       }
       for (const track of result.tracks.slice(0, 6)) {
-        returnData.push({ name: track.title, value: track.url });
+        const title = track.title.length > 100 ? track.title.substring(0, 90) + "..." : track.title;
+        returnData.push({ name: title, value: track.url });
       }
     }
     await interaction.respond(returnData);

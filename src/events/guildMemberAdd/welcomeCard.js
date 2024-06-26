@@ -1,6 +1,7 @@
 const { Client, GuildMember, AttachmentBuilder } = require("discord.js");
-const { Welcomer } = require("canvacord");
 const GuildConfiguration = require("../../models/GuildConfiguration");
+const { GreetingsCard } = require("../../utils/GreetingsCard");
+require("canvacord").Font.loadDefault();
 
 /**
  *
@@ -20,12 +21,10 @@ module.exports = async (member, client) => {
       return;
     }
 
-    const welcomeCard = new Welcomer()
-      .setUsername(member.user.username)
-      .setDiscriminator(member.user.discriminator)
+    const welcomeCard = new GreetingsCard()
+      .setDisplayName(member.user.username)
       .setAvatar(member.user.displayAvatarURL({ size: 256 }))
-      .setMemberCount(member.guild.memberCount)
-      .setBackground("https://cdn.discordapp.com/attachments/1160574192262062112/1177733568219320330/--------_on_Instagram___comenten_algo_asi_no_muere_la_cuenta_jeje_--__CJpSOt3DiR6mb3RMTd2rOfKf7a4raF.jpg?ex=657394db&is=65611fdb&hm=b3dc09ade4095f84895510f234a51dff03dff7bdb2fa7ac86de441d734152066&");
+      .setMessage(`¡Bienvenido a ${guild.name}!`);
 
     const data = await welcomeCard.build();
     const attachment = new AttachmentBuilder(data);
