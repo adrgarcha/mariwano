@@ -1,5 +1,5 @@
-# Using Node v18
-FROM node:18
+# Using Node LTS
+FROM node:lts
 
 # Install npm dependencies and ffmpeg
 RUN apt-get update && apt-get install -y python3 make build-essential ffmpeg
