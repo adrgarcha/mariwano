@@ -99,12 +99,13 @@ module.exports = {
       if (result.playlist) {
         const title =
           result.playlist.title.length > 100
-            ? result.playlist.title.substring(0, 90) + "..(truncated).."
+            ? result.playlist.title.substring(0, 90) + "..."
             : result.playlist.title;
         returnData.push({ name: `${title} | Playlist`, value: query });
       }
       for (const track of result.tracks.slice(0, 6)) {
-        returnData.push({ name: track.title, value: track.url });
+        const title = track.title.length > 100 ? track.title.substring(0, 90) + "..." : track.title;
+        returnData.push({ name: title, value: track.url });
       }
     }
     await interaction.respond(returnData);
