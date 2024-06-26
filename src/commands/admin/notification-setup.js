@@ -17,13 +17,12 @@ module.exports = {
             const youtubeChannelId = interaction.options.getString("youtube-channel-id");
             const notificationChannel = interaction.options.getChannel("notification-channel");
             const customMessage = interaction.options.getString("custom-message");
-
-            const existingConfigs = await NotificationConfig.find({
+            const duplicateExists = await NotificationConfig.exists({
                 notificationChannelId: notificationChannel.id,
                 youtubeChannelId: youtubeChannelId,
             });
 
-            if (existingConfigs.length > 0) {
+            if (duplicateExists) {
                 interaction.editReply("Ya existe una configuración para notificaciones en este canal. Puedes usar `notification-remove` para eliminarla.");
                 return;
             }
