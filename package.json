@@ -21,16 +21,17 @@
     "@discord-player/extractor": "^4.4.7",
     "canvacord": "^6.0.2",
     "commandkit": "^0.1.10",
-    "discord-player": "6.6.2",
+    "discord-player": "6.6.10",
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
     "fakeyou.js": "^1.1.1",
     "jimp": "^0.22.12",
+    "mediaplex": "^0.0.9",
     "mongodb": "^6.7.0",
     "mongoose": "^8.4.3",
     "ms": "^2.1.3",
     "pretty-ms": "^9.0.0",
     "rss-parser": "^3.13.0",
-    "youtube-ext": "^1.1.25"
+    "ytdl-core": "^4.11.5"
   }
 }
