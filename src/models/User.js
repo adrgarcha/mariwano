@@ -16,6 +16,10 @@ const userSchema = new Schema({
   lastDaily: {
     type: Date,
   },
+  lastWordle: {
+    type: Date,
+    default: new Date(),
+  },
   kahootLimit: {
     type: Number,
     default: 5,
@@ -28,6 +32,19 @@ const userSchema = new Schema({
     type: String,
     default: "",
   },
+  invested: {
+    type: Number,
+    default: 0,
+  },
+  investBankFactor: {
+    type: Number,
+    default: 0,
+  },
+  investFactor: {
+    type: Number,
+    default: 0,
+  }
+
 });
 
 module.exports = model("User", userSchema);

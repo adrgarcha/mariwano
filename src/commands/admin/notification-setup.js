@@ -17,7 +17,6 @@ module.exports = {
             const youtubeChannelId = interaction.options.getString("youtube-channel-id");
             const notificationChannel = interaction.options.getChannel("notification-channel");
             const customMessage = interaction.options.getString("custom-message");
-
             const duplicateExists = await NotificationConfig.exists({
                 notificationChannelId: notificationChannel.id,
                 youtubeChannelId: youtubeChannelId,
