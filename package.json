@@ -18,13 +18,12 @@
   },
   "homepage": "https://github.com/adrgarcha/discord-bot#readme",
   "dependencies": {
-
-    "discord-canvas": "^1.5.2",
-    "discord-gamecord": "^4.4.1",
-
+    
     "@discord-player/extractor": "^4.4.7",
     "canvacord": "^6.0.2",
     "commandkit": "^0.1.10",
+    "discord-canvas": "^1.5.2",
+    "discord-gamecord": "^4.4.1",
     "discord-player": "6.6.10",
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
