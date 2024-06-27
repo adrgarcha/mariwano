@@ -33,5 +33,10 @@
     "pretty-ms": "^9.0.0",
     "rss-parser": "^3.13.0",
     "ytdl-core": "^4.11.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.2"
   }
 }
