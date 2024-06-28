@@ -1,78 +1,79 @@
-const { Interaction } = require("discord.js");
-const Report = require("../../models/Report");
+import { Interaction, EmbedBuilder } from 'discord.js';
+import { Report } from '../../models/Report';
 
-/**
- *
- * @param {Interaction} interaction
- */
-module.exports = async (interaction) => {
-  if (!interaction.isButton() || !interaction.customId) return;
+export const handleReports = async (interaction: Interaction) => {
+   if (!interaction.isButton() || !interaction.customId) return;
 
-  try {
-    const [type, reportId, action] = interaction.customId.split(".");
+   try {
+      const [type, reportId, action] = interaction.customId.split('.');
 
-    if (!type || !reportId || !action) return;
+      if (!type || !reportId || !action) return;
 
-    if (type !== "report") return;
+      if (type !== 'report') return;
 
-    await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ ephemeral: true });
 
-    const targetReport = await Report.findOne({ reportId });
-    const targetMessage = await interaction.channel.messages.fetch(
-      targetReport.messageId
-    );
-    const targetMessageEmbed = targetMessage.embeds[0];
+      const targetReport = await Report.findOne({ reportId });
+      const targetReportId = targetReport?.reportId;
 
-    if (action === "solved") {
-      if (!interaction.memberPermissions.has("Administrator")) {
-        await interaction.editReply(
-          "No tienes permisos para marcar como solucionado un informe."
-        );
-        return;
+      if (!targetReportId) {
+         await interaction.editReply('No se ha encontrado el informe.');
+         return;
       }
 
-      targetReport.status = "solved";
+      const targetMessage = await interaction.channel?.messages.fetch(targetReportId);
+      const targetMessageEmbed = targetMessage?.embeds[0];
 
-      targetMessageEmbed.data.color = 0x84e660;
-      targetMessageEmbed.fields[2].value = "✅ Solucionado";
+      if (action === 'solved') {
+         if (!interaction.memberPermissions?.has('Administrator')) {
+            await interaction.editReply('No tienes permisos para marcar como solucionado un informe.');
+            return;
+         }
 
-      await targetReport.save();
+         if (!targetMessageEmbed) {
+            await interaction.editReply('Ha ocurrido un error al obtener el mensaje del informe.');
+            return;
+         }
 
-      interaction.editReply("Bug solucionado.");
+         targetMessageEmbed.fields[2].value = '✅ Solucionado';
+         const updatedEmbed = EmbedBuilder.from(targetMessageEmbed).setColor(0x84e660);
 
-      targetMessage.edit({
-        embeds: [targetMessageEmbed],
-        components: [],
-      });
-      return;
-    }
+         await Report.findOneAndUpdate({ reportId }, { status: 'solved' });
 
-    if (action === "fake") {
-      if (!interaction.memberPermissions.has("Administrator")) {
-        await interaction.editReply(
-          "No tienes permisos para marcar como falso un informe."
-        );
-        return;
+         interaction.editReply('Error solucionado. Muchas gracias por su informe.');
+
+         targetMessage?.edit({
+            embeds: [updatedEmbed],
+            components: [],
+         });
+         return;
       }
 
-      targetReport.status = "fake";
+      if (action === 'fake') {
+         if (!interaction.memberPermissions?.has('Administrator')) {
+            await interaction.editReply('No tienes permisos para marcar como falso un informe.');
+            return;
+         }
 
-      targetMessageEmbed.data.color = 0xffffff;
-      targetMessageEmbed.fields[2].value = "❕ Falso";
+         if (!targetMessageEmbed) {
+            await interaction.editReply('Ha ocurrido un error al obtener el mensaje del informe.');
+            return;
+         }
 
-      await targetReport.save();
+         targetMessageEmbed.fields[2].value = '❕ Falso';
+         const updatedEmbed = EmbedBuilder.from(targetMessageEmbed).setColor(0xffffff);
 
-      interaction.editReply(
-        "Informe falso. Se tomaran medidas con el usuario conveniente por divulgar información falsa."
-      );
+         await Report.findOneAndUpdate({ reportId }, { status: 'fake' });
 
-      targetMessage.edit({
-        embeds: [targetMessageEmbed],
-        components: [],
-      });
-      return;
-    }
-  } catch (error) {
-    console.log(`Hubo un error en el manejador de informes: ${error}`);
-  }
+         interaction.editReply('Informe falso. Se tomaran medidas con el usuario conveniente por divulgar información falsa.');
+
+         targetMessage?.edit({
+            embeds: [updatedEmbed],
+            components: [],
+         });
+         return;
+      }
+   } catch (error) {
+      console.log(`Hubo un error en el manejador de informes: ${error}`);
+   }
 };

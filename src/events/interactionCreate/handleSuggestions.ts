@@ -1,122 +1,129 @@
-const { Interaction } = require("discord.js");
-const Suggestion = require("../../models/Suggestion");
+import { Interaction } from 'discord.js';
+import { Suggestion } from '../../models/Suggestion';
 
-/**
- *
- * @param {Interaction} interaction
- */
-module.exports = async (interaction) => {
-  if (!interaction.isButton() || !interaction.customId) return;
+export const handleSuggestions = async (interaction: Interaction) => {
+   if (!interaction.isButton() || !interaction.customId) return;
 
-  try {
-    const [type, suggestionId, action] = interaction.customId.split(".");
+   try {
+      const [type, suggestionId, action] = interaction.customId.split('.');
 
-    if (!type || !suggestionId || !action) return;
+      if (!type || !suggestionId || !action) return;
 
-    if (type !== "suggestion") return;
+      if (type !== 'suggestion') return;
 
-    await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ ephemeral: true });
 
-    const targetSuggestion = await Suggestion.findOne({ suggestionId });
-    const targetMessage = await interaction.channel.messages.fetch(
-      targetSuggestion.messageId
-    );
-    const targetMessageEmbed = targetMessage.embeds[0];
+      const targetSuggestion = await Suggestion.findOne({ suggestionId });
+      const targetSuggestionId = targetSuggestion?.messageId;
 
-    if (action === "approve") {
-      if (!interaction.memberPermissions.has("Administrator")) {
-        await interaction.editReply(
-          "No tienes permisos para aprobar sugerencias."
-        );
-        return;
+      if (!targetSuggestionId) {
+         await interaction.editReply('No se ha encontrado la sugerencia.');
+         return;
       }
 
-      targetSuggestion.status = "approved";
+      const targetMessage = await interaction.channel?.messages.fetch(targetSuggestionId);
+      const targetMessageEmbed = targetMessage?.embeds[0];
 
-      targetMessageEmbed.data.color = 0x84e660;
-      targetMessageEmbed.fields[1].value = "✅ Approved";
+      if (action === 'approve') {
+         if (!interaction.memberPermissions?.has('Administrator')) {
+            await interaction.editReply('No tienes permisos para aprobar sugerencias.');
+            return;
+         }
 
-      await targetSuggestion.save();
+         if (!targetMessageEmbed) {
+            await interaction.editReply('Ha ocurrido un error al obtener el mensaje de la sugerencia.');
+            return;
+         }
 
-      interaction.editReply("Sugerencia aprobada.");
+         targetMessageEmbed.fields[2].value = '✅ Aprobado';
+         const updatedEmbed = EmbedBuilder.from(targetMessageEmbed).setColor(0x84e660);
 
-      targetMessage.edit({
-        embeds: [targetMessageEmbed],
-        components: [],
-      });
-      return;
-    }
+         await Suggestion.findOneAndUpdate({ suggestionId }, { status: 'approved' });
 
-    if (action === "reject") {
-      if (!interaction.memberPermissions.has("Administrator")) {
-        await interaction.editReply(
-          "No tienes permisos para rechazar sugerencias."
-        );
-        return;
+         interaction.editReply('Sugerencia aprobada.');
+
+         targetMessage?.edit({
+            embeds: [updatedEmbed],
+            components: [],
+         });
+         return;
       }
 
-      targetSuggestion.status = "rejected";
+      if (action === 'reject') {
+         if (!interaction.memberPermissions?.has('Administrator')) {
+            await interaction.editReply('No tienes permisos para rechazar sugerencias.');
+            return;
+         }
 
-      targetMessageEmbed.data.color = 0xff6161;
-      targetMessageEmbed.fields[1].value = "❌ Rechazado";
+         if (!targetMessageEmbed) {
+            await interaction.editReply('Ha ocurrido un error al obtener el mensaje de la sugerencia.');
+            return;
+         }
 
-      await targetSuggestion.save();
+         targetMessageEmbed.fields[2].value = '❌ Rechazado';
+         const updatedEmbed = EmbedBuilder.from(targetMessageEmbed).setColor(0xff6161);
 
-      interaction.editReply("Sugerencia rechazada.");
+         await Suggestion.findOneAndUpdate({ suggestionId }, { status: 'rejected' });
 
-      targetMessage.edit({
-        embeds: [targetMessageEmbed],
-        components: [],
-      });
-      return;
-    }
+         interaction.editReply('Sugerencia rechazada.');
 
-    if (action === "upvote") {
-      const hasVoted =
-        targetSuggestion.upvotes.includes(interaction.user.id) ||
-        targetSuggestion.downvotes.includes(interaction.user.id);
-
-      if (hasVoted) {
-        await interaction.editReply("Ya has votado en esta sugerencia.");
-        return;
+         targetMessage?.edit({
+            embeds: [updatedEmbed],
+            components: [],
+         });
+         return;
       }
 
-      targetSuggestion.upvotes.push(interaction.user.id);
+      if (action === 'upvote') {
+         const hasVoted = targetSuggestion.upvotes.includes(interaction.user.id) || targetSuggestion.downvotes.includes(interaction.user.id);
 
-      await targetSuggestion.save();
+         if (hasVoted) {
+            await interaction.editReply('Ya has votado en esta sugerencia.');
+            return;
+         }
 
-      interaction.editReply("Sugerencia votada a favor.");
+         if (!targetMessageEmbed) {
+            await interaction.editReply('Ha ocurrido un error al obtener el mensaje de la sugerencia.');
+            return;
+         }
 
-      targetMessageEmbed.fields[2].value = `A favor: ${targetSuggestion.upvotes.length} | En contra: ${targetSuggestion.downvotes.length}`;
+         targetMessageEmbed.fields[2].value = `A favor: ${targetSuggestion.upvotes.length} | En contra: ${targetSuggestion.downvotes.length}`;
 
-      targetMessage.edit({
-        embeds: [targetMessageEmbed],
-      });
-    }
+         targetSuggestion.upvotes.push(interaction.user.id);
+         await targetSuggestion.save();
 
-    if (action === "downvote") {
-      const hasVoted =
-        targetSuggestion.upvotes.includes(interaction.user.id) ||
-        targetSuggestion.downvotes.includes(interaction.user.id);
+         interaction.editReply('Sugerencia votada a favor.');
 
-      if (hasVoted) {
-        await interaction.editReply("Ya has votado en esta sugerencia.");
-        return;
+         targetMessage?.edit({
+            embeds: [targetMessageEmbed],
+         });
       }
 
-      targetSuggestion.downvotes.push(interaction.user.id);
+      if (action === 'downvote') {
+         const hasVoted = targetSuggestion.upvotes.includes(interaction.user.id) || targetSuggestion.downvotes.includes(interaction.user.id);
 
-      await targetSuggestion.save();
+         if (hasVoted) {
+            await interaction.editReply('Ya has votado en esta sugerencia.');
+            return;
+         }
 
-      interaction.editReply("Sugerencia votada en contra.");
+         if (!targetMessageEmbed) {
+            await interaction.editReply('Ha ocurrido un error al obtener el mensaje de la sugerencia.');
+            return;
+         }
 
-      targetMessageEmbed.fields[2].value = `A favor: ${targetSuggestion.upvotes.length} | En contra: ${targetSuggestion.downvotes.length}`;
+         targetMessageEmbed.fields[2].value = `A favor: ${targetSuggestion.upvotes.length} | En contra: ${targetSuggestion.downvotes.length}`;
 
-      targetMessage.edit({
-        embeds: [targetMessageEmbed],
-      });
-    }
-  } catch (error) {
-    console.log(`Hubo un error en el manejador de sugerencias: ${error}`);
-  }
+         targetSuggestion.downvotes.push(interaction.user.id);
+         await targetSuggestion.save();
+
+         interaction.editReply('Sugerencia votada en contra.');
+
+         targetMessage.edit({
+            embeds: [targetMessageEmbed],
+         });
+      }
+   } catch (error) {
+      console.log(`Hubo un error en el manejador de sugerencias: ${error}`);
+   }
 };
