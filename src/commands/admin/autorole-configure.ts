@@ -1,57 +1,56 @@
-const { ApplicationCommandOptionType, PermissionFlagsBits, ChatInputCommandInteraction } = require("discord.js");
-const AutoRole = require('../../models/AutoRole');
+import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord.js';
+import { SlashCommandProps } from 'commandkit';
+import { AutoRole } from '../../models/AutoRole';
 
 module.exports = {
-    /**
-     * 
-     * @param {Object} param0 
-     * @param {ChatInputCommandInteraction} param0.interaction
-     */
-    run: async ({ interaction }) => {
-        if(!interaction.inGuild){
-            interaction.reply('Solo puedes ejecutar este comando en un servidor.');
-            return;
-        }
+   run: async ({ interaction }: SlashCommandProps) => {
+      if (!interaction.guild) {
+         interaction.reply('Solo puedes ejecutar este comando en un servidor.');
+         return;
+      }
 
-        const targetRoleId = interaction.options.get('role').value;
+      if (!interaction.memberPermissions?.has('Administrator')) {
+         await interaction.reply('Solo los administradores pueden ejecutar este comando.');
+         return;
+      }
 
-        try {
-            await interaction.deferReply();
+      const targetRoleId = interaction.options.get('role')?.value;
 
-            let autoRole = await AutoRole.findOne({ guildId: interaction.guild.id });
+      try {
+         await interaction.deferReply({ ephemeral: true });
 
-            if(autoRole){
-                if(autoRole.roleId === targetRoleId){
-                    interaction.editReply(`Auto-rol ya se ha configurado para este rol. Para deshabilitarlo use '/autorole-disable'`);
-                    return;
-                }
-
-                autoRole.roleId = targetRoleId;
-            } else {
-                autoRole = new AutoRole({
-                    guildId: interaction.guild.id,
-                    roleId: targetRoleId,
-                });
+         let autoRole = await AutoRole.findOne({ guildId: interaction.guild.id });
+         if (autoRole) {
+            if (autoRole.roleId === targetRoleId) {
+               await interaction.followUp(`Auto-rol ya se ha configurado para este rol. Para deshabilitarlo use '/autorole-disable'`);
+               return;
             }
 
-            await autoRole.save();
-            interaction.editReply(`Auto-rol se ha configurado correctamente. Para deshabilitarlo use '/autorole-disable'`);
-        } catch (error) {
-            console.log(`Hubo un error al configurar el auto-rol: ${error}`);
-        }
-    },
-    data: {
-        name: 'autorole-configure',
-        description: 'Configurar el auto-rol para este servidor.',
-        options: [
-            {
-                name: 'role',
-                description: 'El rol que quieres darle a nuevos usuarios.',
-                type: ApplicationCommandOptionType.Role,
-                required: true,
-            },
-        ],
-        permissionsRequired: [PermissionFlagsBits.Administrator],
-        botPermissions: [PermissionFlagsBits.ManageRoles],
-    },
-}
+            autoRole.set({ roleId: targetRoleId });
+         } else {
+            autoRole = new AutoRole({
+               guildId: interaction.guild.id,
+               roleId: targetRoleId,
+            });
+         }
+         await autoRole.save();
+         await interaction.followUp(`Auto-rol se ha configurado correctamente. Para deshabilitarlo use '/autorole-disable'`);
+      } catch (error) {
+         console.error(`Hubo un error al configurar el auto-rol: ${error}`);
+      }
+   },
+   data: {
+      name: 'autorole-configure',
+      description: 'Configurar el auto-rol para este servidor.',
+      options: [
+         {
+            name: 'role',
+            description: 'El rol que quieres darle a nuevos usuarios.',
+            type: ApplicationCommandOptionType.Role,
+            required: true,
+         },
+      ],
+      permissionsRequired: [PermissionFlagsBits.Administrator],
+      botPermissions: [PermissionFlagsBits.ManageRoles],
+   },
+};
