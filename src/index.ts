@@ -1,11 +1,11 @@
-(async () => {
-  require("dotenv").config();
+import "dotenv/config";
+import { Client, GatewayIntentBits } from "discord.js";
+import { CommandKit } from "commandkit";
+import { Player } from "discord-player";
+import mongoose from "mongoose";
+import path from "path";
 
-  const { Client, GatewayIntentBits } = require("discord.js");
-  const { CommandKit } = require("commandkit");
-  const { Player } = require("discord-player");
-  const mongoose = require("mongoose");
-  const path = require("path");
+(async () => {
 
   const client = new Client({
     intents: [
@@ -27,7 +27,7 @@
 
   (async () => {
     try {
-      await mongoose.connect(process.env.MONGODB_URI);
+      await mongoose.connect(process.env.MONGODB_URI!);
       console.log("Conectado a la base de datos.");
 
       new CommandKit({
