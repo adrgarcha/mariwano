@@ -1,7 +1,7 @@
 import { Interaction } from 'discord.js';
 import { Suggestion } from '../../models/Suggestion';
 
-export const handleSuggestions = async (interaction: Interaction) => {
+export default async function (interaction: Interaction) {
    if (!interaction.isButton() || !interaction.customId) return;
 
    try {
@@ -126,4 +126,4 @@ export const handleSuggestions = async (interaction: Interaction) => {
    } catch (error) {
       console.log(`Hubo un error en el manejador de sugerencias: ${error}`);
    }
-};
+}

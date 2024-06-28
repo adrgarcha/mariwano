@@ -3,7 +3,7 @@ import { GuildConfiguration } from '../../models/GuildConfiguration';
 import { GreetingsCard } from '../../utils/GreetingsCard';
 require('canvacord').Font.loadDefault();
 
-export const welcomeCard = async (member: GuildMember, client: Client) => {
+export default async function (member: GuildMember, client: Client) {
    let guild = member.guild;
    if (!guild) return;
 
@@ -29,4 +29,4 @@ export const welcomeCard = async (member: GuildMember, client: Client) => {
          return textChannel.send({ files: [attachment] });
       })
       .catch(error => console.log(`Hubo un error al enviar el mensaje de bienvenida: ${error}`));
-};
+}

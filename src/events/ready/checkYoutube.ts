@@ -4,7 +4,7 @@ import { Client, TextChannel } from 'discord.js';
 
 const parser = new Parser();
 
-export const checkYoutube = (client: Client) => {
+export default function (client: Client) {
    const checkYoutube = async () => {
       try {
          const notificationConfigs = await NotificationConfig.find();
@@ -63,4 +63,4 @@ export const checkYoutube = (client: Client) => {
 
    checkYoutube();
    setInterval(checkYoutube, 60000);
-};
+}

@@ -10,7 +10,7 @@ function getRandomXp(min: number, max: number): number {
    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export const giveUserXp = async (message: Message, client: Client) => {
+export default async function (message: Message, client: Client) {
    if (!message.inGuild() || message.author.bot || cooldowns.has(message.author.id)) return;
 
    const xpToGive = getRandomXp(5, 15);
@@ -59,4 +59,4 @@ export const giveUserXp = async (message: Message, client: Client) => {
    } catch (error) {
       console.log(`Hubo un error al dar la experiencia: ${error}`);
    }
-};
+}

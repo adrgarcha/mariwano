@@ -1,6 +1,6 @@
 import { Client, Message } from 'discord.js';
 
-export const botReply = (message: Message, client: Client) => {
+export default function (message: Message, client: Client) {
    if (message.author.bot) return;
 
    if (message.content === 'iyow') {
@@ -10,4 +10,4 @@ export const botReply = (message: Message, client: Client) => {
    if (message.content.includes('sale evento')) {
       message.reply('el de mis huevos al viento');
    }
-};
+}

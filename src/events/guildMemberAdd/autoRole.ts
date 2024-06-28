@@ -1,7 +1,7 @@
 import { Client, GuildMember } from 'discord.js';
 import { AutoRole } from '../../models/AutoRole';
 
-export const autoRole = async (member: GuildMember, client: Client) => {
+export default async function (member: GuildMember, client: Client) {
    try {
       let guild = member.guild;
       if (!guild) return;
@@ -13,4 +13,4 @@ export const autoRole = async (member: GuildMember, client: Client) => {
    } catch (error) {
       console.log(`Hubo un error al dar el rol automaticamente: ${error}`);
    }
-};
+}
