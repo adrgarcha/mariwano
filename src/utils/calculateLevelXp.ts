@@ -1,1 +1,1 @@
-module.exports = (level) => 100 * level || 1;
+export const calculateLevelXp = (level: number) => 100 * level || 1;
