@@ -1,22 +1,22 @@
-const { Schema, model } = require("mongoose");
+import { Schema, model } from 'mongoose';
 
 const guildConfigurationSchema = new Schema({
-  guildId: {
-    type: String,
-    required: true,
-  },
-  suggestionChannelIds: {
-    type: [String],
-    default: [],
-  },
-  reportChannelIds: {
-    type: [String],
-    default: [],
-  },
-  welcomeChannelIds: {
-    type: [String],
-    default: [],
-  },
+   guildId: {
+      type: String,
+      required: true,
+   },
+   suggestionChannelIds: {
+      type: [String],
+      default: [],
+   },
+   reportChannelIds: {
+      type: [String],
+      default: [],
+   },
+   welcomeChannelIds: {
+      type: [String],
+      default: [],
+   },
 });
 
-module.exports = model("GuildConfiguration", guildConfigurationSchema);
+export const GuildConfiguration = model('GuildConfiguration', guildConfigurationSchema);
