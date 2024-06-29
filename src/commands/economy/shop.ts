@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, Colors, ColorResolvable, GuildMemberRoleManager } from 'discord.js';
 import { User } from '../../models/User';
 import { SlashCommandProps } from 'commandkit';
-import { customRoleCost, customRoleEditCost } from '../../data/shopPrices.json';
+import { customRoleCost, customRoleEditCost } from '../../data/shopPrices';
 
 const colorChoices = Object.entries(Colors).map(([name, value]) => ({
    name,
@@ -152,7 +152,7 @@ module.exports = {
             await interaction.editReply(`Tu rol personalizado ha sido eliminado.`);
          }
       } catch (error) {
-         console.log(`Ha ocurrido un error con el comando 'shop': ${error}`);
+         console.error(`Ha ocurrido un error con el comando 'shop': ${error}`);
       }
    },
    data: new SlashCommandBuilder()
