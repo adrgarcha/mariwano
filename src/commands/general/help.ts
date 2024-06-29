@@ -1,122 +1,119 @@
-const {
-  ChatInputCommandInteraction,
-  Client,
-  EmbedBuilder,
-  ActionRowBuilder,
-  ComponentType,
-  StringSelectMenuBuilder,
-  StringSelectMenuOptionBuilder,
-} = require("discord.js");
-const fs = require("fs");
-const path = require("path");
+import { SlashCommandProps } from 'commandkit';
+import {
+   EmbedBuilder,
+   ActionRowBuilder,
+   ComponentType,
+   StringSelectMenuBuilder,
+   StringSelectMenuOptionBuilder,
+   StringSelectMenuInteraction,
+   SlashCommandBuilder,
+} from 'discord.js';
+import fs from 'fs';
+import path from 'path';
+
+interface Command {
+   data: {
+      name: string;
+      description: string;
+   };
+}
+
+const emojis: { [key: string]: string } = {
+   admin: '⚙',
+   economy: '💰',
+   fun: '😂',
+   general: '🌐',
+   moderation: '🛠',
+   music: '🎵',
+   rpg: '⚔',
+};
+
+const formatString = (str: string) => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`;
 
 module.exports = {
-  /**
-   *
-   * @param {Object} param0
-   * @param {ChatInputCommandInteraction} param0.interaction
-   * @param {Client} param0.client
-   */
-  run: async ({ interaction, client }) => {
-    try {
-      const emojis = {
-        admin: "⚙",
-        economy: "💰",
-        fun: "😂",
-        general: "🌐",
-        moderation: "🛠",
-        music: "🎵",
-        rpg: "⚔",
-      };
-
-      const formatString = (str) =>
-        `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`;
-
-      let categoryCommands = {};
-      const commandFolders = fs.readdirSync(path.join(__dirname, ".."));
-
-      for (const commandFolder of commandFolders) {
-        const commandFiles = fs
-          .readdirSync(path.join(__dirname, `../${commandFolder}`))
-          .filter((file) => file.endsWith(".js"));
-        categoryCommands[`${formatString(commandFolder)}`] = [];
-
-        for (const commandFile of commandFiles) {
-          const command = require(`../${commandFolder}/${commandFile}`);
-
-          categoryCommands[`${formatString(commandFolder)}`].push(command);
-        }
+   run: async ({ interaction }: SlashCommandProps) => {
+      if (!interaction.guild) {
+         interaction.reply({
+            content: 'Solo puedes ejecutar este comando en un servidor.',
+            ephemeral: true,
+         });
+         return;
       }
 
-      const helpEmbed = new EmbedBuilder().setDescription(
-        "Por favor eliga una categoría en el menú desplegable."
-      );
+      try {
+         let categoryCommands: { [key: string]: Command[] } = {};
+         const commandFolders = fs.readdirSync(path.join(__dirname, '..'));
 
-      const components = (state) => [
-        new ActionRowBuilder().addComponents(
-          new StringSelectMenuBuilder()
-            .setCustomId("help-menu")
-            .setPlaceholder("Seleccione una categoría")
-            .setDisabled(state)
-            .addOptions(
-              Object.keys(categoryCommands).map((category) => {
-                return new StringSelectMenuOptionBuilder()
-                  .setLabel(category)
-                  .setValue(category.toLowerCase())
-                  .setDescription(`Comandos de la categoría ${category}`)
-                  .setEmoji(emojis[category.toLowerCase()] || "❓");
-              })
-            )
-        ),
-      ];
+         for (const commandFolder of commandFolders) {
+            const commandFiles = fs.readdirSync(path.join(__dirname, `../${commandFolder}`)).filter(file => file.endsWith('.ts'));
+            categoryCommands[`${formatString(commandFolder)}`] = [];
 
-      const initialMessage = await interaction.reply({
-        embeds: [helpEmbed],
-        components: components(false),
-        ephemeral: true,
-      });
+            for (const commandFile of commandFiles) {
+               const command = require(`../${commandFolder}/${commandFile}`);
 
-      const filter = (interaction) =>
-        interaction.user.id === interaction.member.id;
+               categoryCommands[`${formatString(commandFolder)}`].push(command);
+            }
+         }
 
-      const collector = interaction.channel.createMessageComponentCollector({
-        filter,
-        componentType: ComponentType.StringSelect,
-      });
+         const helpEmbed = new EmbedBuilder().setDescription('Por favor eliga una categoría en el menú desplegable.');
 
-      collector.on("collect", (interaction) => {
-        const [directory] = interaction.values;
-        const category = Object.keys(categoryCommands).find(
-          (category) => category.toLowerCase() === directory
-        );
+         const components = (state: boolean) => [
+            new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+               new StringSelectMenuBuilder()
+                  .setCustomId('help-menu')
+                  .setPlaceholder('Seleccione una categoría')
+                  .setDisabled(state)
+                  .addOptions(
+                     Object.keys(categoryCommands).map(category => {
+                        return new StringSelectMenuOptionBuilder()
+                           .setLabel(category)
+                           .setValue(category.toLowerCase())
+                           .setDescription(`Comandos de la categoría ${category}`)
+                           .setEmoji(emojis[category.toLowerCase()] || '❓');
+                     })
+                  )
+            ),
+         ];
 
-        const categoryEmbed = new EmbedBuilder()
-          .setTitle(`Comandos de ${formatString(directory)}`)
-          .setDescription(
-            `Una lista de todos los comandos dentro de la categoría ${directory}`
-          )
-          .addFields(
-            categoryCommands[category].map((command) => {
-              return {
-                name: `\`${command.data.name}\``,
-                value: command.data.description,
-                inline: true,
-              };
-            })
-          );
+         const initialMessage = await interaction.reply({
+            embeds: [helpEmbed],
+            components: components(false),
+            ephemeral: true,
+         });
 
-        interaction.update({ embeds: [categoryEmbed] });
-      });
+         const filter = (interaction: StringSelectMenuInteraction) => interaction.user.id === interaction.member?.user.id;
 
-      collector.on("end", () => {
-        initialMessage.edit({ components: components(true) });
-      });
-    } catch (error) {
-      console.log(`Hubo un error al ejecutar el comando 'help': ${error}`);
-    }
-  },
-  data: {
-    name: "help",
-    description: "Muestra todos los comandos disponibles para el bot.",
-  },
+         const collector = interaction.channel!.createMessageComponentCollector({
+            filter,
+            componentType: ComponentType.StringSelect,
+         });
+
+         collector.on('collect', interaction => {
+            const [directory] = interaction.values;
+            const category = Object.keys(categoryCommands).find(category => category.toLowerCase() === directory) as string;
+
+            const categoryEmbed = new EmbedBuilder()
+               .setTitle(`Comandos de ${formatString(directory)}`)
+               .setDescription(`Una lista de todos los comandos dentro de la categoría ${directory}`)
+               .addFields(
+                  categoryCommands[category].map(command => {
+                     return {
+                        name: `\`${command.data.name}\``,
+                        value: command.data.description,
+                        inline: true,
+                     };
+                  })
+               );
+
+            interaction.update({ embeds: [categoryEmbed] });
+         });
+
+         collector.on('end', () => {
+            initialMessage.edit({ components: components(true) });
+         });
+      } catch (error) {
+         console.error(`Hubo un error al ejecutar el comando 'help': ${error}`);
+      }
+   },
+   data: new SlashCommandBuilder().setName('help').setDescription('Muestra todos los comandos disponibles para el bot.'),
 };
