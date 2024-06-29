@@ -1,174 +1,128 @@
-const {
-  ChatInputCommandInteraction,
-  EmbedBuilder,
-  ApplicationCommandOptionType,
-} = require("discord.js");
+import { EmbedBuilder, SlashCommandBuilder, Message } from 'discord.js';
+import { User } from '../../models/User';
+import { KahootQuestion, kahootQuestions } from '../../data/kahootQuestions';
+import { SlashCommandProps } from 'commandkit';
 
-const User = require("../../models/User");
+const shuffle = (array: string[]) => {
+   let currentIndex = array.length,
+      randomIndex;
+   while (currentIndex > 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+   }
 
-const preguntas = require("../../utils/kahootQuestions.json");
+   return array;
+};
 
-// funciones necesarias:
-// ordenar los elementos de un array aleatoriamente
-function shuffle(array) {
-  let currentIndex = array.length,
-    randomIndex;
-  while (currentIndex > 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
-    ];
-  }
+const getRandomQuestion = (questions: KahootQuestion[], hardcore: boolean): KahootQuestion => {
+   const filteredQuestions = hardcore ? questions.filter(q => q.dificultad > 1) : questions;
+   const randomIndex = Math.floor(Math.random() * filteredQuestions.length);
+   return filteredQuestions[randomIndex];
+};
 
-  return array;
-}
-// escoger una propiedad de un objeto aleatoriamente
-function randomProperty(obj, hardcored) {
-  var keys = Object.keys(obj);
-  if (!hardcored) {
-    return obj[keys[(keys.length * Math.random()) << 0]];
-  } else {
-    var validKeys = keys.filter(function (key) {
-      return obj[key].dificultad > 1;
-    });
-
-    if (validKeys.length === 0) {
-      return undefined; // Devuelve undefined si no hay propiedades con dificultad mayor que 1
-    }
-
-    var randomKey = validKeys[(validKeys.length * Math.random()) << 0];
-    return obj[randomKey];
-  }
-}
-// fin funciones
 module.exports = {
-  /**
-   *
-   * @param {Object} param0
-   * @param {ChatInputCommandInteraction} param0.interaction
-   */
-  run: async ({ interaction }) => {
-    try {
-      if (!interaction.inGuild) {
-        interaction.reply({
-          content: "Solo puedes ejecutar este comando en un servidor.",
-          ephemeral: true,
-        });
-        return;
-      }
-
-      var botPr = randomProperty(
-        preguntas,
-        interaction.options.getBoolean("hardcore")
-      );
-      let query = {
-        userId: interaction.member.id,
-        guildId: interaction.guild.id,
-      };
-
-      let user = await User.findOne(query);
-
-      if (user) {
-        const lastKahootDate = user.lastKahoot.toDateString();
-        const currentDate = new Date().toDateString();
-        var kahootUserCount = user.kahootLimit;
-
-        if (lastKahootDate !== currentDate) {
-          user.kahootLimit = 5;
-          await user.save();
-        }
-
-        if (kahootUserCount <= 0) {
-          interaction.reply({
-            content: `Has excedido el límite de preguntas por hoy. El límite diario es de 5 preguntas`,
+   run: async ({ interaction }: SlashCommandProps) => {
+      if (!interaction.guild) {
+         interaction.reply({
+            content: 'Solo puedes ejecutar este comando en un servidor.',
             ephemeral: true,
-          });
-          return;
-        }
-      } else {
-        user = new User({
-          ...query,
-          lastKahoot: new Date(),
-          kahootLimit: 5,
-        });
+         });
+         return;
       }
 
-      const respuestasReply = [botPr.respuesta, botPr.r1, botPr.r2, botPr.r3];
-      const respuestasDef = shuffle(respuestasReply);
-      user.kahootLimit -= 1;
-      user.lastKahoot = new Date();
-      await user.save();
+      try {
+         let hardcore = interaction.options.getBoolean('hardcore');
+         if (!hardcore) hardcore = false;
 
-      let leaderboardEmbed = new EmbedBuilder()
-        .setTitle(`${botPr.pregunta}`)
-        .setColor(0x45d6fd)
-        .setFooter({
-          text: "Escribe en tu siguiente mensaje la respuesta y no la letra (da igual si es mayúsculas o minúsculas)",
-        });
+         let botPr = getRandomQuestion(kahootQuestions, hardcore);
+         const query = {
+            userId: interaction.member?.user.id,
+            guildId: interaction.guild.id,
+         };
 
-      var data = "";
-      for (var i = 0; i < respuestasReply.length; i++) {
-        data += "\n" + String.fromCharCode(i + 65) + ") " + respuestasDef[i];
+         let user = await User.findOne(query);
+
+         if (user) {
+            const lastKahootDate = user.lastKahoot.toDateString();
+            const currentDate = new Date().toDateString();
+            let kahootUserCount = user.kahootLimit;
+
+            if (lastKahootDate !== currentDate) {
+               user.kahootLimit = 5;
+               await user.save();
+            }
+
+            if (kahootUserCount <= 0) {
+               interaction.reply({
+                  content: `Has excedido el límite de preguntas por hoy. El límite diario es de 5 preguntas`,
+                  ephemeral: true,
+               });
+               return;
+            }
+         } else {
+            user = new User({
+               ...query,
+               lastKahoot: new Date(),
+               kahootLimit: 5,
+            });
+         }
+
+         const respuestasReply = [botPr.respuesta, botPr.r1, botPr.r2, botPr.r3];
+         const respuestasDef = shuffle(respuestasReply);
+         user.kahootLimit -= 1;
+         user.lastKahoot = new Date();
+         await user.save();
+
+         let leaderboardEmbed = new EmbedBuilder().setTitle(`${botPr.pregunta}`).setColor(0x45d6fd).setFooter({
+            text: 'Escribe en tu siguiente mensaje la respuesta y no la letra (da igual si es mayúsculas o minúsculas)',
+         });
+
+         let data = '';
+         for (let i = 0; i < respuestasReply.length; i++) {
+            data += '\n' + String.fromCharCode(i + 65) + ') ' + respuestasDef[i];
+         }
+         leaderboardEmbed.setDescription(data);
+
+         await interaction.reply({ embeds: [leaderboardEmbed] });
+         const filter = (response: Message) => response.author.id === interaction.member?.user.id;
+         const collector = interaction.channel!.createMessageCollector({
+            filter,
+            time: 15000,
+         });
+
+         collector.on('collect', response => {
+            const respuestaUsuario = response.content;
+
+            if (respuestaUsuario.toLowerCase().trim().includes(botPr.respuesta.trim().toLowerCase())) {
+               const amountWon = 175 * botPr.dificultad;
+               user.balance += amountWon;
+               user.save();
+
+               interaction.followUp(`¡Respuesta correcta! | ${amountWon} gramos de cocaína fueron agregadas a tu inventario.`);
+            } else {
+               interaction.followUp(`Perdiste. Ahora sabes cuál no es la correcta socio`);
+            }
+
+            collector.stop();
+            return;
+         });
+
+         collector.on('end', (collected, reason) => {
+            if (reason === 'time') {
+               interaction.followUp({
+                  content: '¡Tiempo agotado!',
+                  ephemeral: true,
+               });
+               return;
+            }
+         });
+      } catch (error) {
+         console.error(`Ha ocurrido un error con el comando 'kahoot': ${error}`);
       }
-      leaderboardEmbed.setDescription(data);
-
-      await interaction.reply({ embeds: [leaderboardEmbed] });
-      const filter = (response) => response.author.id === interaction.member.id;
-      const collector = interaction.channel.createMessageCollector({
-        filter,
-        time: 15000,
-      });
-
-      collector.on("collect", (response) => {
-        const respuestaUsuario = response.content;
-
-        if (
-          respuestaUsuario
-            .toLowerCase()
-            .trim()
-            .includes(botPr.respuesta.trim().toLowerCase())
-        ) {
-          const amountWon = 175 * botPr.dificultad;
-          user.balance += amountWon;
-          user.save();
-
-          interaction.followUp(`¡Respuesta correcta! | ${amountWon} gramos de cocaína fueron agregadas a tu inventario.`);
-        } else {
-          interaction.followUp(
-            `Perdiste. Ahora sabes cuál no es la correcta socio`
-          );
-        }
-
-        collector.stop();
-        return;
-      });
-
-      collector.on("end", (collected, reason) => {
-        if (reason === "time") {
-          interaction.followUp({
-            content: "¡Tiempo agotado!",
-            ephemeral: true,
-          });
-          return;
-        }
-      });
-    } catch (error) {
-      console.log(`Ha ocurrido un error con el kahoot: ${error}`);
-    }
-  },
-  data: {
-    name: "kahoot",
-    description:
-      "Si aciertas una pregunta de cultura clásica, serás recompensado con gramos de cocaina",
-    options: [
-      {
-        name: "hardcore",
-        description: "Preguntas más difíciles pero ganas más gramos",
-        type: ApplicationCommandOptionType.Boolean,
-        required: true,
-      },
-    ],
-  },
+   },
+   data: new SlashCommandBuilder()
+      .setName('kahoot')
+      .setDescription('Si aciertas una pregunta de cultura clásica, serás recompensado con gramos de cocaina')
+      .addBooleanOption(option => option.setName('hardcore').setDescription('Preguntas más difíciles pero ganas más gramos')),
 };

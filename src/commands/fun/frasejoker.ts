@@ -1,45 +1,36 @@
-const { ApplicationCommandOptionType } = require("discord.js");
-const frasesJoker = [
-  "quien madruga se encuentra con todo cerrado😔🤙",
-  "para mi el locomotor es solo motor🥵😫",
-  "el tiempo sin ti es empo🙏🤟",
-  "a veces las personas más frías solo necesitan un sueter😯🥶",
-  "la piedad es la edad de los pies😔🤙",
-];
+import { SlashCommandBuilder } from 'discord.js';
+import { frasesJoker } from '../../data/frasesJoker';
+import { SlashCommandProps } from 'commandkit';
+
 module.exports = {
-  run: async ({ interaction }) => {
-    await interaction.deferReply();
+   run: async ({ interaction }: SlashCommandProps) => {
+      await interaction.deferReply();
 
-    const fraseAgregada = interaction.options.get("add")?.value;
-    const frases = interaction.options.get("all")?.value;
+      const fraseAgregada = interaction.options.get('add')?.value as string;
+      const frases = interaction.options.get('all')?.value;
 
-    if (fraseAgregada) {
-      frasesJoker.push(fraseAgregada);
-      interaction.editReply(`Se ha agregado la frase ${fraseAgregada}.`);
-      return;
-    }
-    if (frases) {
-      interaction.editReply(frasesJoker.join("\n"));
-      return;
-    }
-    const fraseJoker =
-      frasesJoker[Math.floor(Math.random() * frasesJoker.length)];
-    interaction.editReply(`${fraseJoker}`);
-  },
-  data: {
-    name: "frasejoker",
-    description: "Dropea una frase aleatoria que diría el joker",
-    options: [
-      {
-        name: "add",
-        description: "añade una frase",
-        type: ApplicationCommandOptionType.String,
-      },
-      {
-        name: "all",
-        description: "muestra todas las frases (no usar, solo para el admin)",
-        type: ApplicationCommandOptionType.Boolean,
-      },
-    ],
-  },
+      if (fraseAgregada) {
+         frasesJoker.push(fraseAgregada);
+         interaction.editReply(`Se ha agregado la frase ${fraseAgregada}.`);
+         return;
+      }
+
+      if (frases) {
+         if (!interaction.memberPermissions?.has('Administrator')) {
+            await interaction.reply('Solo los administradores pueden ejecutar este comando.');
+            return;
+         }
+
+         interaction.editReply(frasesJoker.join('\n'));
+         return;
+      }
+
+      const fraseJoker = frasesJoker[Math.floor(Math.random() * frasesJoker.length)];
+      interaction.editReply(`${fraseJoker}`);
+   },
+   data: new SlashCommandBuilder()
+      .setName('frasejoker')
+      .setDescription('Dropea una frase aleatoria que diría el joker')
+      .addStringOption(option => option.setName('add').setDescription('Añade una frase a la lista de frases.').setRequired(false))
+      .addBooleanOption(option => option.setName('all').setDescription('Muestra todas las frases (solo admin)').setRequired(false)),
 };
