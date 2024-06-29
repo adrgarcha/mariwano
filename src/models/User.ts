@@ -15,6 +15,11 @@ const userSchema = new Schema({
    },
    lastDaily: {
       type: Date,
+      default: new Date(),
+   },
+   lastWordle: {
+      type: Date,
+      default: new Date(),
    },
    kahootLimit: {
       type: Number,
@@ -27,6 +32,18 @@ const userSchema = new Schema({
    customRoleId: {
       type: String,
       default: '',
+   },
+   invested: {
+      type: Number,
+      default: 0,
+   },
+   investBankFactor: {
+      type: Number,
+      default: 0,
+   },
+   investFactor: {
+      type: Number,
+      default: 0,
    },
 });
 
