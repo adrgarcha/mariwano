@@ -13,9 +13,9 @@ jobs:
          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
          DISCORD_TEST_TOKEN: ${{ secrets.DISCORD_TEST_TOKEN }}
          GUILD_ID: ${{ secrets.GUILD_ID }}
-         CLIENT_ID: ${{ secrets. }}
-         MONGODB_URI: ${{ secrets.CLIENT_ID }}
-         DEV_ID_1: ${{ secrets.MONGODB_URI }}
+         CLIENT_ID: ${{ secrets.CLIENT_ID }}
+         MONGODB_URI: ${{ secrets.MONGODB_URI }}
+         DEV_ID_1: ${{ secrets.DEV_ID_1 }}
          DEV_ID_2: ${{ secrets.DEV_ID_2 }}
 
       strategy:
