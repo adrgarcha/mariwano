@@ -1,4 +1,7 @@
-import { Builder, loadImage } from "canvacord";
+/** @jsx JSX.createElement */
+/** @jsxFrag JSX.Fragment */
+
+import { Builder, JSX, loadImage } from "canvacord";
 
 interface Props {
   displayName: string;

@@ -1,12 +1,14 @@
-import { SlashCommandBuilder, Colors, ColorResolvable, GuildMemberRoleManager } from 'discord.js';
-import { User } from '../../models/User';
 import { SlashCommandProps } from 'commandkit';
+import { ColorResolvable, Colors, GuildMemberRoleManager, SlashCommandBuilder } from 'discord.js';
 import { customRoleCost, customRoleEditCost } from '../../data/shopPrices';
+import { User } from '../../models/User';
 
-const colorChoices = Object.entries(Colors).map(([name, value]) => ({
-   name,
-   value: value.toString(),
-}));
+const colorChoices = Object.entries(Colors)
+   .map(([name, value]) => ({
+      name,
+      value: value.toString(),
+   }))
+   .slice(0, 25);
 
 module.exports = {
    run: async ({ interaction }: SlashCommandProps) => {
