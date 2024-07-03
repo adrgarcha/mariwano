@@ -1,7 +1,7 @@
-import 'dotenv/config';
-import { Client, GatewayIntentBits } from 'discord.js';
 import { CommandKit } from 'commandkit';
 import { Player } from 'discord-player';
+import { Client, GatewayIntentBits } from 'discord.js';
+import 'dotenv/config';
 import mongoose from 'mongoose';
 import path from 'path';
 
@@ -33,7 +33,6 @@ import path from 'path';
             client,
             commandsPath: path.join(__dirname, 'commands'),
             eventsPath: path.join(__dirname, 'events'),
-            // bulkRegister: true, // Testing
          });
 
          // client.login(process.env.DISCORD_TOKEN); // Despliegue
