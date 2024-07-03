@@ -19,7 +19,9 @@ module.exports = {
          return;
       }
 
-      const cantidad = interaction.options.get('cantidad')!.value as number;
+      const cantidad = isNaN(interaction.options.get("cantidad")?.value as number) 
+      ? 0
+      : interaction.options.get("cantidad")?.value as number;
       const targetUserId = interaction.options.get('usuario')?.value || interaction.member?.user.id;
 
       try {
