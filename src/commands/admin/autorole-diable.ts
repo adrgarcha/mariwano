@@ -1,6 +1,6 @@
-import { PermissionFlagsBits } from 'discord.js';
-import { AutoRole } from '../../models/AutoRole';
 import { SlashCommandProps } from 'commandkit';
+import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
+import { AutoRole } from '../../models/AutoRole';
 
 module.exports = {
    run: async ({ interaction }: SlashCommandProps) => {
@@ -28,9 +28,8 @@ module.exports = {
          console.error(`Hubo un error al deshabilitar el auto-rol: ${error}`);
       }
    },
-   data: {
-      name: 'autorole-disable',
-      description: 'Deshabilita el auto-rol para este servidor.',
-      permissionsRequired: [PermissionFlagsBits.Administrator],
-   },
+   data: new SlashCommandBuilder()
+      .setName('autorole-disable')
+      .setDescription('Deshabilita el auto-rol para este servidor.')
+      .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 };

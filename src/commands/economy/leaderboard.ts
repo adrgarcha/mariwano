@@ -1,6 +1,6 @@
-import { EmbedBuilder } from 'discord.js';
-import { User } from '../../models/User';
 import { SlashCommandProps } from 'commandkit';
+import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { User } from '../../models/User';
 
 module.exports = {
    run: async ({ interaction }: SlashCommandProps) => {
@@ -76,8 +76,5 @@ module.exports = {
          console.error(`Hubo un error al ejecutar el comando 'leaderboard': ${error}`);
       }
    },
-   data: {
-      name: 'leaderboard',
-      description: 'Muestra el Top 10 de usuarios con más gramos de cocaína.',
-   },
+   data: new SlashCommandBuilder().setName('leaderboard').setDescription('Muestra el Top 10 de usuarios con más gramos de cocaína.'),
 };

@@ -1,5 +1,5 @@
 import { SlashCommandProps } from 'commandkit';
-import { ApplicationCommandOptionType, GuildMember } from 'discord.js';
+import { GuildMember, SlashCommandBuilder } from 'discord.js';
 import { User } from '../../models/User';
 
 module.exports = {
@@ -85,23 +85,9 @@ module.exports = {
          console.error(`Ha ocurrido un error con el comando 'donate': ${error}`);
       }
    },
-
-   data: {
-      name: 'donate',
-      description: 'Donale a un miembro pobre asqueroso.',
-      options: [
-         {
-            name: 'user',
-            description: 'El pobre asqueroso al que le quieres donar.',
-            type: ApplicationCommandOptionType.Mentionable,
-            required: true,
-         },
-         {
-            name: 'amount',
-            description: 'La cantidad que le quieres donar al pobre asqueroso.',
-            type: ApplicationCommandOptionType.Number,
-            required: true,
-         },
-      ],
-   },
+   data: new SlashCommandBuilder()
+      .setName('donate')
+      .setDescription('Donale a un miembro pobre asqueroso.')
+      .addMentionableOption(option => option.setName('user').setDescription('El pobre asqueroso al que le quieres donar.').setRequired(true))
+      .addNumberOption(option => option.setName('amount').setDescription('La cantidad que le quieres donar al pobre asqueroso.').setRequired(true)),
 };

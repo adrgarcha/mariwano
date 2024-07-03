@@ -1,9 +1,8 @@
-import { ApplicationCommandOptionType, AttachmentBuilder } from 'discord.js';
-import { calculateLevelXp } from '../../utils/calculateLevelXp';
-import { Level } from '../../models/Level';
-import { RankCardBuilder } from 'canvacord';
-import { Font } from 'canvacord';
+import { Font, RankCardBuilder } from 'canvacord';
 import { SlashCommandProps } from 'commandkit';
+import { AttachmentBuilder, SlashCommandBuilder } from 'discord.js';
+import { Level } from '../../models/Level';
+import { calculateLevelXp } from '../../utils/calculateLevelXp';
 Font.loadDefault();
 
 module.exports = {
@@ -63,15 +62,8 @@ module.exports = {
          console.error(`Ha ocurrido un error con el comando 'level': ${error}`);
       }
    },
-   data: {
-      name: 'level',
-      description: 'Muestra tu nivel o el de otra persona.',
-      options: [
-         {
-            name: 'target-user',
-            description: 'El usuario que quieres ver su nivel.',
-            type: ApplicationCommandOptionType.Mentionable,
-         },
-      ],
-   },
+   data: new SlashCommandBuilder()
+      .setName('level')
+      .setDescription('Muestra tu nivel o el de otra persona.')
+      .addUserOption(option => option.setName('target-user').setDescription('El usuario que quieres ver su nivel.')),
 };

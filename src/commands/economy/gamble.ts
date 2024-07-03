@@ -1,6 +1,6 @@
-import { ApplicationCommandOptionType } from 'discord.js';
-import { User } from '../../models/User';
 import { SlashCommandProps } from 'commandkit';
+import { SlashCommandBuilder } from 'discord.js';
+import { User } from '../../models/User';
 
 module.exports = {
    run: async ({ interaction }: SlashCommandProps) => {
@@ -80,16 +80,8 @@ module.exports = {
          console.error(`Ha ocurrido un error con el comando 'gamble': ${error}`);
       }
    },
-   data: {
-      name: 'gamble',
-      description: 'Conviértete en ludópata.',
-      options: [
-         {
-            name: 'amount',
-            description: 'La cantidad que vas a apostar.',
-            type: ApplicationCommandOptionType.Number,
-            required: true,
-         },
-      ],
-   },
+   data: new SlashCommandBuilder()
+      .setName('gamble')
+      .setDescription('Conviértete en ludópata.')
+      .addNumberOption(option => option.setName('amount').setDescription('La cantidad que vas a apostar.').setRequired(true)),
 };

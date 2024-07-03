@@ -1,5 +1,5 @@
-import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord.js';
 import { SlashCommandProps } from 'commandkit';
+import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { AutoRole } from '../../models/AutoRole';
 
 module.exports = {
@@ -39,18 +39,9 @@ module.exports = {
          console.error(`Hubo un error al configurar el auto-rol: ${error}`);
       }
    },
-   data: {
-      name: 'autorole-configure',
-      description: 'Configurar el auto-rol para este servidor.',
-      options: [
-         {
-            name: 'role',
-            description: 'El rol que quieres darle a nuevos usuarios.',
-            type: ApplicationCommandOptionType.Role,
-            required: true,
-         },
-      ],
-      permissionsRequired: [PermissionFlagsBits.Administrator],
-      botPermissions: [PermissionFlagsBits.ManageRoles],
-   },
+   data: new SlashCommandBuilder()
+      .setName('autorole-configure')
+      .setDescription('Configurar el auto-rol para este servidor.')
+      .addRoleOption(option => option.setName('role').setDescription('El rol que quieres darle a nuevos usuarios.').setRequired(true))
+      .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 };

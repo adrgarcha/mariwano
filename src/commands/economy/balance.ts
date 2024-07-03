@@ -1,6 +1,6 @@
-import { ApplicationCommandOptionType, ChatInputCommandInteraction } from 'discord.js';
-import { User } from '../../models/User';
 import { SlashCommandProps } from 'commandkit';
+import { SlashCommandBuilder } from 'discord.js';
+import { User } from '../../models/User';
 
 module.exports = {
    run: async ({ interaction }: SlashCommandProps) => {
@@ -36,15 +36,8 @@ module.exports = {
          console.error(`Hubo un error al ejecutar el comando 'balance': ${error}`);
       }
    },
-   data: {
-      name: 'balance',
-      description: 'Los gramos de cocaína de tu cuenta o el de otro usuario.',
-      options: [
-         {
-            name: 'user',
-            description: 'El usuario del que quieres saber cuantos gramos tiene.',
-            type: ApplicationCommandOptionType.Mentionable,
-         },
-      ],
-   },
+   data: new SlashCommandBuilder()
+      .setName('balance')
+      .setDescription('Los gramos de cocaína de tu cuenta o el de otro usuario.')
+      .addUserOption(option => option.setName('user').setDescription('El usuario del que quieres saber cuantos gramos tiene.')),
 };

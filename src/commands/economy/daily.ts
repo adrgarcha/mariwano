@@ -1,5 +1,6 @@
 import { SlashCommandProps } from 'commandkit';
 
+import { SlashCommandBuilder } from 'discord.js';
 import { User } from '../../models/User';
 
 const dailyAmount = 1000;
@@ -48,8 +49,5 @@ module.exports = {
          console.error(`Ha ocurrido un error con las diarias: ${error}`);
       }
    },
-   data: {
-      name: 'daily',
-      description: 'Recolecta tus diarias.',
-   },
+   data: new SlashCommandBuilder().setName('daily').setDescription('Recolecta tus diarias.'),
 };
