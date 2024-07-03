@@ -1,4 +1,4 @@
-import { Interaction } from 'discord.js';
+import { EmbedBuilder, Interaction } from 'discord.js';
 import { Suggestion } from '../../models/Suggestion';
 
 export default async function (interaction: Interaction) {
@@ -124,6 +124,6 @@ export default async function (interaction: Interaction) {
          });
       }
    } catch (error) {
-      console.log(`Hubo un error en el manejador de sugerencias: ${error}`);
+      console.error(`Hubo un error en el manejador de sugerencias: ${error}`);
    }
 }

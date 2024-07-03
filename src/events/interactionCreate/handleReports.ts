@@ -1,4 +1,4 @@
-import { Interaction, EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, Interaction } from 'discord.js';
 import { Report } from '../../models/Report';
 
 export default async function (interaction: Interaction) {
@@ -74,6 +74,6 @@ export default async function (interaction: Interaction) {
          return;
       }
    } catch (error) {
-      console.log(`Hubo un error en el manejador de informes: ${error}`);
+      console.error(`Hubo un error en el manejador de informes: ${error}`);
    }
 }

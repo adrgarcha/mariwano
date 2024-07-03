@@ -1,6 +1,6 @@
+import { SlashCommandProps } from 'commandkit';
 import { ApplicationCommandOptionType, GuildMember } from 'discord.js';
 import { User } from '../../models/User';
-import { SlashCommandProps } from 'commandkit';
 
 module.exports = {
    run: async ({ interaction }: SlashCommandProps) => {
@@ -82,7 +82,7 @@ module.exports = {
 
          interaction.editReply(`Has donado ${donateAmount} gramos de cocaína al pobre de <@${receiveUser.id}>.`);
       } catch (error) {
-         console.log(`Ha ocurrido un error con el comando 'donate': ${error}`);
+         console.error(`Ha ocurrido un error con el comando 'donate': ${error}`);
       }
    },
 

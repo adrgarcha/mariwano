@@ -11,6 +11,6 @@ export default async function (member: GuildMember, client: Client) {
 
       await member.roles.add(autoRole.roleId);
    } catch (error) {
-      console.log(`Hubo un error al dar el rol automaticamente: ${error}`);
+      console.error(`Hubo un error al dar el rol automaticamente: ${error}`);
    }
 }

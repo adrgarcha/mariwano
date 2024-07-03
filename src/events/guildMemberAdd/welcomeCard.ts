@@ -1,4 +1,4 @@
-import { Client, GuildMember, AttachmentBuilder, TextChannel } from 'discord.js';
+import { AttachmentBuilder, Client, GuildMember, TextChannel } from 'discord.js';
 import { GuildConfiguration } from '../../models/GuildConfiguration';
 import { GreetingsCard } from '../../utils/GreetingsCard';
 require('canvacord').Font.loadDefault();
@@ -28,5 +28,5 @@ export default async function (member: GuildMember, client: Client) {
          const textChannel = channel as TextChannel;
          return textChannel.send({ files: [attachment] });
       })
-      .catch(error => console.log(`Hubo un error al enviar el mensaje de bienvenida: ${error}`));
+      .catch(error => console.error(`Hubo un error al enviar el mensaje de bienvenida: ${error}`));
 }

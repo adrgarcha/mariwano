@@ -34,7 +34,7 @@ export default async function (message: Message, client: Client) {
          }
 
          await level.save().catch(e => {
-            console.log(`Error al guardar el nivel actualizado: ${e}`);
+            console.error(`Error al guardar el nivel actualizado: ${e}`);
             return;
          });
 
@@ -57,6 +57,6 @@ export default async function (message: Message, client: Client) {
          }, 30000); // 30s
       }
    } catch (error) {
-      console.log(`Hubo un error al dar la experiencia: ${error}`);
+      console.error(`Hubo un error al dar la experiencia: ${error}`);
    }
 }
