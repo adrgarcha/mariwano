@@ -38,7 +38,14 @@ module.exports = {
 
          let user = await User.findOne(query);
          const targetUser = await User.findOne(targetQuery);
-
+         if(subcomando === "info"){
+            interaction.editReply(
+               'Invierte en un usuario que esté en un canal. Cuanto más gramos ganéis (y tengáis), más beneficios generáis entre tú y el usuario y más rentable hacéis el canal' +
+                  '\n\nCuanto más rentable sea el canal, más gramos se podrán ganar. Si el canal está en déficit, no podréis ganar nada (aunque generéis beneficios) pero podréis sacar al canal del déficit' +
+                  '\n\nPara recargar los beneficios/pérdidas pon ```/invertir claim```pero antes debes hacer una inversión con ```/invertir nuevo```'
+            );
+            return;
+         }
          if (!targetUser) {
             interaction.editReply('No se ha encontrado al usuario al que quieres invertir el dinero.');
             return;
@@ -48,9 +55,8 @@ module.exports = {
             const userBalance = user.balance;
             if (user.investBankFactor == 0 && cantidad === 0) {
                interaction.editReply(
-                  'Invierte en un usuario que esté en un canal. Cuanto más gramos ganéis (y tengáis), más beneficios generáis entre tú y el usuario y más rentable hacéis el canal' +
-                     '\n\nCuanto más rentable sea el canal, más gramos se podrán ganar. Si el canal está en déficit, no podréis ganar nada (aunque generéis beneficios) pero podréis sacar al canal del déficit' +
-                     '\n\nPara recargar los beneficios/maleficios vuelve a poner el comando /invertir sin opciones. Si sale este mensaje es que no has generado beneficios ni pérdidas'
+                  'No se han generado ni beneficios ni pérdidas.' 
+                     
                );
                return;
             } else if (user.investBankFactor != 0) {
