@@ -70,7 +70,7 @@ module.exports = {
             return;
          }
 
-         const amountWon = 3*Number((amount * (Math.random() + 0.55)).toFixed(0));
+         const amountWon = Math.round(3*(amount * (Math.random() + 0.55)));
 
          user.balance += amountWon;
          await user.save();
