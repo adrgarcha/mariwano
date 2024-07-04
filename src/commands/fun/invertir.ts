@@ -53,7 +53,7 @@ module.exports = {
 
          if (user) {
             const userBalance = user.balance;
-            if (user.investBankFactor == 0 && cantidad === 0) {
+            if ((user.investBankFactor == 0 && cantidad === 0 )|| subcomando==="claim") {
                interaction.editReply(
                   'No se han generado ni beneficios ni pérdidas.' 
                      
