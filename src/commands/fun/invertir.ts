@@ -23,7 +23,7 @@ module.exports = {
       ? 0
       : interaction.options.get("cantidad")?.value as number;
       const targetUserId = interaction.options.get('usuario')?.value || interaction.member?.user.id;
-
+      const subcomando = interaction.options.getSubcommand();
       try {
          await interaction.deferReply();
 
@@ -117,8 +117,29 @@ module.exports = {
    data: new SlashCommandBuilder()
       .setName('invertir')
       .setDescription('Invierte en un usuario que esté en un canal para maximizar beneficios')
-      .addUserOption(option => option.setName('usuario').setDescription('El usuario que quieres que quieres invertir.'))
-      .addIntegerOption(option =>
-         option.setName('cantidad').setDescription('La cantidad de dinero que vas a invertir. Tiene que ser más de 10 000.').setRequired(true)
-      ),
+      .addSubcommand(subcommand =>
+         subcommand
+            .setName('info')
+            .setDescription(`Información sobre el comando`)
+            
+      )
+      .addSubcommand(subcommand =>
+         subcommand
+         .setName('claim')
+         .setDescription(`Recoge las ganancias, arriesgando a perder dinero`)
+      )
+      .addSubcommand(subcommand =>
+         subcommand
+         .setName('nuevo')
+         .setDescription(`Haz una nueva inversión`)
+         .addNumberOption(option =>
+            option
+               .setName('cantidad').setDescription(`La cantidad debe ser mayor a 10 000 gramos`)
+               .setRequired(true)
+         )
+         .addMentionableOption(option =>
+            option.setName('usuario').setDescription('Usuario al que quieres realizar la inversion').setRequired(true)
+         )
+      )
+      ,
 };
