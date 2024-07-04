@@ -58,7 +58,7 @@ module.exports = {
             return;
          }
 
-         const hasWin = Math.random() > 0.5; // 50% de ganar
+         const hasWin = Math.random() > 1-Math.random(); 
 
          if (!hasWin) {
             user.balance -= amount;
@@ -70,7 +70,7 @@ module.exports = {
             return;
          }
 
-         const amountWon = Number((amount * (Math.random() + 0.55)).toFixed(0));
+         const amountWon = 3*Number((amount * (Math.random() + 0.55)).toFixed(0));
 
          user.balance += amountWon;
          await user.save();
