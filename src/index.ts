@@ -33,6 +33,7 @@ import path from 'path';
             client,
             commandsPath: path.join(__dirname, 'commands'),
             eventsPath: path.join(__dirname, 'events'),
+            bulkRegister: true,
          });
 
          client.login(process.env.DISCORD_TOKEN); // Despliegue
