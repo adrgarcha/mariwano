@@ -1,6 +1,6 @@
-import { ChatInputCommandInteraction, ApplicationCommandOptionType, SlashCommandBuilder } from 'discord.js';
-import { User } from '../../models/User';
 import { SlashCommandProps } from 'commandkit';
+import { SlashCommandBuilder } from 'discord.js';
+import { User } from '../../models/User';
 
 const factorial = (num: number): number => {
    if (num <= 0) {
@@ -19,11 +19,9 @@ module.exports = {
          return;
       }
 
-      const cantidad = isNaN(interaction.options.get("cantidad")?.value as number) 
-      ? 0
-      : interaction.options.get("cantidad")?.value as number;
+      const cantidad = isNaN(interaction.options.get('cantidad')?.value as number) ? 0 : (interaction.options.get('cantidad')?.value as number);
       const targetUserId = interaction.options.get('usuario')?.value || interaction.member?.user.id;
-
+      const subcomando = interaction.options.getSubcommand();
       try {
          await interaction.deferReply();
 
@@ -38,7 +36,14 @@ module.exports = {
 
          let user = await User.findOne(query);
          const targetUser = await User.findOne(targetQuery);
-
+         if (subcomando === 'info') {
+            interaction.editReply(
+               'Invierte en un usuario que esté en un canal. Cuanto más gramos ganéis (y tengáis), más beneficios generáis entre tú y el usuario y más rentable hacéis el canal' +
+                  '\n\nCuanto más rentable sea el canal, más gramos se podrán ganar. Si el canal está en déficit, no podréis ganar nada (aunque generéis beneficios) pero podréis sacar al canal del déficit' +
+                  '\n\nPara recargar los beneficios/pérdidas pon ```/invertir claim```pero antes debes hacer una inversión con ```/invertir new```'
+            );
+            return;
+         }
          if (!targetUser) {
             interaction.editReply('No se ha encontrado al usuario al que quieres invertir el dinero.');
             return;
@@ -47,11 +52,7 @@ module.exports = {
          if (user) {
             const userBalance = user.balance;
             if (user.investBankFactor == 0 && cantidad === 0) {
-               interaction.editReply(
-                  'Invierte en un usuario que esté en un canal. Cuanto más gramos ganéis (y tengáis), más beneficios generáis entre tú y el usuario y más rentable hacéis el canal' +
-                     '\n\nCuanto más rentable sea el canal, más gramos se podrán ganar. Si el canal está en déficit, no podréis ganar nada (aunque generéis beneficios) pero podréis sacar al canal del déficit' +
-                     '\n\nPara recargar los beneficios/maleficios vuelve a poner el comando /invertir sin opciones. Si sale este mensaje es que no has generado beneficios ni pérdidas'
-               );
+               interaction.editReply('No se han generado ni beneficios ni pérdidas.');
                return;
             } else if (user.investBankFactor != 0) {
                if (userBalance - user.investBankFactor > 0) {
@@ -109,7 +110,7 @@ module.exports = {
          user.invested = cantidad;
          await user.save();
 
-         interaction.editReply(`Has invertido ${cantidad} en <#${user.guildId}>`);
+         interaction.editReply(`Has invertido ${cantidad} en <@${targetUserId}>`);
       } catch (error) {
          console.error(`Ha ocurrido un error en el commando 'invertir': ${error}`);
       }
@@ -117,8 +118,15 @@ module.exports = {
    data: new SlashCommandBuilder()
       .setName('invertir')
       .setDescription('Invierte en un usuario que esté en un canal para maximizar beneficios')
-      .addUserOption(option => option.setName('usuario').setDescription('El usuario que quieres que quieres invertir.'))
-      .addIntegerOption(option =>
-         option.setName('cantidad').setDescription('La cantidad de dinero que vas a invertir. Tiene que ser más de 10 000.').setRequired(true)
+      .addSubcommand(subcommand => subcommand.setName('info').setDescription(`Información sobre el comando`))
+      .addSubcommand(subcommand => subcommand.setName('claim').setDescription(`Recoge las ganancias, arriesgando a perder dinero`))
+      .addSubcommand(subcommand =>
+         subcommand
+            .setName('new')
+            .setDescription(`Haz una nueva inversión`)
+            .addNumberOption(option => option.setName('cantidad').setDescription(`La cantidad debe ser mayor a 10 000 gramos`).setRequired(true))
+            .addMentionableOption(option =>
+               option.setName('usuario').setDescription('Usuario al que quieres realizar la inversion').setRequired(true)
+            )
       ),
 };
