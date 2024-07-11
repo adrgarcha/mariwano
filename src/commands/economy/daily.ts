@@ -28,7 +28,6 @@ module.exports = {
          if (user) {
             const lastDailyDate = user.lastDaily.toDateString();
             const currentDate = new Date().toDateString();
-
             if (lastDailyDate === currentDate) {
                interaction.editReply(`Ya has recolectado las diarias de hoy.`);
                return;
