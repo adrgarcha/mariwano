@@ -1,7 +1,9 @@
+import { Font } from 'canvacord';
 import { AttachmentBuilder, Client, GuildMember, TextChannel } from 'discord.js';
 import { GuildConfiguration } from '../../models/GuildConfiguration';
 import { GreetingsCard } from '../../utils/GreetingsCard';
-require('canvacord').Font.loadDefault();
+
+Font.loadDefault();
 
 export default async function (member: GuildMember, client: Client) {
    let guild = member.guild;

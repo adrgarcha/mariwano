@@ -1,9 +1,20 @@
-import { CommandKit } from 'commandkit';
 import { Player } from 'discord-player';
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits, Partials } from 'discord.js';
+
 import 'dotenv/config';
 import mongoose from 'mongoose';
-import path from 'path';
+import { commandHandler } from './handlers/commandHandler';
+import { eventHandler } from './handlers/eventHandler';
+import { deployCommands } from './lib/deployCommands';
+import { CustomClient } from './lib/types';
+
+let botToken = process.env.DISCORD_TEST_TOKEN!;
+let botId = process.env.CLIENT_TEST_ID!;
+
+if (process.env.NODE_ENV === 'production') {
+   botToken = process.env.DISCORD_TOKEN!;
+   botId = process.env.CLIENT_ID!;
+}
 
 (async () => {
    const client = new Client({
@@ -15,30 +26,24 @@ import path from 'path';
          GatewayIntentBits.GuildVoiceStates,
          GatewayIntentBits.MessageContent,
       ],
+      partials: [Partials.Channel],
    });
-
    const player = new Player(client);
    await player.extractors.loadDefault();
 
    player.events.on('playerStart', (queue, track) => {
-      queue.metadata.channel.send(`Reproduciendo **${track.title}**.`);
+      queue.metadata.send(`Reproduciendo **${track.title}**.`);
    });
 
-   (async () => {
-      try {
-         await mongoose.connect(process.env.MONGODB_URI!);
-         console.log('Conectado a la base de datos.');
+   await commandHandler(client as CustomClient);
+   await deployCommands(botToken, botId);
+   await eventHandler(client);
 
-         new CommandKit({
-            client,
-            commandsPath: path.join(__dirname, 'commands'),
-            eventsPath: path.join(__dirname, 'events'),
-         });
-
-         // client.login(process.env.DISCORD_TOKEN); // Despliegue
-         client.login(process.env.DISCORD_TEST_TOKEN); // Testing
-      } catch (error) {
-         console.error(`Hubo un error al conectar con la base de datos: ${error}`);
-      }
-   })();
+   try {
+      await mongoose.connect(process.env.MONGODB_URI!);
+      console.log('Conectado a la base de datos.');
+      client.login(botToken);
+   } catch (error) {
+      console.error(`Hubo un error al conectar con la base de datos: ${error}`);
+   }
 })();

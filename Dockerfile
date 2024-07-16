@@ -15,4 +15,4 @@ COPY . .
 RUN npm ci
 
 # Startup command to run the bot
-CMD ["npm", "start"]
+CMD ["npm", "run", "start:prod"]
