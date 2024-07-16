@@ -1,9 +1,9 @@
 import { REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from 'discord.js';
 import { readFiles } from '../utils/readFiles';
 
-export function deployCommands(botToken: string, botId: string) {
+export async function deployCommands(botToken: string, botId: string) {
    const commands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
-   readFiles('../commands', ({ filePath, obj: command }) => {
+   await readFiles('../commands', ({ filePath, obj: command }) => {
       if ('data' in command && 'run' in command) {
          commands.push(command.data.toJSON());
       } else {
