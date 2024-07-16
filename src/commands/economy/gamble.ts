@@ -70,7 +70,7 @@ module.exports = {
             return;
          }
 
-         const amountWon = Number((amount * (Math.random() + 0.55)).toFixed(0));
+         const amountWon = Math.floor(Number((amount * (Math.random() + 0.55)).toFixed(0)));
 
          user.balance += amountWon;
          await user.save();
