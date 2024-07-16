@@ -10,6 +10,7 @@ import {
 import fs from 'fs';
 import path from 'path';
 import { CommandProps } from '../../lib/types';
+import { fileURLToPath } from 'url';
 
 interface Command {
    data: {
@@ -27,7 +28,7 @@ const emojis: { [key: string]: string } = {
    music: '🎵',
    rpg: '⚔',
 };
-
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const formatString = (str: string) => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`;
 
 export const run = async ({ interaction }: CommandProps) => {
