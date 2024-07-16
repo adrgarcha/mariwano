@@ -35,9 +35,9 @@ if (process.env.NODE_ENV === 'production') {
       queue.metadata.send(`Reproduciendo **${track.title}**.`);
    });
 
-   commandHandler(client as CustomClient);
-   deployCommands(botToken, botId);
-   eventHandler(client);
+   await commandHandler(client as CustomClient);
+   await deployCommands(botToken, botId);
+   await eventHandler(client);
 
    try {
       await mongoose.connect(process.env.MONGODB_URI!);

@@ -2,9 +2,9 @@ import { Collection } from 'discord.js';
 import { CustomClient } from '../lib/types';
 import { readFiles } from '../utils/readFiles';
 
-export function commandHandler(client: CustomClient) {
+export async function commandHandler(client: CustomClient) {
    client.commands = new Collection();
-   readFiles('../commands', ({ filePath, obj: command }) => {
+   await readFiles('../commands', ({ filePath, obj: command }) => {
       if ('data' in command && 'run' in command) {
          client.commands.set(command.data.name, command);
       } else {
