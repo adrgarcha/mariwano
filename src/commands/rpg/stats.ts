@@ -1,7 +1,6 @@
-import { SlashCommandProps } from 'commandkit';
 import { SlashCommandBuilder } from 'discord.js';
+import { CommandProps } from '../../lib/types';
 
-module.exports = {
-   run: async ({ interaction }: SlashCommandProps) => {},
-   data: new SlashCommandBuilder().setName('stats').setDescription('Las estadísticas de tu usuario. (Comando no desarrollado)'),
-};
+export const run = async ({ interaction }: CommandProps) => {};
+
+export const data = new SlashCommandBuilder().setName('stats').setDescription('Las estadísticas de tu usuario. (Comando no desarrollado)');
