@@ -10,7 +10,7 @@ const userSchema = new Schema({
       required: true,
    },
    balance: {
-      type: BigInt,
+      type: Number,
       default: 0,
    },
    lastDaily: {
@@ -34,7 +34,7 @@ const userSchema = new Schema({
       default: '',
    },
    invested: {
-      type: BigInt,
+      type: Number,
       default: 0,
    },
    investBankFactor: {
