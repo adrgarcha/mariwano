@@ -9,8 +9,8 @@ import {
 } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
-import { CommandProps } from '../../lib/types';
 import { fileURLToPath } from 'url';
+import { CommandProps } from '../../lib/types';
 
 interface Command {
    data: {
@@ -49,7 +49,7 @@ export const run = async ({ interaction }: CommandProps) => {
          categoryCommands[`${formatString(commandFolder)}`] = [];
 
          for (const commandFile of commandFiles) {
-            const command = require(`../${commandFolder}/${commandFile}`);
+            const command = await import(`../${commandFolder}/${commandFile}`);
 
             categoryCommands[`${formatString(commandFolder)}`].push(command);
          }
