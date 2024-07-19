@@ -34,15 +34,21 @@ const userSchema = new Schema({
     default: "",
   },
   invested: {
-    type: BigInt,
+    type: Number,
+    get: (n: number) => Math.floor(n),
+    set: (n: number) => Math.floor(n),
     default: 0,
   },
   investBankFactor: {
-    type: BigInt,
+    type: Number,
+    get: (n: number) => Math.floor(n),
+    set: (n: number) => Math.floor(n),
     default: 0,
   },
   investFactor: {
-    type: BigInt,
+    type: Number,
+    get: (n: number) => Math.floor(n),
+    set: (n: number) => Math.floor(n),
     default: 0,
   },
 });
