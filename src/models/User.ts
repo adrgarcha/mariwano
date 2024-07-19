@@ -10,7 +10,9 @@ const userSchema = new Schema({
     required: true,
   },
   balance: {
-    type: BigInt,
+    type: Number,
+    get: (n: number) => Math.floor(n),
+    set: (n: number) => Math.floor(n),
     default: 0,
   },
   lastDaily: {
