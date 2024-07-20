@@ -67,12 +67,12 @@ export const run = async ({ interaction }: CommandProps) => {
         if (userBalance - user.investBankFactor > 0) {
           let ganancias = Math.round(
             user.invested +
-              (userBalance - user.investBankFactor) *
-                factorial(user.investFactor + 1) +
-              ((userBalance / user.invested) * user.investFactor * 0.5 + 1)
+              (userBalance - user.investBankFactor) +
+              factorial(user.investFactor + 1) +
+              ((userBalance / user.invested) * Math.sqrt(user.investFactor) + 1)
           );
           interaction.editReply(
-            `Has ganado ${ganancias} a causa de las ganancias del canal.\n\n` +
+            `Has generado ${ganancias} en beneficios a causa de las ganancias del canal.\n\n` +
               `${
                 user.investFactor < 0
                   ? "El canal es más rentable, pero sigue en déficit\n"
@@ -84,6 +84,7 @@ export const run = async ({ interaction }: CommandProps) => {
           user.balance += ganancias;
           targetUser.investFactor += targetUser.investFactor > 6 ? 0 : 1;
           if (user.investFactor > 6) user.investFactor = 6;
+          targetUser.balance += ganancias;
           user.investBankFactor = 0;
           user.invested = 0;
           await targetUser.save();
@@ -110,6 +111,7 @@ export const run = async ({ interaction }: CommandProps) => {
           user.balance = Math.round(user.balance);
           user.balance += Math.round(ganancias);
           targetUser.investFactor -= 2;
+          targetUser.balance -= ganancias;
           user.investBankFactor = 0;
           user.invested = 0;
 
