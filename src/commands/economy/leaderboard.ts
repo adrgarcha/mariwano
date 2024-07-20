@@ -19,7 +19,7 @@ export const run = async ({ interaction }: CommandProps) => {
          userId: id,
          guildId: interaction.guild.id,
       });
-      const balance = user?.balance;
+      const balance: BigInt = BigInt(user?.balance!);
 
       let leaderboardEmbed = new EmbedBuilder()
          .setTitle('**Top 10 usuarios con más gramos de cocaína**')
