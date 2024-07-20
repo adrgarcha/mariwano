@@ -42,7 +42,12 @@ export const run = async ({ interaction }: CommandProps) => {
       interaction.editReply(
         "Invierte en un usuario que esté en un canal. Cuanto más gramos ganéis (y tengáis), más beneficios generáis entre tú y el usuario y más rentable hacéis el canal" +
           "\n\nCuanto más rentable sea el canal, más gramos se podrán ganar. Si el canal está en déficit, no podréis ganar nada (aunque generéis beneficios) pero podréis sacar al canal del déficit" +
-          "\n\nPara recargar los beneficios/pérdidas pon ```/invertir claim```pero antes debes hacer una inversión con ```/invertir new```"
+          "\n\nPara recargar los beneficios/pérdidas pon ```/invertir claim```pero antes debes hacer una inversión con ```/invertir new```" +
+          `\n-# <@${user!.userId}> : investFactor = ${
+            targetUser!.investFactor
+          }, invested = ${user!.invested}, investBankFactor = ${
+            user!.investBankFactor
+          }`
       );
       return;
     }
@@ -64,22 +69,24 @@ export const run = async ({ interaction }: CommandProps) => {
             user.invested +
               (userBalance - user.investBankFactor) *
                 factorial(user.investFactor + 1) +
-              ((userBalance / user.invested) * user.investFactor + 1)
+              ((userBalance / user.invested) * user.investFactor * 0.5 + 1)
           );
           interaction.editReply(
             `Has ganado ${ganancias} a causa de las ganancias del canal.\n\n` +
               `${
                 user.investFactor < 0
-                  ? "El canal es más rentable, pero sigue en déficit"
-                  : "El canal ahora es más rentable"
-              }`
+                  ? "El canal es más rentable, pero sigue en déficit\n"
+                  : "El canal ahora es más rentable\n"
+              }` +
+              `-# <@${user.userId}> : investFactor = ${targetUser.investFactor}, invested = ${user.invested}, investBankFactor = ${user.investBankFactor}`
           );
           user.balance = Math.round(user.balance);
           user.balance += ganancias;
-          user.investFactor += user.investFactor > 6 ? 0 : 1;
+          targetUser.investFactor += targetUser.investFactor > 6 ? 0 : 1;
           if (user.investFactor > 6) user.investFactor = 6;
           user.investBankFactor = 0;
           user.invested = 0;
+          await targetUser.save();
 
           await user.save();
           return;
@@ -95,17 +102,19 @@ export const run = async ({ interaction }: CommandProps) => {
             } a causa de las pérdidas del canal.\n\n` +
               `${
                 user.investFactor < 0
-                  ? "El canal está ahora en déficit"
-                  : "El canal ahora es menos rentable, pero no está en déficit"
-              }`
+                  ? "El canal está ahora en déficit\n"
+                  : "El canal ahora es menos rentable, pero no está en déficit\n"
+              }` +
+              `-# <@${user.userId}> : investFactor = ${targetUser.investFactor}, invested = ${user.invested}, investBankFactor = ${user.investBankFactor}`
           );
           user.balance = Math.round(user.balance);
           user.balance += Math.round(ganancias);
-          user.investFactor -= 2;
+          targetUser.investFactor -= 2;
           user.investBankFactor = 0;
           user.invested = 0;
 
           await user.save();
+          await targetUser.save();
           return;
         }
       }
@@ -128,9 +137,6 @@ export const run = async ({ interaction }: CommandProps) => {
 
     user.balance -= cantidad;
     await user.save();
-
-    targetUser.invested += cantidad;
-    await targetUser.save();
 
     user.investBankFactor = user.balance;
     user.invested = cantidad;
