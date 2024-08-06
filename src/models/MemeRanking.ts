@@ -15,5 +15,4 @@ const memeSchema = new Schema({
     required: true,
   },
 });
-
 export const MemeConfiguration = model("MemeConfiguration", memeSchema);
