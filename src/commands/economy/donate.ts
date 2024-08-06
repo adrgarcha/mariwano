@@ -89,4 +89,4 @@ export const data = new SlashCommandBuilder()
    .setName('donate')
    .setDescription('Donale a un miembro pobre asqueroso.')
    .addMentionableOption(option => option.setName('user').setDescription('El pobre asqueroso al que le quieres donar.').setRequired(true))
-   .addNumberOption(option => option.setName('amount').setDescription('La cantidad que le quieres donar al pobre asqueroso.').setRequired(true));
+   .addIntegerOption(option => option.setName('amount').setDescription('La cantidad que le quieres donar al pobre asqueroso.').setRequired(true));

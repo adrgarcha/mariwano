@@ -138,6 +138,6 @@ export const data = new SlashCommandBuilder()
       subcommand
          .setName('new')
          .setDescription(`Haz una nueva inversión`)
-         .addNumberOption(option => option.setName('cantidad').setDescription(`La cantidad debe ser mayor a 10 000 gramos`).setRequired(true))
+         .addIntegerOption(option => option.setName('cantidad').setDescription(`La cantidad debe ser mayor a 10 000 gramos`).setRequired(true))
          .addMentionableOption(option => option.setName('usuario').setDescription('Usuario al que quieres realizar la inversion').setRequired(true))
    );
