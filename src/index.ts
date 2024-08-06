@@ -1,4 +1,3 @@
-
 import { Player } from 'discord-player';
 import { Client, GatewayIntentBits, Partials } from 'discord.js';
 
@@ -18,7 +17,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 (async () => {
-   
    const client = new Client({
       intents: [
          GatewayIntentBits.Guilds,
@@ -33,16 +31,15 @@ if (process.env.NODE_ENV === 'production') {
    });
    const player = new Player(client);
    await player.extractors.loadDefault();
-   
+
    player.events.on('playerStart', (queue, track) => {
       queue.metadata.send(`Reproduciendo **${track.title}**.`);
    });
 
    await commandHandler(client as CustomClient);
-
    await deployCommands(botToken, botId);
    await eventHandler(client);
-   
+
    try {
       await mongoose.connect(process.env.MONGODB_URI!);
       console.log('Conectado a la base de datos.');
