@@ -77,7 +77,7 @@ export const run = async ({ interaction }: CommandProps) => {
           user.balance += ganancias;
           targetUser.investFactor += targetUser.investFactor > 6 ? 0 : 1;
           if (user.investFactor > 6) user.investFactor = 6;
-          targetUser.balance += ganancias;
+          targetUser.balance += ganancias*0.1;
           user.investBankFactor = 0;
           user.invested = 0;
           await targetUser.save();
@@ -94,7 +94,7 @@ export const run = async ({ interaction }: CommandProps) => {
                user.balance = Math.round(user.balance);
                user.balance += Math.round(ganancias);
                targetUser.investFactor -= 2;
-               targetUser.balance -= ganancias;
+               targetUser.balance -= ganancias*0.1;
                user.investBankFactor = 0;
                user.invested = 0;
 
