@@ -69,7 +69,7 @@ export const run = async ({ interaction }: CommandProps) => {
             user.invested +
               (userBalance - user.investBankFactor) +
               factorial(user.investFactor + 1) +
-              ((userBalance / user.invested) * Math.sqrt(user.investFactor) + 1)
+              ((userBalance / user.invested)*0.5)
           );
           interaction.editReply(
             `Has generado ${ganancias} en beneficios a causa de las ganancias del canal.\n\n` +
