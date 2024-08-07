@@ -1,18 +1,18 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
 
-const memeSchema = new Schema({
-  guildId: {
-    type: String,
-    required: true,
-  },
-  rankingChannelId: {
-    type: String,
-    required: true,
-  },
-  lastRanking: {
-    type: Date,
-    default: new Date(),
-    required: true,
-  },
+const memeRankingSchema = new Schema({
+   guildId: {
+      type: String,
+      required: true,
+   },
+   rankingChannelId: {
+      type: String,
+      required: true,
+   },
+   lastRanking: {
+      type: Date,
+      default: new Date(),
+      required: true,
+   },
 });
-export const MemeConfiguration = model("MemeConfiguration", memeSchema);
+export const MemeRanking = model('MemeRanking', memeRankingSchema);
