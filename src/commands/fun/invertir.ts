@@ -18,7 +18,7 @@ export const run = async ({ interaction }: CommandProps) => {
       return;
    }
 
-   const cantidad = isNaN(interaction.options.get('cantidad')?.value as number) ? 0 : (interaction.options.get('cantidad')?.value as number);
+   const cantidad = isNaN(interaction.options.getInteger('cantidad')!) ? 0 : interaction.options.getInteger('cantidad')!;
    const targetUserId = interaction.options.get('usuario')?.value || interaction.member?.user.id;
    const subcomando = interaction.options.getSubcommand();
    try {

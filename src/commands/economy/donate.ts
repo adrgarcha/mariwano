@@ -13,7 +13,7 @@ export const run = async ({ interaction }: CommandProps) => {
 
    try {
       const receiveUser = interaction.options.getMentionable('user') as GuildMember;
-      const donateAmount = interaction.options.getNumber('amount');
+      const donateAmount = interaction.options.getInteger('amount');
 
       const user = await User.findOne({
          userId: interaction.user.id,
