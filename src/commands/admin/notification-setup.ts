@@ -1,9 +1,7 @@
 import { ChannelType, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
-import Parser from 'rss-parser';
 import { CommandProps } from '../../lib/types';
 import { NotificationConfig } from '../../models/NotificationConfig';
-
-const parser = new Parser();
+import { fetchYoutubeChannelUploads } from '../../utils/fetchYoutube';
 
 export const run = async ({ interaction }: CommandProps) => {
    if (!interaction.guild) {
@@ -19,7 +17,7 @@ export const run = async ({ interaction }: CommandProps) => {
    try {
       await interaction.deferReply({ ephemeral: true });
 
-      const youtubeChannelId = interaction.options.getString('youtube-channel-id');
+      const youtubeChannelId = interaction.options.getString('youtube-channel-id')!;
       const notificationChannel = interaction.options.getChannel('notification-channel');
       const customMessage = interaction.options.getString('custom-message');
 
@@ -33,14 +31,11 @@ export const run = async ({ interaction }: CommandProps) => {
          return;
       }
 
-      const youtubeRssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${youtubeChannelId}`;
-      const feed = await parser.parseURL(youtubeRssUrl).catch(error => {
+      const uploads = await fetchYoutubeChannelUploads(youtubeChannelId).catch(() => {
          interaction.editReply('Hubo un error al obtener el canal. Asegúrate de que el ID del canal sea correcto.');
       });
 
-      if (!feed) return;
-
-      const channelName = feed.title;
+      if (!uploads?.length) return;
 
       const notificationConfig = new NotificationConfig({
          guildId: interaction.guild.id,
@@ -50,15 +45,13 @@ export const run = async ({ interaction }: CommandProps) => {
          lastCheckedVideo: null,
       });
 
-      if (feed.items.length) {
-         const lastVideo = feed.items[0];
+      const lastVideo = uploads[0];
+      notificationConfig.lastCheckedVideo = {
+         videoId: lastVideo.contentDetails?.videoId!,
+         publishedDate: new Date(lastVideo.contentDetails?.videoPublishedAt!),
+      };
 
-         notificationConfig.lastCheckedVideo = {
-            videoId: lastVideo.id.split(':')[2],
-            publishedDate: new Date(lastVideo.pubDate!),
-         };
-      }
-
+      const channelName = lastVideo.snippet?.channelTitle;
       notificationConfig
          .save()
          .then(() => {
