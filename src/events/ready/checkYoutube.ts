@@ -1,8 +1,6 @@
-import Parser from 'rss-parser';
-import { NotificationConfig } from '../../models/NotificationConfig';
 import { Client, TextChannel } from 'discord.js';
-
-const parser = new Parser();
+import { NotificationConfig } from '../../models/NotificationConfig';
+import { fetchYoutubeChannelUploads } from '../../utils/fetchYoutube';
 
 export default function (client: Client) {
    const checkYoutube = async () => {
@@ -10,18 +8,21 @@ export default function (client: Client) {
          const notificationConfigs = await NotificationConfig.find();
 
          for (const notificationConfig of notificationConfigs) {
-            const youtubeRssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${notificationConfig.youtubeChannelId}`;
-            const feed = await parser.parseURL(youtubeRssUrl).catch(error => console.error(`Hubo un error al obtener el feed de YouTube: ${error}`));
+            const uploads = await fetchYoutubeChannelUploads(notificationConfig.youtubeChannelId);
 
-            if (!feed?.items.length) continue;
+            if (!uploads?.length) continue;
 
-            const lastVideo = feed.items[0];
+            const lastVideo = uploads[0];
             const lastCheckedVideo = notificationConfig.lastCheckedVideo;
 
-            if (
-               !lastCheckedVideo ||
-               (lastVideo.id.split(':')[2] !== lastCheckedVideo.videoId && new Date(lastVideo.pubDate!) > new Date(lastCheckedVideo.publishedDate))
-            ) {
+            const lastVideoId = lastVideo.contentDetails?.videoId!;
+            const lastVideoPubDate = new Date(lastVideo.contentDetails?.videoPublishedAt!);
+            const lastVideoLink = `https://www.youtube.com/watch?v=${lastVideoId}`;
+            const lastVideoTitle = lastVideo.snippet?.title!;
+            const lastVideoChannelName = lastVideo.snippet?.channelTitle!;
+            const lastVideoChannelUrl = `https://www.youtube.com/channel/${lastVideo.snippet?.channelId}`;
+
+            if (!lastCheckedVideo || (lastVideoId !== lastCheckedVideo.videoId && lastVideoPubDate > new Date(lastCheckedVideo.publishedDate))) {
                const targetGuild = await client.guilds.fetch(notificationConfig.guildId);
 
                if (!targetGuild) {
@@ -37,8 +38,8 @@ export default function (client: Client) {
                }
 
                notificationConfig.lastCheckedVideo = {
-                  videoId: lastVideo.id.split(':')[2],
-                  publishedDate: new Date(lastVideo.pubDate!),
+                  videoId: lastVideoId,
+                  publishedDate: lastVideoPubDate,
                };
 
                notificationConfig
@@ -46,14 +47,14 @@ export default function (client: Client) {
                   .then(async () => {
                      const targetMessage =
                         notificationConfig.customMessage
-                           ?.replace('{videoUrl}', lastVideo.link!)
-                           ?.replace('{videoTitle}', lastVideo.title!)
-                           ?.replace('{channelName}', feed.title!)
-                           ?.replace('{channelUrl}', feed.link!) || `Nuevo video de **${feed.title}**: ${lastVideo.link}`;
+                           ?.replace('{videoUrl}', lastVideoLink)
+                           ?.replace('{videoTitle}', lastVideoTitle)
+                           ?.replace('{channelName}', lastVideoChannelName)
+                           ?.replace('{channelUrl}', lastVideoChannelUrl) || `Nuevo video de **${lastVideoChannelName}**: ${lastVideoLink}`;
 
                      await targetChannel.send(targetMessage);
                   })
-                  .catch(error => null);
+                  .catch(error => console.error(`Hubo un error al guardar la configuración de notificación: ${error}`));
             }
          }
       } catch (error) {
