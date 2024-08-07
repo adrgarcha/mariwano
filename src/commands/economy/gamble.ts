@@ -12,7 +12,7 @@ export const run = async ({ interaction }: CommandProps) => {
          return;
       }
 
-      const amount = interaction.options.get('amount')!.value;
+      const amount = interaction.options.getInteger('amount');
 
       if (!amount) {
          interaction.reply({
@@ -83,4 +83,4 @@ export const run = async ({ interaction }: CommandProps) => {
 export const data = new SlashCommandBuilder()
    .setName('gamble')
    .setDescription('Conviértete en ludópata.')
-   .addNumberOption(option => option.setName('amount').setDescription('La cantidad que vas a apostar.').setRequired(true));
+   .addIntegerOption(option => option.setName('amount').setDescription('La cantidad que vas a apostar.').setRequired(true));
