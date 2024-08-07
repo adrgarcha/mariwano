@@ -34,7 +34,7 @@ export const run = async ({ interaction }: CommandProps) => {
 
       const memberIndex = members?.findIndex(member => member.userId === id);
 
-      if (!memberIndex) {
+      if (memberIndex === undefined || memberIndex === -1) {
          await interaction.editReply({
             content: 'No estás en el ranking. Prueba a utilizar el comando /daily.',
          });

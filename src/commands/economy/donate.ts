@@ -13,7 +13,7 @@ export const run = async ({ interaction }: CommandProps) => {
 
    try {
       const receiveUser = interaction.options.getMentionable('user') as GuildMember;
-      const donateAmount = interaction.options.getNumber('amount');
+      const donateAmount = interaction.options.getInteger('amount');
 
       const user = await User.findOne({
          userId: interaction.user.id,
@@ -89,4 +89,4 @@ export const data = new SlashCommandBuilder()
    .setName('donate')
    .setDescription('Donale a un miembro pobre asqueroso.')
    .addMentionableOption(option => option.setName('user').setDescription('El pobre asqueroso al que le quieres donar.').setRequired(true))
-   .addNumberOption(option => option.setName('amount').setDescription('La cantidad que le quieres donar al pobre asqueroso.').setRequired(true));
+   .addIntegerOption(option => option.setName('amount').setDescription('La cantidad que le quieres donar al pobre asqueroso.').setRequired(true));

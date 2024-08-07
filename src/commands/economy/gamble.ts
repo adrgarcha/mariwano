@@ -12,7 +12,7 @@ export const run = async ({ interaction }: CommandProps) => {
          return;
       }
 
-      const amount = interaction.options.get('amount')!.value;
+      const amount = interaction.options.getInteger('amount');
 
       if (!amount) {
          interaction.reply({
@@ -57,7 +57,7 @@ export const run = async ({ interaction }: CommandProps) => {
          return;
       }
 
-      const hasWin = Math.random() > 1 - Math.random();
+      const hasWin = Math.random() > Math.random();
 
       if (!hasWin) {
          user.balance -= amount;
@@ -69,12 +69,12 @@ export const run = async ({ interaction }: CommandProps) => {
          return;
       }
 
-      const amountWon = Math.round(3 * (amount * (Math.random() + 0.55)));
+      const amountWon = Math.round(amount * (Math.random() + 0.95));
 
       user.balance += amountWon;
       await user.save();
 
-      interaction.reply(`🎉 Has ganado ${amountWon} 🎊.\nAhora mismo tienes ${user.balance} gramos.`);
+      interaction.reply(`🎉 ¡HAS GANADO ${amountWon} 🎊!\nAhora mismo tienes ${user.balance} gramos.`);
    } catch (error) {
       console.error(`Ha ocurrido un error con el comando 'gamble': ${error}`);
    }
@@ -83,4 +83,4 @@ export const run = async ({ interaction }: CommandProps) => {
 export const data = new SlashCommandBuilder()
    .setName('gamble')
    .setDescription('Conviértete en ludópata.')
-   .addNumberOption(option => option.setName('amount').setDescription('La cantidad que vas a apostar.').setRequired(true));
+   .addIntegerOption(option => option.setName('amount').setDescription('La cantidad que vas a apostar.').setRequired(true));

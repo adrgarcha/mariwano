@@ -9,6 +9,7 @@ import {
 } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { CommandProps } from '../../lib/types';
 
 interface Command {
@@ -27,7 +28,7 @@ const emojis: { [key: string]: string } = {
    music: '🎵',
    rpg: '⚔',
 };
-
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const formatString = (str: string) => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`;
 
 export const run = async ({ interaction }: CommandProps) => {
@@ -48,7 +49,7 @@ export const run = async ({ interaction }: CommandProps) => {
          categoryCommands[`${formatString(commandFolder)}`] = [];
 
          for (const commandFile of commandFiles) {
-            const command = require(`../${commandFolder}/${commandFile}`);
+            const command = await import(`../${commandFolder}/${commandFile}`);
 
             categoryCommands[`${formatString(commandFolder)}`].push(command);
          }
