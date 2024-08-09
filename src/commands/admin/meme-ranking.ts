@@ -16,46 +16,36 @@ export const run = async ({ interaction }: CommandProps) => {
    try {
       await interaction.deferReply({ ephemeral: true });
 
-      let memeGuildConfiguration = await MemeRanking.findOne({
+      const channel = interaction.options.getChannel('canal');
+      const subcommand = interaction.options.getSubcommand();
+
+      const channelExists = await MemeRanking.exists({
          guildId: interaction.guildId,
       });
 
-      if (!memeGuildConfiguration) {
-         memeGuildConfiguration = new MemeRanking({
-            guildId: interaction.guildId,
-         });
-      }
-
-      const channel = interaction.options.getChannel('canal');
-      const subcommand = interaction.options.getSubcommand();
       switch (subcommand) {
          case 'setup':
-            if (memeGuildConfiguration.rankingChannelId) {
+            if (channelExists) {
                await interaction.editReply(`Ya hay un canal de ranking de memes configurado.`);
                return;
             }
 
-            memeGuildConfiguration = new MemeRanking({
+            await MemeRanking.create({
                guildId: interaction.guildId,
                rankingChannelId: channel?.id,
-               lastRanking: new Date().setMonth(9),
             });
-
-            await memeGuildConfiguration.save();
 
             await interaction.editReply(`Se ha agregado ${channel} como canal de memes.`);
             return;
          case 'disable':
-            if (!memeGuildConfiguration.rankingChannelId) {
-               await interaction.editReply(`${channel} no es un canal de ranking de memes.`);
+            if (!channelExists) {
+               await interaction.editReply(`No se ha configurado un canal de ranking de memes.`);
                return;
             }
-            const memeConfigs = await MemeRanking.find();
-            for (const memeConfig of memeConfigs) {
-               await memeConfig.deleteOne();
-            }
 
-            await memeGuildConfiguration.deleteOne();
+            await MemeRanking.findOneAndDelete({
+               guildId: interaction.guildId,
+            });
 
             await interaction.editReply(`Se ha eliminado ${channel} como canal de ranking de memes.`);
             return;

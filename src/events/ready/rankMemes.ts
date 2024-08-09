@@ -1,11 +1,9 @@
 import { Client, EmbedBuilder, Message, TextChannel } from 'discord.js';
 import { MemeRanking } from '../../models/MemeRanking';
+import { isDateAfterDays, isDateBeforeDays } from '../../utils/date';
 
-interface MemeEntry {
-   user: string;
-   meme: string;
-   value: number;
-}
+// const rankingInterval = 7; // 7 days
+const rankingInterval = 60 / (24 * 3600); // 60 seconds
 
 export default function (client: Client) {
    const checkRanking = async () => {
@@ -15,78 +13,18 @@ export default function (client: Client) {
             const targetGuild = await client.guilds.fetch(memeRanking?.guildId);
             if (!targetGuild) {
                console.error(`No se ha encontrado el servidor de memes para el ranking: ${memeRanking}`);
-               return;
+               continue;
             }
 
             const targetChannel = (await targetGuild.channels.fetch(memeRanking?.rankingChannelId)) as TextChannel;
             if (!targetChannel) {
                console.error(`No se ha encontrado el canal de ranking de memes: ${targetChannel}`);
-               return;
+               continue;
             }
 
-            const lastRanking = memeRanking?.lastRanking;
-            const mapUserMemes = new Map<string, Map<string, number>>();
-
-            if (lastRanking.getMonth() === 6) {
-               const collector = targetChannel.createMessageCollector({
-                  filter: (messages: Message) => messages.attachments.size > 0,
-                  time: 604800000,
-               });
-
-               collector.on('collect', message => {
-                  const userResponse = message.url;
-                  const userMeme = new Map<string, number>();
-                  const collectorReactions = message.createReactionCollector({
-                     filter: () => true,
-                     time: 604800000,
-                  });
-
-                  collectorReactions.on('collect', (reactions, user) => {
-                     userMeme.set(userResponse!, reactions.count);
-                     if (mapUserMemes.has(user.id)) {
-                        mapUserMemes.get(user.id)?.set(userResponse!, reactions.count);
-                     } else {
-                        mapUserMemes.set(user.id, userMeme);
-                     }
-                  });
-               });
-
-               collector.on('end', () => {
-                  let count = 0;
-                  mapUserMemes.forEach(userMemes => {
-                     count += userMemes.size;
-                  });
-
-                  if (count < 3) {
-                     targetChannel.send(
-                        `# 🏆**LEADERBOARD**🏆` +
-                           `\n\n### No han habido los suficientes memes para seleccionar un ganador, por lo tanto nadie recibirá el premio de 10 000 gramos.`
-                     );
-                     return;
-                  }
-
-                  let memesArray: MemeEntry[] = [];
-                  mapUserMemes.forEach((userMemes, user) => {
-                     userMemes.forEach((value, meme) => {
-                        memesArray.push({ user, meme, value });
-                     });
-                  });
-
-                  memesArray.sort((a, b) => b.value - a.value);
-                  const leaderboardEmbed = new EmbedBuilder()
-                     .setTitle(` 🏆**LEADERBOARD**🏆`)
-                     .setColor(0x45d6fd)
-                     .setDescription(
-                        `## 🥇TOP 1: <@${memesArray[0].user}> con ${memesArray[0].value} reacciones: \n${memesArray[0].meme}` +
-                           `\n### 🥈TOP 2: <@${memesArray[1].user}> con ${memesArray[1].value} reacciones: \n${memesArray[1].meme}` +
-                           `\n\n🥉**TOP 3: <@${memesArray[2].user}> con ${memesArray[2].value} reacciones:** \n${memesArray[2].meme}`
-                     )
-                     .setFooter({
-                        text: `Enhorabuena al ganador del top 1 por haber ganado el premio de 10 000 gramos`,
-                     });
-                  targetChannel.send({ embeds: [leaderboardEmbed] });
-                  mapUserMemes.clear();
-               });
+            if (isDateAfterDays(memeRanking.lastRanking, rankingInterval)) {
+               await collectMessages(targetChannel);
+               await memeRanking.updateOne({ lastRanking: new Date() });
             }
          }
       } catch (error) {
@@ -95,5 +33,42 @@ export default function (client: Client) {
    };
 
    checkRanking();
-   setInterval(checkRanking, 604800000);
+   setInterval(checkRanking, 30000);
+}
+
+async function collectMessages(targetChannel: TextChannel) {
+   const memeMessages = new Array<Message>();
+   const leaderboardEmbed = new EmbedBuilder().setTitle('🏆 **LEADERBOARD** 🏆').setColor(0x45d6fd);
+
+   try {
+      const messages = await targetChannel.messages.fetch();
+      messages
+         .filter(message => !message.author.bot && message.attachments.size > 0 && isDateBeforeDays(message.createdAt, rankingInterval))
+         .forEach(message => memeMessages.push(message));
+   } catch (error) {
+      console.error(`Hubo un error al recopilar los mensajes de memes: ${error}`);
+      return;
+   }
+
+   if (memeMessages.length < 3) {
+      leaderboardEmbed.setDescription('No se han enviado suficientes memes, nadie recibirá el premio de 10.000 gramos.');
+      targetChannel.send({ embeds: [leaderboardEmbed] });
+      return;
+   }
+
+   memeMessages.sort((a, b) => b.reactions.cache.size - a.reactions.cache.size);
+   const firstWinner = memeMessages[0];
+   const secondWinner = memeMessages[1];
+   const thirdWinner = memeMessages[2];
+
+   leaderboardEmbed
+      .setDescription(
+         `🥇TOP 1: ${firstWinner.author} con ${firstWinner.reactions.cache.size} reacciones: ${firstWinner.url}` +
+            `\n🥈TOP 2: ${secondWinner.author} con ${secondWinner.reactions.cache.size} reacciones: ${secondWinner.url}` +
+            `\n🥉TOP 3: ${thirdWinner.author} con ${thirdWinner.reactions.cache.size} reacciones: ${thirdWinner.url}`
+      )
+      .setFooter({
+         text: 'Enhorabuena al ganador del top 1 por haber ganado el premio de 10.000 gramos',
+      });
+   targetChannel.send({ embeds: [leaderboardEmbed] });
 }
