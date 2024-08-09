@@ -25,8 +25,9 @@ if (process.env.NODE_ENV === 'production') {
          GatewayIntentBits.GuildPresences,
          GatewayIntentBits.GuildVoiceStates,
          GatewayIntentBits.MessageContent,
+         GatewayIntentBits.GuildMessageReactions
       ],
-      partials: [Partials.Channel],
+      partials: [Partials.Message, Partials.Channel, Partials.Reaction],
    });
    const player = new Player(client);
    await player.extractors.loadDefault();
