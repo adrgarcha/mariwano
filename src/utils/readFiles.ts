@@ -19,7 +19,7 @@ export async function readFiles(rootPath: string, callback: ({ folderName, fileP
       const childPath = path.join(foldersPath, folder);
       const files = fs.readdirSync(childPath).filter((file: string) => file.endsWith('.ts'));
       for (const file of files) {
-         const filePath = path.join(childPath, file).replace('C:','file:///C:');
+         const filePath = path.join(childPath, file).replace('C:', 'file:///C:');
          const obj = await import(filePath);
          callback({ folderName: folder, filePath, obj });
       }
