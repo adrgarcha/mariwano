@@ -1,9 +1,9 @@
-import { Client, EmbedBuilder, Message, TextChannel } from 'discord.js';
+import { Client, EmbedBuilder, Message, TextChannel, ChatInputCommandInteraction } from 'discord.js';
 import { MemeRanking } from '../../models/MemeRanking';
 import { isDateAfterDays, isDateBeforeDays } from '../../utils/date';
+import { User } from '../../models/User';
 
-// const rankingInterval = 7; // 7 days
-const rankingInterval = 60 / (24 * 3600); // 60 seconds
+const rankingInterval = 7; // 7 days
 
 export default function (client: Client) {
    const checkRanking = async () => {
@@ -68,7 +68,33 @@ async function collectMessages(targetChannel: TextChannel) {
             `\n🥉TOP 3: ${thirdWinner.author} con ${thirdWinner.reactions.cache.size} reacciones: ${thirdWinner.url}`
       )
       .setFooter({
-         text: 'Enhorabuena al ganador del top 1 por haber ganado el premio de 10.000 gramos',
+         text: `Enhorabuena al ganador del top 1 por haber ganado el premio de ${
+            firstWinner.author == secondWinner.author && secondWinner.author == thirdWinner.author ? '5.000' : '10.000'
+         } gramos`,
       });
+
+   let queryFirstWinner = {
+      userId: firstWinner.author.id,
+      guildId: targetChannel.id,
+   };
+
+   let firstWinnerUser = await User.findOne(queryFirstWinner);
+
+   if (firstWinnerUser) {
+      if (firstWinner.author == secondWinner.author && secondWinner.author == thirdWinner.author) {
+         firstWinnerUser.balance += 5000;
+      } else {
+         firstWinnerUser.balance += 10000;
+      }
+      firstWinnerUser.save();
+   } else {
+      firstWinnerUser = new User({
+         ...queryFirstWinner,
+      });
+      targetChannel.send(
+         'No hay ningún usuario registrado en la base de datos como ' + firstWinner.author + '. Se procederá a no ingresar ninguna cantidad.'
+      );
+   }
+
    targetChannel.send({ embeds: [leaderboardEmbed] });
 }
