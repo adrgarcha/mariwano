@@ -1,9 +1,10 @@
-import { Client, EmbedBuilder, Message, TextChannel, ChatInputCommandInteraction } from 'discord.js';
+import { Client, EmbedBuilder, Message, TextChannel } from 'discord.js';
 import { MemeRanking } from '../../models/MemeRanking';
-import { isDateAfterDays, isDateBeforeDays } from '../../utils/date';
 import { User } from '../../models/User';
+import { isDateAfterDays, isDateBeforeDays } from '../../utils/date';
 
-const rankingInterval = 7; // 7 days
+const rankingInterval = process.env.NODE_ENV === 'production' ? 7 : 60 / (24 * 3600); // 7 days in prod | 30 seconds in dev
+const checkRankingInterval = process.env.NODE_ENV === 'production' ? 1000 * 60 * 60 : 1000 * 10; // 1 hour in prod | 10 seconds in dev
 
 export default function (client: Client) {
    const checkRanking = async () => {
@@ -33,7 +34,7 @@ export default function (client: Client) {
    };
 
    checkRanking();
-   setInterval(checkRanking, 30000);
+   setInterval(checkRanking, checkRankingInterval);
 }
 
 async function collectMessages(targetChannel: TextChannel) {
@@ -73,28 +74,25 @@ async function collectMessages(targetChannel: TextChannel) {
          } gramos`,
       });
 
-   let queryFirstWinner = {
+   const queryFirstWinner = {
       userId: firstWinner.author.id,
-      guildId: targetChannel.id,
+      guildId: targetChannel.guild.id,
    };
 
    let firstWinnerUser = await User.findOne(queryFirstWinner);
 
-   if (firstWinnerUser) {
-      if (firstWinner.author == secondWinner.author && secondWinner.author == thirdWinner.author) {
-         firstWinnerUser.balance += 5000;
-      } else {
-         firstWinnerUser.balance += 10000;
-      }
-      firstWinnerUser.save();
-   } else {
+   if (!firstWinnerUser) {
       firstWinnerUser = new User({
          ...queryFirstWinner,
       });
-      targetChannel.send(
-         'No hay ningún usuario registrado en la base de datos como ' + firstWinner.author + '. Se procederá a no ingresar ninguna cantidad.'
-      );
    }
+
+   if (firstWinner.author == secondWinner.author && secondWinner.author == thirdWinner.author) {
+      firstWinnerUser.balance += 5000;
+   } else {
+      firstWinnerUser.balance += 10000;
+   }
+   firstWinnerUser.save();
 
    targetChannel.send({ embeds: [leaderboardEmbed] });
 }
