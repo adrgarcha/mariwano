@@ -1,11 +1,17 @@
 import Background from '@/components/background';
 import CustomButton from '@/components/custom-button';
 import { Handshake } from 'lucide-react';
+import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
 const discordServerImg = 'https://cdn.discordapp.com/icons/305023221546352640/a_0bef830ae07176f016d4f1c35b931851.gif?size=128';
 const discordServerLink = 'https://discord.gg/4cC2zBVA8e';
+
+export const metadata: Metadata = {
+   title: 'Comunidad | Mariwano',
+   description: 'La página del servidor de Discord al que pertenece Mariwano.',
+};
 
 export default function Community() {
    return (

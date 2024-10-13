@@ -1,3 +1,10 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+   title: 'Comandos | Mariwano',
+   description: 'Información sobre los comandos que puedes usar con Mariwano.',
+};
+
 export default function Commands() {
    return (
       <div className="flex flex-col items-center justify-center gap-y-4 w-full h-full">

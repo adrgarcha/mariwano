@@ -1,4 +1,10 @@
 import Command from '@/components/command';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+   title: 'Comandos de música | Mariwano',
+   description: 'Información sobre los comandos para reproducir música de Mariwano.',
+};
 
 export default function Music() {
    return (

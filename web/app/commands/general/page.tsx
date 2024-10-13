@@ -1,4 +1,10 @@
 import Command from '@/components/command';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+   title: 'Comandos generales | Mariwano',
+   description: 'Información sobre los comandos de propósito general de Mariwano.',
+};
 
 export default function General() {
    return (

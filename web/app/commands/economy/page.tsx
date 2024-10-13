@@ -1,4 +1,10 @@
 import Command from '@/components/command';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+   title: 'Comandos de economía | Mariwano',
+   description: 'Información sobre los comandos para gestionar la economía del servidor de Mariwano.',
+};
 
 export default function Economy() {
    return (

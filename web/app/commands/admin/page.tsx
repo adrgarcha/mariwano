@@ -1,4 +1,10 @@
 import Command from '@/components/command';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+   title: 'Comandos de administración | Mariwano',
+   description: 'Información sobre los comandos de administración de Mariwano.',
+};
 
 export default function Admin() {
    return (

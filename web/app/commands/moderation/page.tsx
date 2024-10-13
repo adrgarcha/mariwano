@@ -1,4 +1,10 @@
 import Command from '@/components/command';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+   title: 'Comandos de moderación | Mariwano',
+   description: 'Información sobre los comandos destinados a moderar el servidor de Mariwano.',
+};
 
 export default function Moderation() {
    return (

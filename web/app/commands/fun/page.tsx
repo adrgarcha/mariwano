@@ -1,4 +1,10 @@
 import Command from '@/components/command';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+   title: 'Comandos divertidos | Mariwano',
+   description: 'Información sobre los comandos más divertidos que tiene Mariwano.',
+};
 
 export default function Fun() {
    return (
