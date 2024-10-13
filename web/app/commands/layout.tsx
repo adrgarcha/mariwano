@@ -1,0 +1,63 @@
+import { AudioLines, CircleDollarSign, Cog, Gavel, Globe2, PartyPopper } from 'lucide-react';
+import Link from 'next/link';
+
+const categories = [
+   {
+      id: 1,
+      name: 'General',
+      href: '/commands/general',
+      icon: <Globe2 />,
+   },
+   {
+      id: 2,
+      name: 'Administración',
+      href: '/commands/admin',
+      icon: <Cog />,
+   },
+   {
+      id: 3,
+      name: 'Moderación',
+      href: '/commands/moderation',
+      icon: <Gavel />,
+   },
+   {
+      id: 4,
+      name: 'Economía',
+      href: '/commands/economy',
+      icon: <CircleDollarSign />,
+   },
+   {
+      id: 5,
+      name: 'Diversión',
+      href: '/commands/fun',
+      icon: <PartyPopper />,
+   },
+   {
+      id: 6,
+      name: 'Música',
+      href: '/commands/music',
+      icon: <AudioLines />,
+   },
+];
+
+export default function CommandsLayout({ children }: { children: React.ReactNode }) {
+   return (
+      <div className="h-full bg-slate-950">
+         <div className="flex pt-12 h-full">
+            <aside className="h-full bg-slate-900">
+               <ul className="px-5 py-1">
+                  {categories.map(category => (
+                     <li key={category.id} className="my-4 px-3 py-1 rounded-lg hover:bg-indigo-900 transition-colors">
+                        <Link href={category.href} className="flex items-center gap-x-4">
+                           {category.icon}
+                           <p className="font-semibold text-lg">{category.name}</p>
+                        </Link>
+                     </li>
+                  ))}
+               </ul>
+            </aside>
+            {children}
+         </div>
+      </div>
+   );
+}
