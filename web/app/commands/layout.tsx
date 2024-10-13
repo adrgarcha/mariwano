@@ -1,5 +1,9 @@
+'use client';
+
+import { cn } from '@/lib/utils';
 import { AudioLines, CircleDollarSign, Cog, Gavel, Globe2, PartyPopper } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const categories = [
    {
@@ -41,13 +45,19 @@ const categories = [
 ];
 
 export default function CommandsLayout({ children }: { children: React.ReactNode }) {
+   const pathname = usePathname();
    return (
       <div className="min-h-screen bg-slate-950">
          <div className="flex pt-12 min-h-screen">
             <aside className="min-h-full bg-slate-900">
                <ul className="px-5 py-1">
                   {categories.map(category => (
-                     <li key={category.id} className="my-4 px-3 py-1 rounded-lg hover:bg-indigo-900 transition-colors">
+                     <li
+                        key={category.id}
+                        className={cn(
+                           'my-4 px-3 py-1 rounded-lg hover:bg-indigo-900 transition-colors',
+                           pathname === category.href && 'bg-indigo-900'
+                        )}>
                         <Link href={category.href} className="flex items-center gap-x-4">
                            {category.icon}
                            <p className="font-semibold text-lg">{category.name}</p>
