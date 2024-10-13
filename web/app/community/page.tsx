@@ -1,5 +1,5 @@
 import Background from '@/components/background';
-import CustomButton from '@/components/CustomButton';
+import CustomButton from '@/components/custom-button';
 import { Handshake } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';

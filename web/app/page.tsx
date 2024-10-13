@@ -1,5 +1,5 @@
 import Background from '@/components/background';
-import CustomButton from '@/components/CustomButton';
+import CustomButton from '@/components/custom-button';
 import Github from '@/components/icons/Github';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
