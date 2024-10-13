@@ -9,7 +9,7 @@ const discordServerLink = 'https://discord.gg/4cC2zBVA8e';
 
 export default function Community() {
    return (
-      <div className="relative flex items-center justify-center gap-x-20 h-full px-36 bg-slate-950">
+      <div className="relative flex items-center justify-center gap-x-20 h-screen px-36 bg-slate-950">
          <Background />
          <section className="flex flex-col items-center gap-y-4">
             <h1 className="font-semibold text-4xl text-center">Drogueros Unidos</h1>

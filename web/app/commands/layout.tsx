@@ -42,9 +42,9 @@ const categories = [
 
 export default function CommandsLayout({ children }: { children: React.ReactNode }) {
    return (
-      <div className="h-full bg-slate-950">
-         <div className="flex pt-12 h-full">
-            <aside className="h-full bg-slate-900">
+      <div className="min-h-screen bg-slate-950">
+         <div className="flex pt-12 min-h-screen">
+            <aside className="min-h-full bg-slate-900">
                <ul className="px-5 py-1">
                   {categories.map(category => (
                      <li key={category.id} className="my-4 px-3 py-1 rounded-lg hover:bg-indigo-900 transition-colors">
@@ -56,7 +56,7 @@ export default function CommandsLayout({ children }: { children: React.ReactNode
                   ))}
                </ul>
             </aside>
-            {children}
+            <section className="mx-32 my-12 w-full">{children}</section>
          </div>
       </div>
    );

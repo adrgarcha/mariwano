@@ -21,7 +21,7 @@ export default function RootLayout({
             <header>
                <Navbar />
             </header>
-            <main className="h-screen">{children}</main>
+            <main className="h-full">{children}</main>
          </body>
       </html>
    );
