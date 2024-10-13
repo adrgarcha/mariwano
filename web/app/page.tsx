@@ -7,7 +7,7 @@ import Link from 'next/link';
 import mariwanoIcon from '../../assets/mariwano-icon.png';
 
 const discordInviteLink = 'https://discord.com/api/oauth2/authorize?client_id=1159902116979146782&permissions=8&scope=bot';
-const githubLink = 'https://github.com/adrgarcha/mariwano-bot';
+const githubLink = 'https://github.com/adrgarcha/mariwano';
 
 export default function Home() {
    return (
