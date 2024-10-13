@@ -56,7 +56,7 @@ export default function CommandsLayout({ children }: { children: React.ReactNode
                   ))}
                </ul>
             </aside>
-            <section className="mx-32 my-12 w-full">{children}</section>
+            <section className="flex flex-col gap-y-8 mx-32 my-12 w-full">{children}</section>
          </div>
       </div>
    );
