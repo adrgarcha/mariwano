@@ -22,7 +22,7 @@ export const run = async ({ interaction }: CommandProps) => {
                   imageObject.blur(5);
                   break;
                case 3:
-                  imageObject.fishEye();
+                  imageObject.fisheye();
                   break;
                case 4:
                   imageObject.invert();
