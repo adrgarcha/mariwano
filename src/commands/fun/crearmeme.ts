@@ -22,7 +22,7 @@ export const run = async ({ interaction }: CommandProps) => {
                   imageObject.blur(5);
                   break;
                case 3:
-                  imageObject.fishEye();
+                  imageObject.fisheye();
                   break;
                case 4:
                   imageObject.invert();
@@ -33,7 +33,6 @@ export const run = async ({ interaction }: CommandProps) => {
             }
          } catch (err) {
             console.error(err);
-            await interaction.reply(`Parece que ha ocurrido un error al crear el efecto.`);
          }
       }
       const font = await Jimp.loadFont('./src/utils/roboto.fnt');
