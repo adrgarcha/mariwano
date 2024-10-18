@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js';
-import Jimp from 'jimp';
+import {HorizontalAlign, Jimp, loadFont, VerticalAlign} from 'jimp';
 import { CommandProps } from '../../lib/types';
 
 const right = (text: string, n: number) => text.slice(-n);
@@ -16,7 +16,7 @@ export const run = async ({ interaction }: CommandProps) => {
          try {
             switch (efecto) {
                case 1:
-                  imageObject.flip(false, true);
+                  imageObject.flip({horizontal: false, vertical: true});
                   break;
                case 2:
                   imageObject.blur(5);
@@ -35,39 +35,39 @@ export const run = async ({ interaction }: CommandProps) => {
             console.error(err);
          }
       }
-      const font = await Jimp.loadFont('./src/utils/roboto.fnt');
+      const font = await loadFont('./src/utils/roboto.fnt');
 
-      imageObject.print(
+      imageObject.print({
          font,
-         0,
-         0,
-         {
-            text: textoSuperior,
-            alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
-            alignmentY: Jimp.VERTICAL_ALIGN_TOP,
+         x: 0,
+         y: 0,
+         text: {
+            text: textoSuperior!,
+            alignmentX: HorizontalAlign.CENTER,
+            alignmentY: VerticalAlign.TOP,
          },
-         imageObject.getWidth(),
-         imageObject.getHeight()
-      );
+         maxWidth: imageObject.width,
+         maxHeight: imageObject.height
+   });
 
-      imageObject.print(
+      imageObject.print({
          font,
-         0,
-         0,
-         {
-            text: textoInferior,
-            alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
-            alignmentY: Jimp.VERTICAL_ALIGN_BOTTOM,
+         x: 0,
+         y: 0,
+         text: {
+            text: textoInferior!,
+            alignmentX: HorizontalAlign.CENTER,
+            alignmentY: VerticalAlign.BOTTOM,
          },
-         imageObject.getWidth(),
-         imageObject.getHeight()
-      );
+         maxWidth: imageObject.width,
+         maxHeight: imageObject.height
+   });
 
       var memeBuffer;
       if (url.includes('.gif') || right(url, 4) === '.gif') {
-         memeBuffer = await imageObject.getBufferAsync(Jimp.MIME_GIF);
+         memeBuffer = await imageObject.getBuffer("image/gif");
       } else {
-         memeBuffer = await imageObject.getBufferAsync(Jimp.MIME_PNG);
+         memeBuffer = await imageObject.getBuffer("image/png");
       }
       await interaction.reply({ files: [memeBuffer] });
    } catch (error) {
