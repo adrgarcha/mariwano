@@ -29,7 +29,7 @@
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
     "fakeyou.ts": "^3.6.1",
-    "jimp": "^0.22.12",
+    "jimp": "^1.6.0",
     "mediaplex": "^0.0.9",
     "mongodb": "^6.7.0",
     "mongoose": "^8.4.3",
