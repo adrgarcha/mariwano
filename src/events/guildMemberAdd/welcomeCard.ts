@@ -1,11 +1,11 @@
 import { Font } from 'canvacord';
-import { AttachmentBuilder, Client, GuildMember, TextChannel } from 'discord.js';
+import { AttachmentBuilder, GuildMember, TextChannel } from 'discord.js';
 import { GuildConfiguration } from '../../models/GuildConfiguration';
 import { GreetingsCard } from '../../utils/GreetingsCard';
 
 Font.loadDefault();
 
-export default async function (member: GuildMember, client: Client) {
+export default async function (member: GuildMember) {
    const guild = member.guild;
    if (!guild) return;
 

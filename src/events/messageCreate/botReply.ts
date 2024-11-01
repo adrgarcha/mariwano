@@ -1,6 +1,6 @@
-import { Client, Message } from 'discord.js';
+import { Message } from 'discord.js';
 
-export default function (message: Message, client: Client) {
+export default function (message: Message) {
    if (message.author.bot) return;
 
    if (message.content === 'iyow') {

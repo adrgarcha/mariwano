@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error /** library doesn't contain types */
 import { Wordle } from 'discord-gamecord';
 import { SlashCommandBuilder } from 'discord.js';
 import { CommandProps } from '../../lib/types';

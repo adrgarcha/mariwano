@@ -39,7 +39,7 @@ export const run = async ({ interaction }: CommandProps) => {
                const barajar = () => Math.floor(Math.random() * 52);
                const cartaAleatoria = baraja[barajar()];
                if (miMano.includes(cartaAleatoria) || suMano.includes(cartaAleatoria)) {
-                  Croupier.daCarta;
+                  Croupier.daCarta(miMano, suMano);
                } else {
                   miMano.push(cartaAleatoria);
                }
