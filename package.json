@@ -9,7 +9,7 @@
     "start:prod": "export NODE_ENV=production && tsx src/index.ts",
     "build": "tsc",
     "dev": "tsx watch src/index.ts",
-    "lint": "eslint . --ext .js,.ts,.tsx,.jsx"
+    "lint": "eslint . .ts,.tsx"
   },
   "repository": {
     "type": "git",
