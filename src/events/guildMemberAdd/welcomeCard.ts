@@ -6,7 +6,7 @@ import { GreetingsCard } from '../../utils/GreetingsCard';
 Font.loadDefault();
 
 export default async function (member: GuildMember, client: Client) {
-   let guild = member.guild;
+   const guild = member.guild;
    if (!guild) return;
 
    const guildConfiguration = await GuildConfiguration.findOne({

@@ -3,7 +3,7 @@ import { AutoRole } from '../../models/AutoRole';
 
 export default async function (member: GuildMember, client: Client) {
    try {
-      let guild = member.guild;
+      const guild = member.guild;
       if (!guild) return;
 
       const autoRole = await AutoRole.findOne({ guildId: guild.id });

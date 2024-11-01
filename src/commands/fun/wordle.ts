@@ -14,7 +14,7 @@ export const run = async ({ interaction }: CommandProps) => {
    }
 
    try {
-      let query = {
+      const query = {
          userId: interaction.member!.user.id,
          guildId: interaction.guild.id,
       };

@@ -31,7 +31,7 @@ export const run = async ({ interaction }: CommandProps) => {
          return;
       }
 
-      let allLevels = await Level.find({
+      const allLevels = await Level.find({
          guildId: interaction.guild.id,
       }).select('-_id userId level xp');
 
@@ -43,7 +43,7 @@ export const run = async ({ interaction }: CommandProps) => {
          }
       });
 
-      let currentRank = allLevels.findIndex(lvl => lvl.userId === targetUserId) + 1;
+      const currentRank = allLevels.findIndex(lvl => lvl.userId === targetUserId) + 1;
 
       const rank = new RankCardBuilder()
          .setAvatar(targetUserObj.user.displayAvatarURL({ size: 256 }))

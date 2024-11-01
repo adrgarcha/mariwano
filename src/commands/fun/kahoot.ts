@@ -34,7 +34,7 @@ export const run = async ({ interaction }: CommandProps) => {
       let hardcore = interaction.options.getBoolean('hardcore');
       if (!hardcore) hardcore = false;
 
-      let botPr = getRandomQuestion(kahootQuestions, hardcore);
+      const botPr = getRandomQuestion(kahootQuestions, hardcore);
       const query = {
          userId: interaction.member?.user.id,
          guildId: interaction.guild.id,
@@ -45,7 +45,7 @@ export const run = async ({ interaction }: CommandProps) => {
       if (user) {
          const lastKahootDate = user.lastKahoot.toDateString();
          const currentDate = new Date().toDateString();
-         let kahootUserCount = user.kahootLimit;
+         const kahootUserCount = user.kahootLimit;
 
          if (lastKahootDate !== currentDate) {
             user.kahootLimit = 5;
@@ -73,7 +73,7 @@ export const run = async ({ interaction }: CommandProps) => {
       user.lastKahoot = new Date();
       await user.save();
 
-      let leaderboardEmbed = new EmbedBuilder().setTitle(`${botPr.pregunta}`).setColor(0x45d6fd).setFooter({
+      const leaderboardEmbed = new EmbedBuilder().setTitle(`${botPr.pregunta}`).setColor(0x45d6fd).setFooter({
          text: 'Escribe en tu siguiente mensaje la respuesta y no la letra (da igual si es mayúsculas o minúsculas)',
       });
 

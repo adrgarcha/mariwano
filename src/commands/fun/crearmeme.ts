@@ -63,7 +63,7 @@ export const run = async ({ interaction }: CommandProps) => {
          maxHeight: imageObject.height
    });
 
-      var memeBuffer;
+      let memeBuffer;
       if (url.includes('.gif') || right(url, 4) === '.gif') {
          memeBuffer = await imageObject.getBuffer("image/gif");
       } else {

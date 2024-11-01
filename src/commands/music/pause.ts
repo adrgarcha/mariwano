@@ -38,7 +38,7 @@ export const run = async ({ interaction }: CommandProps) => {
       return;
    }
 
-   let checkPause = queue.node.isPaused();
+   const checkPause = queue.node.isPaused();
 
    try {
       const pauseEmbed = new EmbedBuilder()
