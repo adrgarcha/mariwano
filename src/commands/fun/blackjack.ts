@@ -12,7 +12,7 @@ export const run = async ({ interaction }: CommandProps) => {
    }
 
    try {
-      let query = {
+      const query = {
          userId: interaction.member?.user.id,
          guildId: interaction.guild.id,
       };
@@ -26,7 +26,7 @@ export const run = async ({ interaction }: CommandProps) => {
       } else {
          const palos = ['C', 'D', 'T', 'P'];
          const cartas = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-         let baraja: string[] = [];
+         const baraja: string[] = [];
          for (let i = 0; i < palos.length; i++) {
             for (let j = 0; j < cartas.length; j++) {
                baraja.push(cartas[j] + palos[i]);
@@ -37,9 +37,9 @@ export const run = async ({ interaction }: CommandProps) => {
             mano: [],
             daCarta: (miMano: string[], suMano: string[]) => {
                const barajar = () => Math.floor(Math.random() * 52);
-               let cartaAleatoria = baraja[barajar()];
+               const cartaAleatoria = baraja[barajar()];
                if (miMano.includes(cartaAleatoria) || suMano.includes(cartaAleatoria)) {
-                  Croupier.daCarta;
+                  Croupier.daCarta(miMano, suMano);
                } else {
                   miMano.push(cartaAleatoria);
                }
@@ -65,8 +65,8 @@ export const run = async ({ interaction }: CommandProps) => {
 
          let resultadoFinal = '';
          (() => {
-            let miJugador = Jugador;
-            let croupier = Croupier;
+            const miJugador = Jugador;
+            const croupier = Croupier;
 
             while (croupier.puntua(miJugador.mano) < 19) {
                croupier.daCarta(miJugador.mano, croupier.mano);
@@ -94,7 +94,7 @@ export const run = async ({ interaction }: CommandProps) => {
             }
          })();
 
-         let leaderboardEmbed = new EmbedBuilder().setTitle(resultadoFinal).setColor(0x45d6fd).setFooter({
+         const leaderboardEmbed = new EmbedBuilder().setTitle(resultadoFinal).setColor(0x45d6fd).setFooter({
             text: 'Modo auto',
          });
          await interaction.reply({ embeds: [leaderboardEmbed] });

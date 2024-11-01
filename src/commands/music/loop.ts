@@ -52,10 +52,10 @@ export const run = async ({ interaction }: CommandProps) => {
       modeName === 'track'
          ? 'Bucle en modo 🔂'
          : modeName === 'queue'
-         ? 'Bucle en modo 🔁'
-         : modeName === 'autoplay'
-         ? 'Bucle en modo 🤖'
-         : 'Bucle apagado 🚫';
+           ? 'Bucle en modo 🔁'
+           : modeName === 'autoplay'
+             ? 'Bucle en modo 🤖'
+             : 'Bucle apagado 🚫';
 
    const loopEmbed = new EmbedBuilder()
       .setAuthor({

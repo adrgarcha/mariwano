@@ -33,7 +33,7 @@ export const run = async ({ interaction }: CommandProps) => {
          password: 'code100Todo',
       });
 
-      let model = await client.fetchTtsModelByName(tipoDeVoz);
+      const model = await client.fetchTtsModelByName(tipoDeVoz);
 
       if (!model) {
          await interaction.followUp({ content: 'Modelo no encontrado.', ephemeral: true });

@@ -21,7 +21,7 @@ export const run = async ({ interaction }: CommandProps) => {
       });
       const balance = user?.balance;
 
-      let leaderboardEmbed = new EmbedBuilder()
+      const leaderboardEmbed = new EmbedBuilder()
          .setTitle('**Top 10 usuarios con más gramos de cocaína**')
          .setColor(0x45d6fd)
          .setFooter({ text: 'No estás en el ranking.' });
@@ -56,13 +56,13 @@ export const run = async ({ interaction }: CommandProps) => {
 
       let description = '';
       for (let i = 0; i < topTen.length; i++) {
-         let { user } = await interaction.guild.members.fetch(topTen[i].userId);
+         const { user } = await interaction.guild.members.fetch(topTen[i].userId);
 
          if (!user) continue;
 
          if (description.includes(`<@${user.id}>`)) continue;
 
-         let userBalance = topTen[i].balance;
+         const userBalance = topTen[i].balance;
          description += `**${i + 1}) <@${user.id}>:** ${userBalance} gramos de cocaína\n`;
       }
 

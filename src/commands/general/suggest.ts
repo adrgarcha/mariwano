@@ -74,7 +74,7 @@ export const run = async ({ interaction }: CommandProps) => {
 
       try {
          suggestionMessage = await interaction.channel!.send('Creando la sugerencia, por favor espere...');
-      } catch (error) {
+      } catch {
          modalInteraction.editReply('Fallo al crear la sugerencia en este canal. Puede que no tenga suficientes permisos.');
          return;
       }

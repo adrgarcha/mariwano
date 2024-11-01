@@ -20,5 +20,5 @@ export interface AutocompleteProps {
 }
 
 export interface Event {
-   default: (...args: any) => void;
+   default: (...args: unknown) => void;
 }

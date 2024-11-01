@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error /** library doesn't contain types */
 import { Wordle } from 'discord-gamecord';
 import { SlashCommandBuilder } from 'discord.js';
 import { CommandProps } from '../../lib/types';
@@ -14,7 +14,7 @@ export const run = async ({ interaction }: CommandProps) => {
    }
 
    try {
-      let query = {
+      const query = {
          userId: interaction.member!.user.id,
          guildId: interaction.guild.id,
       };

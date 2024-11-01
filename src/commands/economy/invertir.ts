@@ -89,7 +89,7 @@ export const run = async ({ interaction }: CommandProps) => {
                      return;
                   } else if (user.investBankFactor != 0) {
                      if (userBalance - user.investBankFactor > 0) {
-                        let ganancias = Math.round(
+                        const ganancias = Math.round(
                            user.invested +
                               (userBalance - user.investBankFactor) +
                               factorial(user.investFactor + 1) +
@@ -112,7 +112,7 @@ export const run = async ({ interaction }: CommandProps) => {
                         await user.save();
                         return;
                      } else if (userBalance - user.investBankFactor < 0) {
-                        let ganancias = Math.round(-user.invested - (userBalance - user.investBankFactor) * factorial(Math.abs(user.investFactor)));
+                        const ganancias = Math.round(-user.invested - (userBalance - user.investBankFactor) * factorial(Math.abs(user.investFactor)));
                         interaction.editReply(
                            `Has perdido ${ganancias > 0 ? ganancias : -ganancias} a causa de las pérdidas del canal.\n\n` +
                               `${
