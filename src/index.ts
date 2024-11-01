@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === 'production') {
          GatewayIntentBits.GuildPresences,
          GatewayIntentBits.GuildVoiceStates,
          GatewayIntentBits.MessageContent,
-         GatewayIntentBits.GuildMessageReactions
+         GatewayIntentBits.GuildMessageReactions,
       ],
       partials: [Partials.Message, Partials.Channel, Partials.Reaction],
    });
