@@ -1,4 +1,4 @@
-name: Lint
+name: Lint CI
 on:
   push:
     branches: ['**']
@@ -18,7 +18,7 @@ jobs:
       DEV_ID_2: ${{ secrets.DEV_ID_2 }}
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [22.x]
     steps:
       - uses: actions/checkout@v4
    
