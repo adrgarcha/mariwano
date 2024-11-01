@@ -1,4 +1,5 @@
 import Navbar from '@/components/navbar';
+import { ThemeProvider } from '@/components/theme-provider';
 import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import './globals.css';
@@ -18,10 +19,12 @@ export default function RootLayout({
    return (
       <html lang="es" className={font.className}>
          <body className="font-[unset]">
-            <header>
-               <Navbar />
-            </header>
-            <main className="h-full">{children}</main>
+            <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+               <header>
+                  <Navbar />
+               </header>
+               <main className="h-full">{children}</main>
+            </ThemeProvider>
          </body>
       </html>
    );
