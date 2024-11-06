@@ -1,7 +1,8 @@
-import { Home, Terminal, Users2 } from 'lucide-react';
+import { Home, Menu, Terminal, Users2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import mariwanoIcon from '../../assets/mariwano-icon.png';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 
 const navbarLinks = [
    {
@@ -31,7 +32,7 @@ export default function Navbar() {
             <Image src={mariwanoIcon} alt="mariwano bot logo" className="size-10 m-1 rounded-lg" />
             <p className="font-semibold text-lg">Mariwano</p>
          </section>
-         <ul className="flex gap-x-8">
+         <ul className="hidden md:flex gap-x-8">
             {navbarLinks.map(link => (
                <li key={link.id} className="px-2 py-1 rounded-lg hover:bg-indigo-900 transition-colors">
                   <Link href={link.href} className="flex gap-x-2 items-center">
@@ -41,6 +42,21 @@ export default function Navbar() {
                </li>
             ))}
          </ul>
+         <DropdownMenu>
+            <DropdownMenuTrigger className="md:hidden">
+               <Menu size={24} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+               {navbarLinks.map(link => (
+                  <Link key={link.id} href={link.href}>
+                     <DropdownMenuItem className="flex gap-x-2 items-center">
+                        {link.icon}
+                        <p className="font-semibold">{link.name}</p>
+                     </DropdownMenuItem>
+                  </Link>
+               ))}
+            </DropdownMenuContent>
+         </DropdownMenu>
       </nav>
    );
 }

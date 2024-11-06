@@ -15,7 +15,7 @@ export default function Home() {
          <Background />
          <section className="flex flex-col items-center gap-y-2">
             <h1 className="font-bold text-6xl">Mariwano</h1>
-            <h2 className="font-medium text-white/80">El bot que transforma el aburrimiento en diversión y buen rollo.</h2>
+            <h2 className="font-medium text-center text-white/80 w-96 md:w-full">El bot que transforma el aburrimiento en diversión y buen rollo.</h2>
          </section>
          <Image src={mariwanoIcon} alt="Mariwano icon" className="size-52 rounded-full" />
          <section className="flex items-center gap-x-2">

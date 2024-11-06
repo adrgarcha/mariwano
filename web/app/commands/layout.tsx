@@ -50,23 +50,23 @@ export default function CommandsLayout({ children }: { children: React.ReactNode
       <div className="min-h-screen bg-slate-950">
          <div className="flex pt-12 min-h-screen">
             <aside className="min-h-full bg-slate-900">
-               <ul className="px-5 py-1">
+               <ul className="p-1 md:px-5">
                   {categories.map(category => (
                      <li
                         key={category.id}
                         className={cn(
-                           'my-4 px-3 py-1 rounded-lg hover:bg-indigo-900 transition-colors',
+                           'my-4 p-2 md:px-3 md:py-1 rounded-lg hover:bg-indigo-900 transition-colors',
                            pathname === category.href && 'bg-indigo-900'
                         )}>
                         <Link href={category.href} className="flex items-center gap-x-4">
                            {category.icon}
-                           <p className="font-semibold text-lg">{category.name}</p>
+                           <p className="hidden md:block font-semibold text-lg">{category.name}</p>
                         </Link>
                      </li>
                   ))}
                </ul>
             </aside>
-            <section className="flex flex-col gap-y-8 mx-32 my-12 w-full">{children}</section>
+            <section className="flex flex-col gap-y-8 px-4 py-6 md:px-40 w-full">{children}</section>
          </div>
       </div>
    );
