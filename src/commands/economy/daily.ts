@@ -16,7 +16,7 @@ export const run = async ({ interaction }: CommandProps) => {
    try {
       await interaction.deferReply({ ephemeral: true });
 
-      let query = {
+      const query = {
          userId: interaction.member?.user.id,
          guildId: interaction.guild?.id,
       };

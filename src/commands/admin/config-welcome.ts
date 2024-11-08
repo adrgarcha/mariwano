@@ -23,7 +23,7 @@ export const run = async ({ interaction }: CommandProps) => {
    if (subcommand === 'add') {
       const channel = interaction.options.getChannel('channel');
 
-      if (guildConfiguration.welcomeChannelIds.includes(channel!!.id)) {
+      if (guildConfiguration.welcomeChannelIds.includes(channel!.id)) {
          await interaction.reply(`${channel} ya es un canal de bienvenida.`);
          return;
       }

@@ -47,8 +47,8 @@ export const run = async ({ interaction }: CommandProps) => {
 
       const lastVideo = uploads[0];
       notificationConfig.lastCheckedVideo = {
-         videoId: lastVideo.contentDetails?.videoId!,
-         publishedDate: new Date(lastVideo.contentDetails?.videoPublishedAt!),
+         videoId: lastVideo.contentDetails?.videoId as string,
+         publishedDate: new Date(lastVideo.contentDetails?.videoPublishedAt as string),
       };
 
       const channelName = lastVideo.snippet?.channelTitle;

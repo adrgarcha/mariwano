@@ -79,7 +79,7 @@ export const run = async ({ interaction }: CommandProps) => {
 
 export const autocomplete = async ({ interaction }: AutocompleteProps) => {
    const query = interaction.options.getString('query');
-   let returnData = [];
+   const returnData = [];
    if (query) {
       const result = await player.search(query);
       if (result.playlist) {

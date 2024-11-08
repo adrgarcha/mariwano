@@ -40,7 +40,7 @@ export const run = async ({ interaction }: CommandProps) => {
 
    try {
       const progress = queue.node.createProgressBar();
-      let create = progress?.replace(/ 0:00/g, ' ◉ EN DIRECTO');
+      const create = progress?.replace(/ 0:00/g, ' ◉ EN DIRECTO');
 
       const npEmbed = new EmbedBuilder()
          .setAuthor({

@@ -41,7 +41,7 @@ export const run = async ({ interaction }: CommandProps) => {
    }
 
    try {
-      let categoryCommands: { [key: string]: Command[] } = {};
+      const categoryCommands: { [key: string]: Command[] } = {};
       const commandFolders = fs.readdirSync(path.join(__dirname, '..'));
 
       for (const commandFolder of commandFolders) {
