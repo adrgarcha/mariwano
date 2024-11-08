@@ -19,6 +19,12 @@ export default function Economy() {
          <Command title="gamble" params={['amount']}>
             Apuesta una cantidad de gramos, como mínimo 100.
          </Command>
+         <Command title="invertir" params={['amount', 'user']}>
+            Invierte en un usuario que esté en un canal. Cuanto más gramos ganéis, más beneficios generáis entre tú y el usuario y más rentable hacéis
+            el canal. Cuanto más rentable sea el canal, más gramos se podrán ganar. Si el canal está en déficit, no podréis ganar nada pero podréis
+            sacar al canal del déficit. Para recargar los beneficios o pérdidas pon /invertir claim pero antes debes hacer una inversión con /invertir
+            new.
+         </Command>
          <Command title="leaderboard">Muestra el top 10 de personas más ricas del servidor.</Command>
          <Command title="level" params={['user']}>
             Muestra el nivel de experiencia de la persona mencionada si es que se ha mencionado, sino muestra la del propio usuario.
