@@ -19,7 +19,7 @@ export default function Community() {
          <Background />
          <section className="flex flex-col items-center gap-y-4">
             <h1 className="font-semibold text-4xl text-center">Drogueros Unidos</h1>
-            <Image src={discordServerImg} alt="drogueros unidos server icon" width={128} height={128} className="size-64 rounded-xl" />
+            <Image src={discordServerImg} alt="drogueros unidos server icon" width={127} height={127} className="size-64 rounded-xl" />
          </section>
          <section className="flex flex-col items-center gap-y-4 md:gap-y-6">
             <h3 className="font-semibold text-xl">👽 ¡Únete a nuestra comunidad!</h3>
