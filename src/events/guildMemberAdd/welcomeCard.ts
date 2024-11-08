@@ -12,8 +12,7 @@ export default async function (member: GuildMember) {
    const guildConfiguration = await GuildConfiguration.findOne({
       guildId: guild.id,
    });
-
-   if (!guildConfiguration?.welcomeChannelIds.length) {
+   if (!guildConfiguration?.welcomeChannelId) {
       return;
    }
 
