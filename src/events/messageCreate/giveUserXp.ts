@@ -1,4 +1,4 @@
-import { Client, Message } from 'discord.js';
+import { Message } from 'discord.js';
 import { Level } from '../../models/Level';
 import { calculateLevelXp } from '../../utils/calculateLevelXp';
 
@@ -10,7 +10,7 @@ function getRandomXp(min: number, max: number): number {
    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export default async function (message: Message, client: Client) {
+export default async function (message: Message) {
    if (!message.inGuild() || message.author.bot || cooldowns.has(message.author.id)) return;
 
    const xpToGive = getRandomXp(5, 15);

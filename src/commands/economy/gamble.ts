@@ -12,7 +12,7 @@ export const run = async ({ interaction }: CommandProps) => {
          return;
       }
 
-      const amount: any = interaction.options.get('amount')?.value;
+      const amount = interaction.options.getNumber('amount');
 
       if (!amount) {
          interaction.reply({

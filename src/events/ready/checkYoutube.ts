@@ -15,11 +15,11 @@ export default function (client: Client) {
             const lastVideo = uploads[0];
             const lastCheckedVideo = notificationConfig.lastCheckedVideo;
 
-            const lastVideoId = lastVideo.contentDetails?.videoId!;
-            const lastVideoPubDate = new Date(lastVideo.contentDetails?.videoPublishedAt!);
+            const lastVideoId = lastVideo.contentDetails?.videoId;
+            const lastVideoPubDate = new Date(lastVideo.contentDetails?.videoPublishedAt as string);
             const lastVideoLink = `https://www.youtube.com/watch?v=${lastVideoId}`;
-            const lastVideoTitle = lastVideo.snippet?.title!;
-            const lastVideoChannelName = lastVideo.snippet?.channelTitle!;
+            const lastVideoTitle = lastVideo.snippet?.title;
+            const lastVideoChannelName = lastVideo.snippet?.channelTitle;
             const lastVideoChannelUrl = `https://www.youtube.com/channel/${lastVideo.snippet?.channelId}`;
 
             if (!lastCheckedVideo || (lastVideoId !== lastCheckedVideo.videoId && lastVideoPubDate > new Date(lastCheckedVideo.publishedDate))) {
@@ -38,7 +38,7 @@ export default function (client: Client) {
                }
 
                notificationConfig.lastCheckedVideo = {
-                  videoId: lastVideoId,
+                  videoId: lastVideoId!,
                   publishedDate: lastVideoPubDate,
                };
 
@@ -48,8 +48,8 @@ export default function (client: Client) {
                      const targetMessage =
                         notificationConfig.customMessage
                            ?.replace('{videoUrl}', lastVideoLink)
-                           ?.replace('{videoTitle}', lastVideoTitle)
-                           ?.replace('{channelName}', lastVideoChannelName)
+                           ?.replace('{videoTitle}', lastVideoTitle!)
+                           ?.replace('{channelName}', lastVideoChannelName!)
                            ?.replace('{channelUrl}', lastVideoChannelUrl) || `Nuevo video de **${lastVideoChannelName}**: ${lastVideoLink}`;
 
                      await targetChannel.send(targetMessage);

@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js';
-import {HorizontalAlign, Jimp, loadFont, VerticalAlign} from 'jimp';
+import { HorizontalAlign, Jimp, loadFont, VerticalAlign } from 'jimp';
 import { CommandProps } from '../../lib/types';
 
 const right = (text: string, n: number) => text.slice(-n);
@@ -16,7 +16,7 @@ export const run = async ({ interaction }: CommandProps) => {
          try {
             switch (efecto) {
                case 1:
-                  imageObject.flip({horizontal: false, vertical: true});
+                  imageObject.flip({ horizontal: false, vertical: true });
                   break;
                case 2:
                   imageObject.blur(5);
@@ -47,8 +47,8 @@ export const run = async ({ interaction }: CommandProps) => {
             alignmentY: VerticalAlign.TOP,
          },
          maxWidth: imageObject.width,
-         maxHeight: imageObject.height
-   });
+         maxHeight: imageObject.height,
+      });
 
       imageObject.print({
          font,
@@ -60,14 +60,14 @@ export const run = async ({ interaction }: CommandProps) => {
             alignmentY: VerticalAlign.BOTTOM,
          },
          maxWidth: imageObject.width,
-         maxHeight: imageObject.height
-   });
+         maxHeight: imageObject.height,
+      });
 
-      var memeBuffer;
+      let memeBuffer;
       if (url.includes('.gif') || right(url, 4) === '.gif') {
-         memeBuffer = await imageObject.getBuffer("image/gif");
+         memeBuffer = await imageObject.getBuffer('image/gif');
       } else {
-         memeBuffer = await imageObject.getBuffer("image/png");
+         memeBuffer = await imageObject.getBuffer('image/png');
       }
       await interaction.reply({ files: [memeBuffer] });
    } catch (error) {

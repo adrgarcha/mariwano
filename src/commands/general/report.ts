@@ -81,7 +81,7 @@ export const run = async ({ interaction }: CommandProps) => {
 
       try {
          reportMessage = await interaction.channel!.send('Creando el informe, por favor espere...');
-      } catch (error) {
+      } catch {
          modalInteraction.editReply('Fallo al crear el informe en este canal. Puede que no tengas suficientes permisos.');
          return;
       }
