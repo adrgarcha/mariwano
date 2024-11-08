@@ -15,14 +15,14 @@ export const metadata: Metadata = {
 
 export default function Community() {
    return (
-      <div className="relative flex flex-col md:flex-row items-center justify-center gap-y-16 md:gap-x-20 h-screen md:px-36 bg-slate-950">
+      <div className="relative flex flex-col md:flex-row items-center justify-center gap-y-16 md:gap-x-20 h-screen md:px-36 overflow-x-hidden bg-slate-950">
          <Background />
          <section className="flex flex-col items-center gap-y-4">
             <h1 className="font-semibold text-4xl text-center">Drogueros Unidos</h1>
             <Image src={discordServerImg} alt="drogueros unidos server icon" width={127} height={127} className="size-64 rounded-xl" />
          </section>
          <section className="flex flex-col items-center gap-y-4 md:gap-y-6">
-            <h3 className="font-semibold text-xl">👽 ¡Únete a nuestra comunidad!</h3>
+            <h2 className="font-semibold text-xl">👽 ¡Únete a nuestra comunidad!</h2>
             <p className="font-medium text-center w-80 md:w-[600px] mb-4">
                Un servidor donde serás bien recibido y donde te lo pasarás de puta madre. Además, de tener soporte directo con los desarrolladores
                principales del bot para cualquier duda o sugerencia.

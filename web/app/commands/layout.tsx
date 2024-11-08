@@ -58,7 +58,7 @@ export default function CommandsLayout({ children }: { children: React.ReactNode
                            'my-4 p-2 md:px-3 md:py-1 rounded-lg hover:bg-indigo-900 transition-colors',
                            pathname === category.href && 'bg-indigo-900'
                         )}>
-                        <Link href={category.href} className="flex items-center gap-x-4">
+                        <Link href={category.href} aria-label={`${category.href.split('/')[2]}-section-link`} className="flex items-center gap-x-4">
                            {category.icon}
                            <p className="hidden md:block font-semibold text-lg">{category.name}</p>
                         </Link>

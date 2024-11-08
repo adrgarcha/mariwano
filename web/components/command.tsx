@@ -7,8 +7,8 @@ interface CommandProps {
 export default function Command({ title, params, children }: CommandProps) {
    return (
       <section className="flex flex-col gap-y-1">
-         <h3 className="font-bold text-2xl">/{title}</h3>
-         <h5 className="font-semibold">Parámetros: {params ? params.join(', ') : 'Ninguno'}</h5>
+         <h1 className="font-bold text-2xl">/{title}</h1>
+         <h2 className="font-semibold">Parámetros: {params ? params.join(', ') : 'Ninguno'}</h2>
          <p className="font-medium text-white/80">{children}</p>
       </section>
    );

@@ -43,7 +43,7 @@ export default function Navbar() {
             ))}
          </ul>
          <DropdownMenu>
-            <DropdownMenuTrigger className="md:hidden">
+            <DropdownMenuTrigger aria-label="menu-dropdown" className="md:hidden">
                <Menu size={24} />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
