@@ -24,7 +24,7 @@ export default async function (member: GuildMember) {
    const data = await welcomeCard.build();
    const attachment = new AttachmentBuilder(data);
    guild.channels
-      .fetch(guildConfiguration.welcomeChannelIds[0])
+      .fetch(guildConfiguration.welcomeChannelId)
       .then(channel => {
          const textChannel = channel as TextChannel;
          return textChannel.send({ files: [attachment] });
