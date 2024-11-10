@@ -22,7 +22,7 @@
 
 ### Antes de contribuir
 
-1. Busca una issue abierta, no te preocupes si no encuentras ninguna, las issues nuevas son muy bienvenidas.
+1. Busca una issue abierta, no te preocupes si no encuentras ninguna, ¡las issues nuevas son muy bienvenidas!
 
 2. Crea una nueva branch, si no existe sobre esa issue, y nómbrala ```feature-N```, donde <i>N</i> es el número de la issue. 
 
@@ -47,7 +47,7 @@
 
 ### Before you contribute
 
-1. Look for an open issue, don't worry if you don't find one, you can create a new one.
+1. Look for an open issue, don't worry if you don't find one, new issues are very welcome!
 
 2. Create a new branch, if it does not exist, on that issue, and name it ``feature-N```, where <i>N</i> is the issue number. 
 
