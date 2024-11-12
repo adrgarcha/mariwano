@@ -7,32 +7,48 @@
     🎯 Requirements to contribute to Mariwano
 </h3>
 
-## Set-up [ES/Español] 
+## Set-up 
 
-1. Haz un fork de este repositorio.
+### Requirements
 
-2. Clona el repositorio en tu máquina. Introduce en la terminal:
-```git clone https://github.com/tu-fork/mariwano.git```
+- Node.js v18.17.1
+- npm v10.1.0
 
-3. Instala las dependencias: 
-```npm install```
+<b>Related to Discord:</b>
+- Discord Developer Portal account (for the bot token)
+- Discord Bot Token (required for bot interaction)
+- A Discord account (to test the bot)
 
-4. Arranca el bot: 
-```npm run dev```
+<b>Development environment:</b>
+- Visual Studio Code (recommended for code editing)
+- Prettier (automatic code formatting)
+- FFmpeg (required for the audio player)
 
-### Antes de contribuir
+## Commit policy
 
-1. Busca una issue abierta, no te preocupes si no encuentras ninguna, ¡las issues nuevas son muy bienvenidas!
+Follow these commit conventions to ensure neatness:
 
-2. Crea una nueva branch, si no existe sobre esa issue, y nómbrala ```feature-N```, donde <i>N</i> es el número de la issue. 
+- Format: `type: description`
+- Example (in a feature branch): `feat: add audio player`
 
-3. Cuando tengas listo todo, crea una Pull Request especificando tus mejoras o contribuciones haciendo referencia a la issue.
+<u>Types:</u>
 
-4. Te llegará un correo cuando se haya revisado tu Pull Request.
+- feat: New feature
+- fix: Bug fix
+- docs: Documentation changes
+- style: Code style changes (formatting, etc.)
+- refactor: Code restructuring
+- test: Adding or updating tests
 
-5. <b>¡Felicidades!</b> Ya contribuiste a Mariwano.
+## Pull Requests
 
-## Set-up [EN/English] 
+When submitting a Pull Request (PR),
+- Description: provide a clear description of the changes made
+- Format: `type: description`
+Make sure your PR pass the CI checks by the way, if not, fix them before submitting
+
+
+## Set-up
 
 1. Fork this repository.
 
@@ -47,7 +63,7 @@
 
 ### Before you contribute
 
-1. Look for an open issue, don't worry if you don't find one, new issues are very welcome!
+1. Look for an open issue, don't worry if you don't find one, new issues are welcome!
 
 2. Create a new branch, if it does not exist, on that issue, and name it ``feature-N```, where <i>N</i> is the issue number. 
 
