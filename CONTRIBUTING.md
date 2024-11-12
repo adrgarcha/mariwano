@@ -48,7 +48,7 @@ When submitting a Pull Request (PR),
 Make sure your PR pass the CI checks by the way, if not, fix them before submitting
 
 
-## Set-up
+## Getting started
 
 1. Fork this repository.
 
