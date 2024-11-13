@@ -65,7 +65,7 @@ Make sure your PR pass the CI checks by the way, if not, fix them before submitt
 
 1. Look for an open issue, don't worry if you don't find one, new issues are welcome!
 
-2. Create a new branch, if it does not exist, on that issue, and name it ``feature-N```, where <i>N</i> is the issue number. 
+2. Create a new branch, if it does not exist, on that issue, and name it ```feature-N```, where <i>N</i> is the issue number. 
 
 3. When you have everything ready, create a Pull Request specifying your improvements or contributions referring to the issue.
 
