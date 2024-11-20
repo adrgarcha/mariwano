@@ -1,4 +1,3 @@
-'use client';
 import CustomButton from '@/components/custom-button';
 import Github from '@/components/icons/github';
 import { OrthographicCamera, Plane, shaderMaterial } from '@react-three/drei';
