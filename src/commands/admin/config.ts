@@ -66,7 +66,7 @@ export const run = async ({ interaction }: CommandProps) => {
       }
 
       case 'welcome': {
-         if (subcommand === 'set') {
+         if (subcommand === 'add') {
             if (guildConfiguration.welcomeChannelId) {
                await interaction.reply({ content: `Ya existe un canal de bienvenida configurado.`, ephemeral: true });
                return;
@@ -136,7 +136,7 @@ export const data = new SlashCommandBuilder()
          .setDescription('Configura el canal de bienvenida')
          .addSubcommand(subcommand =>
             subcommand
-               .setName('set')
+               .setName('add')
                .setDescription('Establece el canal de bienvenida.')
                .addChannelOption(option =>
                   option
