@@ -26,7 +26,7 @@ export const run = async ({ interaction }: CommandProps) => {
       const guildConfiguration = await GuildConfiguration.findOne({
          guildId: interaction.guildId,
       });
-      if (!guildConfiguration?.reportChannelIds.length) {
+      if (!guildConfiguration?.reportChannelId) {
          await interaction.reply({
             content: `Este servidor todavia no ha sido configurado con un canal de informes.`,
             ephemeral: true,
@@ -34,11 +34,9 @@ export const run = async ({ interaction }: CommandProps) => {
          return;
       }
 
-      if (!guildConfiguration.reportChannelIds.includes(interaction.channelId)) {
+      if (guildConfiguration.reportChannelId !== interaction.channelId) {
          await interaction.reply({
-            content: `Este canal no se ha configurado como canal de informes.\nUsa uno de estos canales en su lugar: ${guildConfiguration.reportChannelIds
-               .map(id => `<#${id}>`)
-               .join(', ')}`,
+            content: `Este canal no se ha configurado como canal de informes.\nUsa este canal en su lugar: <#${guildConfiguration.reportChannelId}>`,
             ephemeral: true,
          });
          return;

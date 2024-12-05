@@ -26,7 +26,7 @@ export const run = async ({ interaction }: CommandProps) => {
       const guildConfiguration = await GuildConfiguration.findOne({
          guildId: interaction.guildId,
       });
-      if (!guildConfiguration?.suggestionChannelIds.length) {
+      if (!guildConfiguration?.suggestionChannelId) {
          await interaction.reply({
             content: `Este servidor todavia no ha sido configurado con un canal de sugerencias.`,
             ephemeral: true,
@@ -34,11 +34,9 @@ export const run = async ({ interaction }: CommandProps) => {
          return;
       }
 
-      if (!guildConfiguration.suggestionChannelIds.includes(interaction.channelId)) {
+      if (guildConfiguration.suggestionChannelId !== interaction.channelId) {
          await interaction.reply({
-            content: `Este canal no se ha configurado como canal de sugerencias.\nUsa uno de estos canales en su lugar: ${guildConfiguration.suggestionChannelIds
-               .map(id => `<#${id}>`)
-               .join(', ')}`,
+            content: `Este canal no se ha configurado como canal de sugerencias.\nUsa este canal en su lugar: <#${guildConfiguration.suggestionChannelId}>`,
             ephemeral: true,
          });
          return;
