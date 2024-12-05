@@ -18,32 +18,37 @@ export const run = async ({ interaction }: CommandProps) => {
    try {
       await interaction.deferReply({ ephemeral: true });
 
-      if (subcommand === 'configure') {
-         const targetRoleId = interaction.options.get('role')?.value;
-         let autoRole = await AutoRole.findOne({ guildId: interaction.guild.id });
+      switch (subcommand) {
+         case 'configure': {
+            const targetRoleId = interaction.options.get('role')?.value;
+            let autoRole = await AutoRole.findOne({ guildId: interaction.guild.id });
 
-         if (autoRole) {
-            if (autoRole.roleId === targetRoleId) {
-               await interaction.followUp(`Auto-rol ya se ha configurado para este rol. Para deshabilitarlo use '/autorole disable'`);
+            if (autoRole) {
+               if (autoRole.roleId === targetRoleId) {
+                  await interaction.followUp(`Auto-rol ya se ha configurado para este rol. Para deshabilitarlo use '/autorole disable'`);
+                  return;
+               }
+               autoRole.set({ roleId: targetRoleId });
+            } else {
+               autoRole = new AutoRole({
+                  guildId: interaction.guild.id,
+                  roleId: targetRoleId,
+               });
+            }
+            await autoRole.save();
+            await interaction.followUp(`Auto-rol se ha configurado correctamente. Para deshabilitarlo use '/autorole disable'`);
+            break;
+         }
+         case 'disable': {
+            const autoRoleToDisable = await AutoRole.findOne({ guildId: interaction.guild.id });
+            if (!autoRoleToDisable) {
+               await interaction.followUp('No hay auto-rol configurado en este servidor.');
                return;
             }
-            autoRole.set({ roleId: targetRoleId });
-         } else {
-            autoRole = new AutoRole({
-               guildId: interaction.guild.id,
-               roleId: targetRoleId,
-            });
+            await autoRoleToDisable.deleteOne();
+            await interaction.followUp('Auto-rol ha sido deshabilitado correctamente.');
+            break;
          }
-         await autoRole.save();
-         await interaction.followUp(`Auto-rol se ha configurado correctamente. Para deshabilitarlo use '/autorole disable'`);
-      } else if (subcommand === 'disable') {
-         const autoRole = await AutoRole.findOne({ guildId: interaction.guild.id });
-         if (!autoRole) {
-            await interaction.followUp('No hay auto-rol configurado en este servidor.');
-            return;
-         }
-         await autoRole.deleteOne();
-         await interaction.followUp('Auto-rol ha sido deshabilitado correctamente.');
       }
    } catch (error) {
       console.error(`Hubo un error con el comando auto-rol: ${error}`);
