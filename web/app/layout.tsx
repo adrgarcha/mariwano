@@ -17,8 +17,8 @@ export default function RootLayout({
    children: React.ReactNode;
 }>) {
    return (
-      <html lang="es" className={font.className}>
-         <body className="font-[unset]">
+      <html lang="es" className={font.className} suppressHydrationWarning>
+         <body className="font-[unset]" suppressHydrationWarning>
             <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
                <header>
                   <Navbar />
