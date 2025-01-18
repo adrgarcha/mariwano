@@ -28,7 +28,7 @@ const float fConcavidadTensor = 1.0;
 
 // Detalles
 
-const float fElevacionZEfectoDeformacion = 2.4;
+const float fElevacionZEfectoDeformacion = 1.4;
 const float fSuavidadEfectoDegradado = 10.0;
 const float fBrilloEfectoDegradado = 0.8;
 const float fFondo = 0.2;
