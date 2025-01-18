@@ -1,4 +1,3 @@
-'use client';
 import CustomButton from '@/components/custom-button';
 import Github from '@/components/icons/github';
 import { ArrowRight } from 'lucide-react';
@@ -11,7 +10,7 @@ import mariwanoIcon from '../../assets/mariwano-icon.png';
 const discordInviteLink = 'https://discord.com/api/oauth2/authorize?client_id=1159902116979146782&permissions=8&scope=bot';
 const githubLink = 'https://github.com/adrgarcha/mariwano';
 
-function BackgroundCanvas() {
+function Background() {
    const canvasRef = useRef<HTMLCanvasElement>(null);
 
    useEffect(() => {
@@ -123,7 +122,7 @@ function BackgroundCanvas() {
 export default function Home() {
    return (
       <div className="relative flex flex-col items-center justify-center gap-y-10 h-screen overflow-x-hidden">
-         <BackgroundCanvas />
+         <Background />
          <section className="flex flex-col items-center gap-y-2">
             <h1 className="font-bold text-6xl">Mariwano</h1>
             <h2 className="font-medium text-center text-white/80 w-96 md:w-full">El bot que transforma el aburrimiento en diversión y buen rollo.</h2>
