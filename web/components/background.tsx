@@ -2,7 +2,7 @@
 import { Camera, Geometry, Mesh, Program, Renderer } from 'ogl';
 import { useEffect, useRef } from 'react';
 
-function BackgroundCanvas() {
+function Background() {
    const canvasRef = useRef<HTMLCanvasElement>(null);
 
    useEffect(() => {
@@ -110,3 +110,5 @@ function BackgroundCanvas() {
 
    return <canvas ref={canvasRef} className="!fixed inset-0 -z-10 w-full h-full" />;
 }
+
+export default Background;
