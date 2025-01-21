@@ -11,7 +11,7 @@ const githubLink = 'https://github.com/adrgarcha/mariwano';
 
 export default function Home() {
    return (
-      <div className="relative flex flex-col items-center justify-center gap-y-10 h-screen overflow-x-hidden bg-slate-950">
+      <div className="relative flex flex-col items-center justify-center gap-y-10 h-screen overflow-x-hidden">
          <Background />
          <section className="flex flex-col items-center gap-y-2">
             <h1 className="font-bold text-6xl">Mariwano</h1>

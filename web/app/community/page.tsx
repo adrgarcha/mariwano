@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function Community() {
    return (
-      <div className="relative flex flex-col md:flex-row items-center justify-center gap-y-16 md:gap-x-20 h-screen md:px-36 overflow-x-hidden bg-slate-950">
+      <div className="relative flex flex-col md:flex-row items-center justify-center gap-y-16 md:gap-x-20 h-screen md:px-36 overflow-x-hidden">
          <Background />
          <section className="flex flex-col items-center gap-y-4">
             <h1 className="font-semibold text-4xl text-center">Drogueros Unidos</h1>
