@@ -1,4 +1,4 @@
-import { useMainPlayer } from 'discord-player';
+import { QueryType, useMainPlayer } from 'discord-player';
 import { GuildMember, SlashCommandBuilder } from 'discord.js';
 import { AutocompleteProps, CommandProps } from '../../lib/types';
 
@@ -34,9 +34,12 @@ export const run = async ({ interaction }: CommandProps) => {
          return;
       }
 
-      const searchResult = await player.search(query, { requestedBy: interaction.user });
+      const searchResult = await player.search(query, {
+         requestedBy: interaction.user,
+         searchEngine: QueryType.AUTO,
+      });
 
-      if (!searchResult.hasTracks()) {
+      if (!searchResult.tracks.length) {
          interaction.followUp({
             content: `No se ha podido encontrar la cancion que has pedido.`,
             ephemeral: true,
@@ -44,28 +47,45 @@ export const run = async ({ interaction }: CommandProps) => {
          return;
       }
 
-      const res = await player.play(interactionMember.voice.channelId, searchResult, {
-         nodeOptions: {
-            metadata: interaction,
-            bufferingTimeout: 15000,
-            leaveOnStop: true,
-            leaveOnStopCooldown: 5000,
-            leaveOnEnd: true,
-            leaveOnEndCooldown: 15000,
-            leaveOnEmpty: true,
-            leaveOnEmptyCooldown: 300000,
-         },
+      // Get or create queue for the guild
+      const queue = player.nodes.create(interaction.guild, {
+         metadata: interaction,
+         bufferingTimeout: 15000,
+         leaveOnStop: true,
+         leaveOnStopCooldown: 5000,
+         leaveOnEnd: true,
+         leaveOnEndCooldown: 15000,
+         leaveOnEmpty: true,
+         leaveOnEmptyCooldown: 3000,
       });
 
-      const message = res.track.playlist
-         ? `Se pusieron en la cola las canciones de: **${res.track.playlist.title}**`
-         : `Se puso en cola: **${res.track.author} - ${res.track.title}**`;
+      // Verify voice channel connection
+      try {
+         if (!queue.connection) {
+            await queue.connect(interactionMember.voice.channel!);
+         }
+      } catch (error) {
+         queue.delete();
+         await interaction.followUp({
+            content: 'No pude unirme a tu canal de voz: ' + error,
+            ephemeral: true,
+         });
+         return;
+      }
+
+      await queue.addTrack(searchResult.tracks[0]);
+
+      if (!queue.isPlaying()) {
+         await queue.node.play();
+      }
+
+      const message = searchResult.playlist
+         ? `Se pusieron en la cola las canciones de: **${searchResult.playlist.title}**`
+         : `Reproduciendo **${searchResult.tracks[0].author} - ${searchResult.tracks[0].title}**`;
 
       interaction.followUp({
          content: message,
       });
-
-      return;
    } catch (error) {
       console.error(`Hubo un error al reproducir musica: ${error}`);
 
@@ -80,18 +100,42 @@ export const run = async ({ interaction }: CommandProps) => {
 export const autocomplete = async ({ interaction }: AutocompleteProps) => {
    const query = interaction.options.getString('query');
    const returnData = [];
-   if (query) {
-      const result = await player.search(query);
+
+   if (!query) {
+      await interaction.respond([]);
+      return;
+   }
+
+   try {
+      const result = await player.search(query, {
+         searchEngine: 'youtube',
+         fallbackSearchEngine: 'youtube',
+         requestedBy: interaction.user,
+      });
+
       if (result.playlist) {
-         const title = result.playlist.title.length > 100 ? result.playlist.title.substring(0, 90) + '...' : result.playlist.title;
-         returnData.push({ name: `${title} | Playlist`, value: query });
+         const title = result.playlist.title.slice(0, 90);
+         returnData.push({
+            name: `${title}${title.length >= 90 ? '...' : ''} | Playlist`,
+            value: result.playlist.url,
+         });
       }
-      for (const track of result.tracks.slice(0, 6)) {
-         const title = track.title.length > 100 ? track.title.substring(0, 90) + '...' : track.title;
-         returnData.push({ name: title, value: track.url });
+
+      for (const track of result.tracks.slice(0, 5)) {
+         const title = track.title.slice(0, 90);
+         returnData.push({
+            name: `${title}${title.length >= 90 ? '...' : ''}`,
+            value: track.url,
+         });
+      }
+
+      await Promise.race([interaction.respond(returnData), new Promise(resolve => setTimeout(resolve, 2500))]);
+   } catch (error) {
+      console.error('Autocomplete error:', error);
+      if (!interaction.responded) {
+         await interaction.respond([]).catch(() => {});
       }
    }
-   await interaction.respond(returnData);
 };
 
 export const data = new SlashCommandBuilder()
