@@ -1,6 +1,5 @@
-import { SpotifyExtractor } from '@discord-player/extractor';
+import { DefaultExtractors } from '@discord-player/extractor';
 import { Player } from 'discord-player';
-import { YoutubeiExtractor } from 'discord-player-youtubei';
 import { Client, GatewayIntentBits, Partials } from 'discord.js';
 import 'dotenv/config';
 import mongoose from 'mongoose';
@@ -8,7 +7,6 @@ import { commandHandler } from './handlers/commandHandler';
 import { eventHandler } from './handlers/eventHandler';
 import { deployCommands } from './lib/deployCommands';
 import { CustomClient } from './lib/types';
-import { DefaultExtractors } from '@discord-player/extractor';
 
 let botToken = process.env.DISCORD_TEST_TOKEN!;
 let botId = process.env.CLIENT_TEST_ID!;
@@ -33,7 +31,7 @@ if (process.env.NODE_ENV === 'production') {
    });
    const player = new Player(client);
    const oauthTokens = process.env.YOUTUBEI_API_KEY!;
-   player.extractors.loadMulti(DefaultExtractors);/*
+   player.extractors.loadMulti(DefaultExtractors); /*
    player.extractors.register(YoutubeiExtractor, {
       authentication: oauthTokens,
       generateWithPoToken: true,
@@ -47,9 +45,7 @@ if (process.env.NODE_ENV === 'production') {
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
    });*/
    player.events
-      .on('playerStart', (queue, track) => {
-         
-      })
+      .on('playerStart', (queue, track) => {})
       .on('playerError', (queue, error) => {
          console.error('Error en el reproductor:', error);
          if (queue.metadata && typeof queue.metadata.send === 'function') {
