@@ -6,6 +6,7 @@ import {
    ModalBuilder,
    ModalSubmitInteraction,
    SlashCommandBuilder,
+   TextChannel,
    TextInputBuilder,
    TextInputStyle,
 } from 'discord.js';
@@ -78,8 +79,9 @@ export const run = async ({ interaction }: CommandProps) => {
       let reportMessage;
 
       try {
-         reportMessage = await interaction.channel!.send('Creando el informe, por favor espere...');
-      } catch {
+         reportMessage = await (interaction.channel as TextChannel).send('Creando el informe, por favor espere...');
+      } catch (error) {
+         console.error(`Error al enviar el mensaje de informe: ${error}`);
          modalInteraction.editReply('Fallo al crear el informe en este canal. Puede que no tengas suficientes permisos.');
          return;
       }

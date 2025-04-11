@@ -1,6 +1,7 @@
+import { DefaultExtractors } from '@discord-player/extractor';
 import { Player } from 'discord-player';
+import { YoutubeiExtractor } from 'discord-player-youtubei';
 import { Client, GatewayIntentBits, Partials } from 'discord.js';
-
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import { commandHandler } from './handlers/commandHandler';
@@ -30,11 +31,23 @@ if (process.env.NODE_ENV === 'production') {
       partials: [Partials.Message, Partials.Channel, Partials.Reaction],
    });
    const player = new Player(client);
-   await player.extractors.loadDefault();
 
-   player.events.on('playerStart', (queue, track) => {
-      queue.metadata.send(`Reproduciendo **${track.title}**.`);
+   await player.extractors.loadMulti(DefaultExtractors);
+   await player.extractors.register(YoutubeiExtractor, {
+      generateWithPoToken: true,
+      streamOptions: { useClient: 'WEB' },
    });
+
+   player.events
+      .on('playerStart', (queue, track) => {
+         queue.channel?.send(`▶️ | Reproduciendo **${track.title}**`);
+      })
+      .on('playerError', (queue, error) => {
+         console.error('Error en el reproductor:', error);
+         if (queue.metadata && typeof queue.metadata.send === 'function') {
+            console.error(`❌ | Ocurrió un error: ${error.message}`);
+         }
+      });
 
    await commandHandler(client as CustomClient);
    await deployCommands(botToken, botId);
