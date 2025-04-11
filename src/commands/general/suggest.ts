@@ -6,6 +6,7 @@ import {
    ModalBuilder,
    ModalSubmitInteraction,
    SlashCommandBuilder,
+   TextChannel,
    TextInputBuilder,
    TextInputStyle,
 } from 'discord.js';
@@ -71,7 +72,7 @@ export const run = async ({ interaction }: CommandProps) => {
       let suggestionMessage;
 
       try {
-         suggestionMessage = await interaction.channel!.send('Creando la sugerencia, por favor espere...');
+         suggestionMessage = await (interaction.channel as TextChannel).send('Creando la sugerencia, por favor espere...');
       } catch {
          modalInteraction.editReply('Fallo al crear la sugerencia en este canal. Puede que no tenga suficientes permisos.');
          return;
