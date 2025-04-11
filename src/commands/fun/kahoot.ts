@@ -1,4 +1,4 @@
-import { EmbedBuilder, Message, SlashCommandBuilder } from 'discord.js';
+import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { KahootQuestion, kahootQuestions } from '../../data/kahootQuestions';
 import { CommandProps } from '../../lib/types';
 import { User } from '../../models/User';
@@ -84,14 +84,13 @@ export const run = async ({ interaction }: CommandProps) => {
       leaderboardEmbed.setDescription(data);
 
       await interaction.reply({ embeds: [leaderboardEmbed] });
-      const filter = (response: Message) => response.author.id === interaction.member?.user.id;
-      const collector = interaction.channel!.createMessageCollector({
-         filter,
+      const collector = interaction.channel!.createMessageComponentCollector({
+         filter: response => response.user.id === interaction.member?.user.id,
          time: 15000,
       });
 
-      collector.on('collect', response => {
-         const respuestaUsuario = response.content;
+      collector.on('collect', interaction => {
+         const respuestaUsuario = interaction.message.content;
 
          if (respuestaUsuario.toLowerCase().trim().includes(botPr.respuesta.trim().toLowerCase())) {
             const amountWon = 175 * botPr.dificultad;
@@ -107,7 +106,7 @@ export const run = async ({ interaction }: CommandProps) => {
          return;
       });
 
-      collector.on('end', (collected, reason) => {
+      collector.on('end', (_, reason) => {
          if (reason === 'time') {
             interaction.followUp({
                content: '¡Tiempo agotado!',
