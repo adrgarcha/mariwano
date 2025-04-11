@@ -47,7 +47,6 @@ export const run = async ({ interaction }: CommandProps) => {
          return;
       }
 
-      // Get or create queue for the guild
       const queue = player.nodes.create(interaction.guild, {
          metadata: interaction,
          bufferingTimeout: 15000,
@@ -59,7 +58,6 @@ export const run = async ({ interaction }: CommandProps) => {
          leaveOnEmptyCooldown: 3000,
       });
 
-      // Verify voice channel connection
       try {
          if (!queue.connection) {
             await queue.connect(interactionMember.voice.channel!);
@@ -73,7 +71,7 @@ export const run = async ({ interaction }: CommandProps) => {
          return;
       }
 
-      await queue.addTrack(searchResult.tracks[0]);
+      queue.addTrack(searchResult.tracks[0]);
 
       if (!queue.isPlaying()) {
          await queue.node.play();
@@ -133,12 +131,12 @@ export const autocomplete = async ({ interaction }: AutocompleteProps) => {
    } catch (error) {
       console.error('Autocomplete error:', error);
       if (!interaction.responded) {
-         await interaction.respond([]).catch(() => {});
+         await interaction.respond([]).catch(error => console.error('Error al responder al autocompletado:', error));
       }
    }
 };
 
 export const data = new SlashCommandBuilder()
    .setName('play')
-   .setDescription('Reproduce una cancion el un canal de voz.')
+   .setDescription('Reproduce una cancion en un canal de voz.')
    .addStringOption(option => option.setName('query').setDescription('La cancion que quieres reproducir.').setRequired(true).setAutocomplete(true));

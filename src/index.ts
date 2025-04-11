@@ -1,5 +1,6 @@
 import { DefaultExtractors } from '@discord-player/extractor';
 import { Player } from 'discord-player';
+import { YoutubeiExtractor } from 'discord-player-youtubei';
 import { Client, GatewayIntentBits, Partials } from 'discord.js';
 import 'dotenv/config';
 import mongoose from 'mongoose';
@@ -30,30 +31,22 @@ if (process.env.NODE_ENV === 'production') {
       partials: [Partials.Message, Partials.Channel, Partials.Reaction],
    });
    const player = new Player(client);
-   const oauthTokens = process.env.YOUTUBEI_API_KEY!;
-   player.extractors.loadMulti(DefaultExtractors); /*
-   player.extractors.register(YoutubeiExtractor, {
-      authentication: oauthTokens,
+
+   await player.extractors.loadMulti(DefaultExtractors);
+   await player.extractors.register(YoutubeiExtractor, {
       generateWithPoToken: true,
-      streamOptions: {
-         useClient: 'ANDROID',
-      },
-      useServerAbrStream: true,
+      streamOptions: { useClient: 'WEB' },
    });
-   player.extractors.register(SpotifyExtractor, {
-      clientId: process.env.SPOTIFY_CLIENT_ID,
-      clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-   });*/
+
    player.events
-      .on('playerStart', (queue, track) => {})
+      .on('playerStart', (queue, track) => {
+         queue.channel?.send(`▶️ | Reproduciendo **${track.title}**`);
+      })
       .on('playerError', (queue, error) => {
          console.error('Error en el reproductor:', error);
          if (queue.metadata && typeof queue.metadata.send === 'function') {
             console.error(`❌ | Ocurrió un error: ${error.message}`);
          }
-      })
-      .on('error', error => {
-         console.error('Error general del reproductor:', error);
       });
 
    await commandHandler(client as CustomClient);
