@@ -25,7 +25,6 @@ export const run = async ({ interaction }: CommandProps) => {
          });
          return;
       }
-
       if (interaction.guild.members.me?.voice.channelId && interactionMember.voice.channelId !== interaction.guild.members.me?.voice.channelId) {
          await interaction.followUp({
             content: 'No te encuentras en el mismo canal de voz que yo.',
