@@ -1,6 +1,7 @@
 import { ChannelType, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { CommandProps } from '../../lib/types';
 import { PatchNotesConfig } from '../../models/PatchNotesConfig';
+import { bug_fixes, date, improvements, new_features, version } from '../../utils/patchNoteTemplate';
 
 export const run = async ({ interaction }: CommandProps) => {
    if (!interaction.memberPermissions?.has(PermissionFlagsBits.Administrator)) {
@@ -27,12 +28,31 @@ export const run = async ({ interaction }: CommandProps) => {
             }
             await PatchNotesConfig.findOneAndUpdate({ guildId: interaction.guildId }, { channelId: channel.id }, { upsert: true, new: true });
             await interaction.editReply(`El canal para los anuncios de notas de parche se ha establecido en <#${channel.id}>.`);
+            // VIM command to replace single quotes with backticks for next 20 lines: :.,+20s/'/`/g
+            await interaction.followUp({
+               content:
+                  `📌 Notas del Parche de Mariwano – v${version}\n` +
+                  `🗓️ Fecha de lanzamiento: ${date}\n` +
+                  `@everyone \n` +
+                  `---\n` +
+                  `✨ Novedades\n` +
+                  `${new_features}\n` +
+                  `🛠️ Mejoras\n` +
+                  `${improvements}\n` +
+                  `🐛 Correcciones de errores\n` +
+                  `${bug_fixes}\n` +
+                  `---\n` +
+                  `📣 ¡Gracias por vuestro apoyo!\n` +
+                  `Si encuentras algún problema o tienes sugerencias, no dudes en compartirlas en el canal correspondiente.\n`,
+               ephemeral: true,
+            });
+
             return;
          }
-         case 'unset': {
+         case `unset`: {
             const deletedConfig = await PatchNotesConfig.findOneAndDelete({ guildId: interaction.guildId });
             if (!deletedConfig) {
-               await interaction.editReply('No había un canal de notas de parche configurado.');
+               await interaction.editReply(`No había un canal de notas de parche configurado.`);
                return;
             }
             await interaction.editReply('Los anuncios de notas de parche han sido desactivados.');
