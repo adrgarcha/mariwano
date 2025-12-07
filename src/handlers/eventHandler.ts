@@ -6,7 +6,7 @@ export async function eventHandler(client: Client) {
       if ('default' in event) {
          client.on(folderName, (...args: unknown[]) => event.default(...args));
       } else {
-         consol.log(`El evento en ${filePath} le falta la funcion por defecto.`);
+         console.log(`El evento en ${filePath} le falta la funcion por defecto.`);
       }
    });
 }
