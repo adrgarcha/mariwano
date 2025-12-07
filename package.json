@@ -9,7 +9,8 @@
     "start:prod": "export NODE_ENV=production && tsx src/index.ts",
     "build": "tsc",
     "dev": "tsx watch src/index.ts",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -44,6 +45,8 @@
     "pretty-ms": "^9.0.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.2.0",
+    "@commitlint/config-conventional": "^20.2.0",
     "@types/ms": "^0.7.34",
     "@types/node": "^20.14.9",
     "@types/react": "^18.3.3",
@@ -52,6 +55,7 @@
     "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "husky": "^9.1.7",
     "prettier": "3.3.3",
     "tsx": "^4.16.2",
     "typescript": "^5.5.2"
