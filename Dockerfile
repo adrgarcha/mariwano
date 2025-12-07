@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -r
 FROM base AS install
 RUN mkdir -p /temp/prod
 COPY package.json bun.lock /temp/prod/
-RUN cd /temp/prod && bun install --frozen-lockfile --production
+RUN cd /temp/prod && bun install --frozen-lockfile --production --ignore-scripts
 
 # Final release image
 FROM base AS release
