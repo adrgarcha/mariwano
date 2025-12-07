@@ -1,29 +1,28 @@
-# Using Node LTS Alpine for smaller image size
-FROM node:lts-alpine
+# Using official Bun image
+# See all versions at https://hub.docker.com/r/oven/bun/tags
+FROM oven/bun:1 AS base
+WORKDIR /usr/src/app
 
-# Install only runtime dependencies (ffmpeg) and clean up
-RUN apk add --no-cache ffmpeg
+# Install ffmpeg runtime dependency
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
 
-# Set the work directory
-WORKDIR /mariwano-discord-bot
+# Install dependencies into temp directory for better caching
+FROM base AS install
+RUN mkdir -p /temp/prod
+COPY package.json bun.lock /temp/prod/
+RUN cd /temp/prod && bun install --frozen-lockfile --production
 
-# Create a non-root user and group
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Final release image
+FROM base AS release
 
-# Copy package files first for better caching
-COPY package*.json ./
+# Copy production dependencies
+COPY --from=install /temp/prod/node_modules node_modules
 
-# Install only production dependencies
-RUN npm ci --only=production
-
-# Copy the rest of the application source code
+# Copy application source code
 COPY . .
 
-# Change ownership to the non-root user
-RUN chown -R appuser:appgroup /mariwano-discord-bot
-
-# Switch to the non-root user
-USER appuser
+# Switch to the non-root bun user (provided by the official image)
+USER bun
 
 # Startup command to run the bot
-CMD ["npm", "run", "start:prod"]
+CMD ["bun", "start:prod"]
