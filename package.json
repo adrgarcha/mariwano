@@ -5,10 +5,10 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "start:dev": "tsx src/index.ts",
-    "start:prod": "export NODE_ENV=production && tsx src/index.ts",
-    "build": "tsc",
-    "dev": "tsx watch src/index.ts",
+    "start:dev": "bun src/index.ts",
+    "start:prod": "export NODE_ENV=production && bun src/index.ts",
+    "build": "tsc --noEmit",
+    "dev": "bun --watch src/index.ts",
     "lint": "eslint"
   },
   "repository": {
@@ -53,7 +53,6 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "3.3.3",
-    "tsx": "^4.16.2",
     "typescript": "^5.5.2"
   }
 }
