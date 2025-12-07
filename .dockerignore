@@ -1,1 +1,16 @@
 node_modules
+Dockerfile*
+docker-compose*
+.dockerignore
+.git
+.gitignore
+.github
+README.md
+LICENSE
+.vscode
+.editorconfig
+.idea
+coverage*
+*.log
+*.md
+.DS_Store
