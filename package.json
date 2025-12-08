@@ -26,6 +26,8 @@
     "@discord-player/extractor": "^7.1.0",
     "@distube/ytdl-core": "^4.16.8",
     "@googleapis/youtube": "^19.0.0",
+    "@twurple/api": "^8.0.2",
+    "@twurple/auth": "^8.0.2",
     "bgutils-js": "^3.2.0",
     "canvacord": "^6.0.2",
     "discord-gamecord": "^4.4.2",
