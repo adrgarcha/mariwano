@@ -79,11 +79,9 @@ export const run = async ({ interaction }: CommandProps) => {
 
       const message = searchResult.playlist
          ? `Se pusieron en la cola las canciones de: **${searchResult.playlist.title}**`
-         : `Reproduciendo **${searchResult.tracks[0].author} - ${searchResult.tracks[0].title}**`;
+         : `Se añadió a la cola **${searchResult.tracks[0].author} - ${searchResult.tracks[0].title}**`;
 
-      interaction.followUp({
-         content: message,
-      });
+      interaction.followUp({ content: message });
    } catch (error) {
       console.error(`Hubo un error al reproducir musica: ${error}`);
 
@@ -105,11 +103,7 @@ export const autocomplete = async ({ interaction }: AutocompleteProps) => {
    }
 
    try {
-      const result = await player.search(query, {
-         searchEngine: 'youtube',
-         fallbackSearchEngine: 'youtube',
-         requestedBy: interaction.user,
-      });
+      const result = await player.search(query, { requestedBy: interaction.user });
 
       if (result.playlist) {
          const title = result.playlist.title.slice(0, 90);
