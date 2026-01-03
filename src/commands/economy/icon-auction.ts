@@ -22,6 +22,7 @@ export const run = async ({ interaction }: CommandProps) => {
     *
     * Introduce /icon-auction con la cantidad para aumentar la puja con tu imagen.
     */
+
    const modal = new ModalBuilder().setTitle('Crear una puja').setCustomId(`auction-${interaction.user.id}`);
 
    const textInput = new TextInputBuilder()
@@ -67,7 +68,17 @@ export const run = async ({ interaction }: CommandProps) => {
 
    const auctionText = modalInteraction.fields.getTextInputValue('auction-input');
    const auctionImageURL = modalInteraction.fields.getTextInputValue('auction-input2');
-
+   if (!auctionImageURL.match(/\.(png|jpe?g|gif|webp|bmp|svg|avif)(\?.*)?$/i)) {
+      modalInteraction.editReply('El enlace insertado no es una imagen. La puesta se ha cancelado.');
+      auctionMessage.edit('Puesta cancelada.');
+      return;
+   } else if (typeof parseInt(auctionText) !== 'number' || parseInt(auctionText) > Number.MAX_SAFE_INTEGER || parseInt(auctionText) < 1000) {
+      modalInteraction.editReply(
+         'La cantidad de gramos o excede los límites o no es un número. La puja mínima es de 1000 gramos. La puesta se ha cancelado.'
+      );
+      auctionMessage.edit('Puesta cancelada.');
+      return;
+   }
    const newAuction = new Auction({
       authorId: interaction.user.id,
       guildId: interaction.guildId,
@@ -109,8 +120,15 @@ export const run = async ({ interaction }: CommandProps) => {
       embeds: [auctionEmbed],
       components: [secondRow],
    });
-   await interaction.guild?.setIcon(auctionImageURL);
-   await interaction.followUp('Imagen establecida.');
 };
 
-export const data = new SlashCommandBuilder().setName('icon-auction').setDescription('Subasta para cambiar el icono del servidor');
+export const data = new SlashCommandBuilder()
+   .setName('icon-auction')
+   .setDescription('Subasta para cambiar el icono del servidor')
+   .addSubcommand(subcommand =>
+      subcommand
+         .setName('add')
+         .setDescription('Nuevo precio para una puesta existente.')
+         .addStringOption(option => option.setName('auction').setDescription('La puesta a reproducir.').setRequired(true).setAutocomplete(true))
+   )
+   .addSubcommand(subcommand => subcommand.setName('new').setDescription('Nueva puesta de la imagen del servidor.'));
