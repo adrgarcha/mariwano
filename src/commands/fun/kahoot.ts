@@ -84,22 +84,22 @@ export const run = async ({ interaction }: CommandProps) => {
       leaderboardEmbed.setDescription(data);
 
       await interaction.reply({ embeds: [leaderboardEmbed] });
-      const collector = interaction.channel!.createMessageComponentCollector({
-         filter: response => response.user.id === interaction.member?.user.id,
+      const collector = interaction.channel!.createMessageCollector({
+         filter: response => response.author.id === interaction.member?.user.id,
          time: 15000,
       });
 
-      collector.on('collect', interaction => {
-         const respuestaUsuario = interaction.message.content;
+      collector.on('collect', async interaction => {
+         const respuestaUsuario = interaction.content;
 
          if (respuestaUsuario.toLowerCase().trim().includes(botPr.respuesta.trim().toLowerCase())) {
             const amountWon = 175 * botPr.dificultad;
             user.balance += amountWon;
             user.save();
 
-            interaction.followUp(`¡Respuesta correcta! | ${amountWon} gramos de cocaína fueron agregadas a tu inventario.`);
+            interaction.reply(`¡Respuesta correcta! | ${amountWon} gramos de cocaína fueron agregadas a tu inventario.`);
          } else {
-            interaction.followUp(`Perdiste. Ahora sabes cuál no es la correcta socio`);
+            interaction.reply(`Perdiste. Ahora sabes cuál no es la correcta socio`);
          }
 
          collector.stop();
