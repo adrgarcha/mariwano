@@ -6,7 +6,6 @@ export default function (client: Client) {
    const checkTwitch = async () => {
       try {
          const notificationConfigs = await TwitchNotificationConfig.find();
-
          for (const notificationConfig of notificationConfigs) {
             const stream = await getTwitchChannelStream(notificationConfig.twitchChannelName);
 
@@ -14,17 +13,12 @@ export default function (client: Client) {
             const isCurrentlyLive = stream !== null;
 
             if (isCurrentlyLive && !wasLive) {
-               const targetGuild = await client.guilds.fetch(notificationConfig.guildId);
+               const cachedGuild = client.guilds.cache.get(notificationConfig.guildId);
+               if (!cachedGuild) continue;
 
-               if (!targetGuild) {
-                  await TwitchNotificationConfig.findOneAndDelete({ _id: notificationConfig._id });
-                  continue;
-               }
-
-               const targetChannel = (await targetGuild.channels.fetch(notificationConfig.notificationChannelId)) as TextChannel;
-
+               const targetChannel = cachedGuild.channels.cache.get(notificationConfig.notificationChannelId) as TextChannel;
                if (!targetChannel) {
-                  await TwitchNotificationConfig.findOneAndDelete({ _id: notificationConfig._id });
+                  console.error(`No se ha encontrado el canal de notificaciones con ID ${notificationConfig.notificationChannelId}`);
                   continue;
                }
 
