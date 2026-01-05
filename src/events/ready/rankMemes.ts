@@ -11,15 +11,12 @@ export default function (client: Client) {
       try {
          const memeRankings = await MemeRanking.find();
          for (const memeRanking of memeRankings) {
-            const targetGuild = await client.guilds.fetch(memeRanking?.guildId);
-            if (!targetGuild) {
-               console.error(`No se ha encontrado el servidor de memes para el ranking: ${memeRanking}`);
-               continue;
-            }
+            const cachedGuild = client.guilds.cache.get(memeRanking.guildId);
+            if (!cachedGuild) continue;
 
-            const targetChannel = (await targetGuild.channels.fetch(memeRanking?.rankingChannelId)) as TextChannel;
+            const targetChannel = cachedGuild.channels.cache.get(memeRanking.rankingChannelId) as TextChannel;
             if (!targetChannel) {
-               console.error(`No se ha encontrado el canal de ranking de memes: ${targetChannel}`);
+               console.error(`No se ha encontrado el canal de ranking con ID ${memeRanking.rankingChannelId}`);
                continue;
             }
 
