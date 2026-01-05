@@ -3,6 +3,8 @@ import { KahootQuestion, kahootQuestions } from '../../data/kahootQuestions';
 import { CommandProps } from '../../lib/types';
 import { User } from '../../models/User';
 
+const removeDiacritics = (text: string) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
 const shuffle = (array: string[]) => {
    let currentIndex = array.length,
       randomIndex;
@@ -30,6 +32,14 @@ export const run = async ({ interaction }: CommandProps) => {
       return;
    }
 
+   if (!interaction.channel || !interaction.channel.isTextBased() || interaction.channel.isDMBased()) {
+      interaction.reply({
+         content: 'Este comando solo puede ser ejecutado en un canal de texto de un servidor.',
+         ephemeral: true,
+      });
+      return;
+   }
+
    try {
       let hardcore = interaction.options.getBoolean('hardcore');
       if (!hardcore) hardcore = false;
@@ -45,14 +55,13 @@ export const run = async ({ interaction }: CommandProps) => {
       if (user) {
          const lastKahootDate = user.lastKahoot.toDateString();
          const currentDate = new Date().toDateString();
-         const kahootUserCount = user.kahootLimit;
 
          if (lastKahootDate !== currentDate) {
             user.kahootLimit = 5;
             await user.save();
          }
 
-         if (kahootUserCount <= 0) {
+         if (user.kahootLimit <= 0) {
             interaction.reply({
                content: `Has excedido el límite de preguntas por hoy. El límite diario es de 5 preguntas`,
                ephemeral: true,
@@ -84,22 +93,23 @@ export const run = async ({ interaction }: CommandProps) => {
       leaderboardEmbed.setDescription(data);
 
       await interaction.reply({ embeds: [leaderboardEmbed] });
-      const collector = interaction.channel!.createMessageComponentCollector({
-         filter: response => response.user.id === interaction.member?.user.id,
+      const collector = interaction.channel.createMessageCollector({
+         filter: response => response.author.id === interaction.user.id,
          time: 15000,
       });
 
       collector.on('collect', interaction => {
-         const respuestaUsuario = interaction.message.content;
+         const respuestaUsuario = removeDiacritics(interaction.content.trim().toLowerCase());
+         const respuestaCorrecta = removeDiacritics(botPr.respuesta.trim().toLowerCase());
 
-         if (respuestaUsuario.toLowerCase().trim().includes(botPr.respuesta.trim().toLowerCase())) {
+         if (respuestaUsuario === respuestaCorrecta) {
             const amountWon = 175 * botPr.dificultad;
             user.balance += amountWon;
             user.save();
 
-            interaction.followUp(`¡Respuesta correcta! | ${amountWon} gramos de cocaína fueron agregadas a tu inventario.`);
+            interaction.reply(`¡Respuesta correcta! | ${amountWon} gramos de cocaína fueron agregadas a tu inventario.`);
          } else {
-            interaction.followUp(`Perdiste. Ahora sabes cuál no es la correcta socio`);
+            interaction.reply(`Perdiste. Ahora sabes cuál no es la correcta socio`);
          }
 
          collector.stop();
@@ -108,10 +118,7 @@ export const run = async ({ interaction }: CommandProps) => {
 
       collector.on('end', (_, reason) => {
          if (reason === 'time') {
-            interaction.followUp({
-               content: '¡Tiempo agotado!',
-               ephemeral: true,
-            });
+            interaction.followUp({ content: '¡Tiempo agotado!' });
             return;
          }
       });
