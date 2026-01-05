@@ -1,47 +1,45 @@
+import cron from 'node-cron';
 import { Client, EmbedBuilder, Message, TextChannel } from 'discord.js';
 import { MemeRanking } from '../../models/MemeRanking';
 import { User } from '../../models/User';
-import { isDateAfterDays, isDateBeforeDays } from '../../utils/date';
 
-const rankingInterval = process.env.NODE_ENV === 'production' ? 7 : 60 / (24 * 3600); // 7 days in prod | 30 seconds in dev
-const checkRankingInterval = process.env.NODE_ENV === 'production' ? 1000 * 60 * 60 : 1000 * 10; // 1 hour in prod | 10 seconds in dev
+// Production: every Sunday at 21:00 -> '0 21 * * 0'
+// Development: every minute -> '* * * * *'
+const cronExpression = process.env.NODE_ENV === 'production' ? '0 21 * * 0' : '* * * * *';
 
 export default function (client: Client) {
-   const checkRanking = async () => {
-      try {
-         const memeRankings = await MemeRanking.find();
-         for (const memeRanking of memeRankings) {
-            const cachedGuild = client.guilds.cache.get(memeRanking.guildId);
-            if (!cachedGuild) continue;
-
-            const targetChannel = cachedGuild.channels.cache.get(memeRanking.rankingChannelId) as TextChannel;
-            if (!targetChannel) {
-               console.error(`No se ha encontrado el canal de ranking con ID ${memeRanking.rankingChannelId}`);
-               continue;
-            }
-
-            if (isDateAfterDays(memeRanking.lastRanking, rankingInterval)) {
-               await collectMessages(targetChannel);
-               await memeRanking.updateOne({ lastRanking: new Date() });
-            }
-         }
-      } catch (error) {
-         console.error(`Hubo un error en el evento de ranking de memes: ${error}`);
-      }
-   };
-
-   checkRanking();
-   setInterval(checkRanking, checkRankingInterval);
+   cron.schedule(cronExpression, () => collectRankings(client), { timezone: 'Europe/Madrid' });
 }
 
-async function collectMessages(targetChannel: TextChannel) {
+async function collectRankings(client: Client) {
+   try {
+      const memeRankings = await MemeRanking.find();
+      for (const memeRanking of memeRankings) {
+         const cachedGuild = client.guilds.cache.get(memeRanking.guildId);
+         if (!cachedGuild) continue;
+
+         const targetChannel = cachedGuild.channels.cache.get(memeRanking.rankingChannelId) as TextChannel;
+         if (!targetChannel) {
+            console.error(`No se ha encontrado el canal de ranking con ID ${memeRanking.rankingChannelId}`);
+            continue;
+         }
+
+         await collectMessages(targetChannel, memeRanking.lastRanking);
+         await memeRanking.updateOne({ lastRanking: new Date() });
+      }
+   } catch (error) {
+      console.error(`Hubo un error en el evento de ranking de memes: ${error}`);
+   }
+}
+
+async function collectMessages(targetChannel: TextChannel, cutoffDate: Date) {
    const memeMessages = new Array<Message>();
    const leaderboardEmbed = new EmbedBuilder().setTitle('🏆 **LEADERBOARD** 🏆').setColor(0x45d6fd);
 
    try {
       const messages = await targetChannel.messages.fetch();
       messages
-         .filter(message => !message.author.bot && message.attachments.size > 0 && isDateBeforeDays(message.createdAt, rankingInterval))
+         .filter(message => !message.author.bot && message.attachments.size > 0 && message.createdAt > cutoffDate)
          .forEach(message => memeMessages.push(message));
    } catch (error) {
       console.error(`Hubo un error al recopilar los mensajes de memes: ${error}`);
