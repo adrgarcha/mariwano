@@ -19,6 +19,10 @@ const userSchema = new Schema({
       type: Date,
       default: new Date(),
    },
+   lastWeekly: {
+      type: Date,
+      default: new Date(0),
+   },
    lastWordle: {
       type: Date,
       default: new Date(),
