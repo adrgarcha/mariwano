@@ -3,6 +3,8 @@ import {
    ButtonBuilder,
    ButtonStyle,
    EmbedBuilder,
+   InteractionContextType,
+   MessageFlags,
    ModalBuilder,
    ModalSubmitInteraction,
    SlashCommandBuilder,
@@ -16,7 +18,7 @@ import { Suggestion } from '../../models/Suggestion';
 
 export const run = async ({ interaction }: CommandProps) => {
    if (!interaction.guild) {
-      interaction.reply({
+      await interaction.reply({
          content: 'Solo puedes ejecutar este comando en un servidor.',
          ephemeral: true,
       });
@@ -24,9 +26,7 @@ export const run = async ({ interaction }: CommandProps) => {
    }
 
    try {
-      const guildConfiguration = await GuildConfiguration.findOne({
-         guildId: interaction.guildId,
-      });
+      const guildConfiguration = await GuildConfiguration.findOne({ guildId: interaction.guildId });
       if (!guildConfiguration?.suggestionChannelId) {
          await interaction.reply({
             content: `Este servidor todavia no ha sido configurado con un canal de sugerencias.`,
@@ -58,16 +58,14 @@ export const run = async ({ interaction }: CommandProps) => {
 
       await interaction.showModal(modal);
 
-      const filter = (i: ModalSubmitInteraction) => i.customId === `suggestion-${interaction.user.id}`;
-
       const modalInteraction = (await interaction
          .awaitModalSubmit({
-            filter,
+            filter: modalInteraction => modalInteraction.customId === `suggestion-${interaction.user.id}`,
             time: 1000 * 60 * 3, // 3min
          })
          .catch(error => console.error(`Hubo un error en las sugerencias: ${error}`))) as ModalSubmitInteraction;
 
-      await modalInteraction.deferReply({ ephemeral: true });
+      await modalInteraction.deferReply({ flags: MessageFlags.Ephemeral });
 
       let suggestionMessage;
 
@@ -134,7 +132,7 @@ export const run = async ({ interaction }: CommandProps) => {
       const secondRow = new ActionRowBuilder<ButtonBuilder>().addComponents(approveButton, rejectButton);
 
       suggestionMessage.edit({
-         content: `${interaction.user} Sugerencia creada.`,
+         content: null,
          embeds: [suggestionEmbed],
          components: [firstRow, secondRow],
       });
@@ -143,4 +141,7 @@ export const run = async ({ interaction }: CommandProps) => {
    }
 };
 
-export const data = new SlashCommandBuilder().setName('suggest').setDescription('Crear una sugerencia.').setDMPermission(false);
+export const data = new SlashCommandBuilder()
+   .setName('suggest')
+   .setDescription('Crear una sugerencia sobre una idea o nueva funcionalidad.')
+   .setContexts([InteractionContextType.Guild]);
