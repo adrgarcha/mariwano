@@ -3,6 +3,8 @@ import {
    ButtonBuilder,
    ButtonStyle,
    EmbedBuilder,
+   InteractionContextType,
+   MessageFlags,
    ModalBuilder,
    ModalSubmitInteraction,
    SlashCommandBuilder,
@@ -16,7 +18,7 @@ import { Report } from '../../models/Report';
 
 export const run = async ({ interaction }: CommandProps) => {
    if (!interaction.guild) {
-      interaction.reply({
+      await interaction.reply({
          content: 'Solo puedes ejecutar este comando en un servidor.',
          ephemeral: true,
       });
@@ -74,7 +76,7 @@ export const run = async ({ interaction }: CommandProps) => {
          })
          .catch(error => console.error(`Hubo un error en los informes: ${error}`))) as ModalSubmitInteraction;
 
-      await modalInteraction.deferReply({ ephemeral: true });
+      await modalInteraction.deferReply({ flags: MessageFlags.Ephemeral });
 
       let reportMessage;
 
@@ -129,7 +131,7 @@ export const run = async ({ interaction }: CommandProps) => {
       const row = new ActionRowBuilder<ButtonBuilder>().addComponents(solveButton, fakeButton);
 
       reportMessage.edit({
-         content: `${interaction.user} Informe creado.`,
+         content: null,
          embeds: [reportEmbed],
          components: [row],
       });
@@ -138,4 +140,7 @@ export const run = async ({ interaction }: CommandProps) => {
    }
 };
 
-export const data = new SlashCommandBuilder().setName('report').setDescription('Crea un informe sobre un bug.').setDMPermission(false);
+export const data = new SlashCommandBuilder()
+   .setName('report')
+   .setDescription('Crea un informe sobre un bug.')
+   .setContexts([InteractionContextType.Guild]);
