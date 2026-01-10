@@ -17,11 +17,19 @@ const userSchema = new Schema({
    },
    lastDaily: {
       type: Date,
-      default: new Date(),
+      default: new Date(0),
+   },
+   dailyStreak: {
+      type: Number,
+      default: 0,
    },
    lastWeekly: {
       type: Date,
       default: new Date(0),
+   },
+   weeklyStreak: {
+      type: Number,
+      default: 0,
    },
    lastWordle: {
       type: Date,
