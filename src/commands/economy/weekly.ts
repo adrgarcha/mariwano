@@ -1,9 +1,9 @@
 import { InteractionContextType, MessageFlags, SlashCommandBuilder } from 'discord.js';
 import { CommandProps } from '../../lib/types';
 import { User } from '../../models/User';
+import { buildRewardMessage, calculateWeeklyStreak, getMultiplier } from '../../utils/streak';
 
-const WEEKLY_AMOUNT = 5000;
-const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
+const WEEKLY_BASE_AMOUNT = 5000;
 
 export const run = async ({ interaction }: CommandProps) => {
    try {
@@ -16,32 +16,42 @@ export const run = async ({ interaction }: CommandProps) => {
 
       let user = await User.findOne(query);
 
-      if (user) {
-         const now = new Date();
-         const lastWeekly = user.lastWeekly;
-         const timeDiff = now.getTime() - lastWeekly.getTime();
+      const currentStreak = user?.weeklyStreak || 0;
+      const lastWeekly = user?.lastWeekly;
 
-         if (timeDiff < WEEK_IN_MS) {
-            const remaining = WEEK_IN_MS - timeDiff;
-            const days = Math.floor(remaining / (24 * 60 * 60 * 1000));
-            const hours = Math.floor((remaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
-            const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+      const streakResult = calculateWeeklyStreak(lastWeekly, currentStreak);
 
-            interaction.editReply(`Debes esperar ${days}d ${hours}h ${minutes}m para reclamar tu recompensa semanal.`);
-            return;
-         }
-      } else {
+      if (!streakResult.canClaim) {
+         interaction.editReply(streakResult.message || 'No puedes reclamar tu recompensa semanal todavía.');
+         return;
+      }
+
+      if (!user) {
          user = new User({
             ...query,
             lastWeekly: new Date(),
+            weeklyStreak: streakResult.newStreak,
          });
       }
 
-      user.balance += WEEKLY_AMOUNT;
+      const multiplier = getMultiplier(streakResult.newStreak, 'weekly');
+      const finalAmount = Math.floor(WEEKLY_BASE_AMOUNT * multiplier);
+
+      user.balance += finalAmount;
       user.lastWeekly = new Date();
+      user.weeklyStreak = streakResult.newStreak;
       await user.save();
 
-      interaction.editReply(`${WEEKLY_AMOUNT} gramos de cocaína fueron agregadas a tu inventario. Ahora mismo tienes ${user.balance}`);
+      const message = buildRewardMessage({
+         baseAmount: WEEKLY_BASE_AMOUNT,
+         multiplier,
+         finalAmount,
+         streak: streakResult.newStreak,
+         balance: user.balance,
+         type: 'weekly',
+      });
+
+      interaction.editReply(message);
    } catch (error) {
       console.error(`Ha ocurrido un error con las semanales: ${error}`);
    }
