@@ -1,8 +1,11 @@
-import { Font, RankCardBuilder } from 'canvacord';
-import { AttachmentBuilder, SlashCommandBuilder } from 'discord.js';
+import { AttachmentBuilder, InteractionContextType, MessageFlags, SlashCommandBuilder } from 'discord.js';
+import { Font } from 'canvacord';
 import { CommandProps } from '../../lib/types';
 import { Level } from '../../models/Level';
+import { User } from '../../models/User';
 import { calculateLevelXp } from '../../utils/calculateLevelXp';
+import { ProfileCard } from '../../utils/ProfileCard';
+
 Font.loadDefault();
 
 export const run = async ({ interaction }: CommandProps) => {
@@ -26,7 +29,7 @@ export const run = async ({ interaction }: CommandProps) => {
             content: mentionedUserId
                ? `${targetUserObj.user.tag} no tiene ningún nivel.`
                : 'No tienes ningún nivel todavía. Intenta hablar un poco más.',
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
          });
          return;
       }
@@ -45,17 +48,33 @@ export const run = async ({ interaction }: CommandProps) => {
 
       const currentRank = allLevels.findIndex(lvl => lvl.userId === targetUserId) + 1;
 
-      const rank = new RankCardBuilder()
-         .setAvatar(targetUserObj.user.displayAvatarURL({ size: 256 }))
-         .setRank(currentRank)
-         .setLevel(fetchedLevel.level)
-         .setCurrentXP(fetchedLevel.xp)
-         .setRequiredXP(calculateLevelXp(fetchedLevel.level))
-         .setStatus(targetUserObj.presence !== null ? targetUserObj.presence.status : 'offline')
-         .setUsername(targetUserObj.user.username);
+      const userData = await User.findOne({
+         userId: targetUserId,
+         guildId: interaction.guild.id,
+      });
 
-      const data = await rank.build();
-      const attachment = new AttachmentBuilder(data);
+      const totalDonated = userData?.totalDonated || 0;
+      const totalReceived = userData?.totalReceived || 0;
+      const donationCount = userData?.donationCount || 0;
+
+      const presenceStatus = targetUserObj.presence?.status || 'offline';
+      const validStatus = presenceStatus === 'invisible' ? 'offline' : presenceStatus;
+
+      const card = new ProfileCard()
+         .setUsername(targetUserObj.user.username)
+         .setAvatar(targetUserObj.user.displayAvatarURL({ size: 256 }))
+         .setLevel(fetchedLevel.level)
+         .setCurrentXp(fetchedLevel.xp)
+         .setRequiredXp(calculateLevelXp(fetchedLevel.level))
+         .setRank(currentRank)
+         .setStatus(validStatus)
+         .setTotalDonated(totalDonated)
+         .setTotalReceived(totalReceived)
+         .setDonationCount(donationCount);
+
+      const image = await card.build();
+      const attachment = new AttachmentBuilder(image, { name: 'profile.png' });
+
       await interaction.reply({ files: [attachment] });
    } catch (error) {
       console.error(`Ha ocurrido un error con el comando 'level': ${error}`);
@@ -65,4 +84,5 @@ export const run = async ({ interaction }: CommandProps) => {
 export const data = new SlashCommandBuilder()
    .setName('level')
    .setDescription('Muestra tu nivel o el de otra persona.')
+   .setContexts([InteractionContextType.Guild])
    .addUserOption(option => option.setName('target-user').setDescription('El usuario que quieres ver su nivel.'));

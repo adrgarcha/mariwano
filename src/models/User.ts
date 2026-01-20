@@ -57,6 +57,18 @@ const userSchema = new Schema({
       set: (n: number) => Math.floor(n),
       default: 0,
    },
+   totalDonated: {
+      type: Number,
+      default: 0,
+   },
+   totalReceived: {
+      type: Number,
+      default: 0,
+   },
+   donationCount: {
+      type: Number,
+      default: 0,
+   },
 });
 
 export const User = model('User', userSchema);
