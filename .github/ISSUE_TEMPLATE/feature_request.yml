@@ -1,0 +1,42 @@
+name: Solicitud de nueva funcionalidad o mejora
+description: Propón una nueva característica o mejora para el bot
+labels: ["enhancement"]
+body:
+  - type: checkboxes
+    attributes:
+      label: Comprobación previa
+      options:
+        - label: He buscado en los issues existentes y esto no es un duplicado
+          required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Problema o motivación
+      description: ¿Qué problema resuelve esta propuesta? ¿Por qué sería útil?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solución propuesta
+      description: Describe cómo te imaginas que debería funcionar
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+      description: ¿Qué otras opciones barajaste antes de llegar a esta propuesta?
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Contexto adicional
+      description: Información extra, enlaces, capturas de pantalla u otros recursos relevantes
+    validations:
+      required: false
