@@ -7,7 +7,6 @@ import { commandHandler } from './handlers/commandHandler';
 import { eventHandler } from './handlers/eventHandler';
 import { deployCommands } from './lib/deployCommands';
 import { CustomClient } from './lib/types';
-import { YoutubeSabrExtractor } from 'discord-player-googlevideo';
 
 let botToken = process.env.DISCORD_TEST_TOKEN!;
 let botId = process.env.CLIENT_TEST_ID!;
@@ -33,7 +32,6 @@ if (process.env.NODE_ENV === 'production') {
    const player = new Player(client);
 
    await player.extractors.loadMulti(DefaultExtractors);
-   await player.extractors.register(YoutubeSabrExtractor, {});
 
    player.events
       .on('playerStart', (queue, track) => {

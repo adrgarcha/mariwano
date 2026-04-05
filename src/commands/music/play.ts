@@ -1,6 +1,6 @@
 import { QueryType, useMainPlayer } from 'discord-player';
 import { GuildMember, SlashCommandBuilder } from 'discord.js';
-import { AutocompleteProps, CommandProps } from '../../lib/types';
+import { CommandProps } from '../../lib/types';
 
 const player = useMainPlayer();
 
@@ -16,6 +16,16 @@ export const run = async ({ interaction }: CommandProps) => {
    await interaction.deferReply();
    const query = interaction.options.getString('query', true);
    const interactionMember = interaction.member as GuildMember;
+
+   try {
+      new URL(query);
+   } catch {
+      await interaction.followUp({
+         content: 'El parámetro `query` debe ser una URL válida. Plataformas soportadas: Spotify, SoundCloud, Apple Music, Vimeo, Facebook.',
+         ephemeral: true,
+      });
+      return;
+   }
 
    try {
       if (!interactionMember.voice.channelId) {
@@ -93,44 +103,9 @@ export const run = async ({ interaction }: CommandProps) => {
    }
 };
 
-export const autocomplete = async ({ interaction }: AutocompleteProps) => {
-   const query = interaction.options.getString('query');
-   const returnData = [];
-
-   if (!query) {
-      await interaction.respond([]);
-      return;
-   }
-
-   try {
-      const result = await player.search(query, { requestedBy: interaction.user });
-
-      if (result.playlist) {
-         const title = result.playlist.title.slice(0, 90);
-         returnData.push({
-            name: `${title}${title.length >= 90 ? '...' : ''} | Playlist`,
-            value: result.playlist.url,
-         });
-      }
-
-      for (const track of result.tracks.slice(0, 5)) {
-         const title = track.title.slice(0, 90);
-         returnData.push({
-            name: `${title}${title.length >= 90 ? '...' : ''}`,
-            value: track.url,
-         });
-      }
-
-      await Promise.race([interaction.respond(returnData), new Promise(resolve => setTimeout(resolve, 2500))]);
-   } catch (error) {
-      console.error('Autocomplete error:', error);
-      if (!interaction.responded) {
-         await interaction.respond([]).catch(error => console.error('Error al responder al autocompletado:', error));
-      }
-   }
-};
-
 export const data = new SlashCommandBuilder()
    .setName('play')
    .setDescription('Reproduce una cancion en un canal de voz.')
-   .addStringOption(option => option.setName('query').setDescription('La cancion que quieres reproducir.').setRequired(true).setAutocomplete(true));
+   .addStringOption(option =>
+      option.setName('query').setDescription('URL de la canción, álbum o playlist (Spotify, SoundCloud, Apple Music...)').setRequired(true)
+   );

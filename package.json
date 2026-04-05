@@ -30,7 +30,6 @@
     "canvacord": "^6.0.2",
     "discord-gamecord": "^4.4.2",
     "discord-player": "^7.1.0",
-    "discord-player-googlevideo": "^0.2.0",
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
     "fakeyou.ts": "^3.6.1",
