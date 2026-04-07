@@ -77,6 +77,10 @@ const userSchema = new Schema({
       type: Number,
       default: 0,
    },
+   totalBurned: {
+      type: Number,
+      default: 0,
+   },
 });
 
 export const User = model('User', userSchema);
