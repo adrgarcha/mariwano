@@ -1,5 +1,6 @@
 import { EmbedBuilder, Interaction, MessageFlags } from 'discord.js';
 import { Report } from '../../models/Report';
+import { runIssueAgent } from '../../utils/issueAgent';
 
 export default async function (interaction: Interaction) {
    if (!interaction.isButton() || !interaction.customId) return;
@@ -43,6 +44,20 @@ export default async function (interaction: Interaction) {
          interaction.editReply('Error solucionado. Muchas gracias por su informe.');
 
          targetMessage?.edit({ embeds: [updatedEmbed], components: [] });
+
+         runIssueAgent({ type: 'report', command: targetReport.command, content: targetReport.description })
+            .then(result => {
+               if (result.created) {
+                  interaction.followUp({ content: `Issue creado: ${result.issueUrl}`, flags: MessageFlags.Ephemeral });
+               } else {
+                  interaction.followUp({ content: `No se ha creado un issue: ${result.reason}`, flags: MessageFlags.Ephemeral });
+               }
+            })
+            .catch(error => {
+               console.error(`Issue agent follow-up error: ${error}`);
+               interaction.followUp({ content: 'Error al procesar el agente de issues.', flags: MessageFlags.Ephemeral });
+            });
+
          return;
       }
 
