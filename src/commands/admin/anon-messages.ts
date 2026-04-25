@@ -1,6 +1,6 @@
 import { ChannelType, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { CommandProps } from '../../lib/types';
-import { AnonMessagesModel } from '../../models/AnonMessages';
+import { AnonConfigModel } from '../../models/AnonConfig';
 
 export const run = async ({ interaction }: CommandProps) => {
    if (!interaction.memberPermissions?.has('Administrator')) {
@@ -19,7 +19,7 @@ export const run = async ({ interaction }: CommandProps) => {
       const channel = interaction.options.getChannel('canal');
       const subcommand = interaction.options.getSubcommand();
 
-      const channelExists = await AnonMessagesModel.exists({
+      const channelExists = await AnonConfigModel.exists({
          guildId: interaction.guildId,
          anonChannelGuild: channel?.id,
       });
@@ -31,7 +31,7 @@ export const run = async ({ interaction }: CommandProps) => {
                return;
             }
 
-            await AnonMessagesModel.create({
+            await AnonConfigModel.create({
                guildId: interaction.guildId,
                anonChannelGuild: channel?.id,
             });
@@ -44,8 +44,9 @@ export const run = async ({ interaction }: CommandProps) => {
                return;
             }
 
-            await AnonMessagesModel.findOneAndDelete({
+            await AnonConfigModel.findOneAndDelete({
                guildId: interaction.guildId,
+               anonChannelGuild: channel?.id,
             });
 
             await interaction.editReply(`Se ha eliminado ${channel} como canal de mensajes anónimos.`);

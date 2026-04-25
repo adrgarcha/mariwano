@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-const AnonMessages = new Schema({
+const AnonConfigSchema = new Schema({
    guildId: {
       type: String,
       required: true,
@@ -11,4 +11,4 @@ const AnonMessages = new Schema({
    },
 });
 
-export const AnonMessagesModel = model('AnonMessages', AnonMessages);
+export const AnonConfigModel = model('AnonConfig', AnonConfigSchema);

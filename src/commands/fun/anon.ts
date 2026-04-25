@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from 'discord.js';
 import { CommandProps } from '../../lib/types';
 import { AnonMessageModel } from '../../models/AnonMessage';
-import { AnonMessagesModel } from '../../models/AnonMessages';
+import { AnonConfigModel } from '../../models/AnonConfig';
 export const run = async ({ interaction }: CommandProps) => {
    const message = interaction.options.getString('mensaje');
 
@@ -10,7 +10,7 @@ export const run = async ({ interaction }: CommandProps) => {
       anonChannelGuild: interaction.channelId,
    };
 
-   const messageChannel = await AnonMessagesModel.findOne(query);
+   const messageChannel = await AnonConfigModel.findOne(query);
 
    if (!messageChannel) {
       await interaction.reply('No hay un canal de mensajes anónimos configurado.');

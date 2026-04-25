@@ -1,7 +1,7 @@
 import { Client, EmbedBuilder, TextChannel } from 'discord.js';
 import cron from 'node-cron';
 import { AnonMessageModel } from '../../models/AnonMessage';
-import { AnonMessagesModel } from '../../models/AnonMessages';
+import { AnonConfigModel } from '../../models/AnonConfig';
 
 // Production: every Sunday at 21:00 -> '0 21 * * 0'
 // Development: every minute -> '* * * * *'
@@ -13,7 +13,7 @@ export default function (client: Client) {
 
 async function collectMessages(client: Client) {
    try {
-      const AnonMessages = await AnonMessagesModel.find();
+      const AnonMessages = await AnonConfigModel.find();
       const AnonMessage = await AnonMessageModel.find();
       for (const message of AnonMessage) {
          const cachedGuild = client.guilds.cache.get(message.guildId);
@@ -62,5 +62,5 @@ async function collectAll(targetChannel: TextChannel, cutoffDate: Date) {
       });
 
    targetChannel.send({ embeds: [leaderboardEmbed] });
-   AnonMessagesModel.deleteMany({});
+   AnonConfigModel.deleteMany({});
 }
