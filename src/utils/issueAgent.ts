@@ -20,7 +20,6 @@ interface LlmDecision {
    reason: string;
    title: string;
    body: string;
-   highPriority: boolean;
 }
 
 const client = new OpenAI({
@@ -45,8 +44,7 @@ Always respond with valid JSON matching exactly this schema:
   "createIssue": boolean,
   "reason": string,
   "title": string,
-  "body": string,
-  "highPriority": boolean
+  "body": string
 }`;
 
 function buildUserMessage(input: IssueAgentInput): string {
@@ -60,10 +58,8 @@ function buildUserMessage(input: IssueAgentInput): string {
    return lines.join('\n');
 }
 
-function buildLabels(input: IssueAgentInput, highPriority: boolean): string[] {
-   const labels = input.type === 'report' ? ['bug', 'ai:report'] : ['enhancement', 'ai:suggestion'];
-   if (highPriority) labels.push('high-priority');
-   return labels;
+function buildLabels(input: IssueAgentInput): string[] {
+   return input.type === 'report' ? ['bug', 'ai:report'] : ['enhancement', 'ai:suggestion'];
 }
 
 export async function runIssueAgent(input: IssueAgentInput): Promise<IssueAgentResult> {
@@ -84,7 +80,7 @@ export async function runIssueAgent(input: IssueAgentInput): Promise<IssueAgentR
 
       if (!decision.createIssue) return { created: false, reason: decision.reason };
 
-      const labels = buildLabels(input, decision.highPriority);
+      const labels = buildLabels(input);
       const issueUrl = await createIssue(decision.title, decision.body, labels);
 
       return { created: true, issueUrl, reason: decision.reason };
