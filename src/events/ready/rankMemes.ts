@@ -52,8 +52,6 @@ async function collectMessages(targetChannel: TextChannel, cutoffDate: Date) {
       return;
    }
 
-   // Fetch each reaction to ensure counts are up-to-date for messages that predate the bot session,
-   // then sum reaction.count across all emoji types to get the true total reaction count per message.
    await Promise.all(memeMessages.map(message => Promise.all(message.reactions.cache.map(reaction => reaction.fetch()))));
 
    const totalReactions = (message: Message) => message.reactions.cache.reduce((sum, reaction) => sum + reaction.count, 0);
