@@ -1,0 +1,74 @@
+name: Reporte de bug
+description: Informa sobre un comportamiento inesperado o error en el bot
+labels: ["bug"]
+body:
+  - type: checkboxes
+    attributes:
+      label: Comprobación previa
+      options:
+        - label: He buscado en los issues existentes y esto no es un duplicado
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción del bug
+      description: Describe claramente el problema que encontraste
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducir
+      description: Indica los pasos exactos para reproducir el comportamiento
+      placeholder: |
+        1. Ejecutar el comando '...'
+        2. Con los parámetros '...'
+        3. Observar el error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamiento esperado
+      description: ¿Qué esperabas que ocurriera?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportamiento actual
+      description: ¿Qué ocurrió realmente?
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Entorno
+      description: Sistema operativo, versión del bot, versión de Node/Bun
+      placeholder: "macOS 14, mariwano v1.3.1, Bun 1.1.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severidad
+      options:
+        - Baja
+        - Media
+        - Alta
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Capturas de pantalla o logs
+      description: Adjunta capturas o logs relevantes si los tienes
+    validations:
+      required: false
