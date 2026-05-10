@@ -1,12 +1,16 @@
-import { DefaultExtractors } from '@discord-player/extractor';
-import { Player } from 'discord-player';
-import { Client, GatewayIntentBits, Partials } from 'discord.js';
 import 'dotenv/config';
+import { Readable } from 'stream';
 import mongoose from 'mongoose';
+import { AttachmentExtractor, SoundCloudExtractor } from '@discord-player/extractor';
+import { Player, onBeforeCreateStream } from 'discord-player';
+import { SpotifyExtractor } from 'discord-player-spotify';
+import { YoutubeiExtractor } from 'discord-player-youtubei';
+import { Client, GatewayIntentBits, Partials } from 'discord.js';
 import { commandHandler } from './handlers/commandHandler';
 import { eventHandler } from './handlers/eventHandler';
 import { deployCommands } from './lib/deployCommands';
 import { CustomClient } from './lib/types';
+import { YoutubeSabrExtractor } from './lib/extractors/YoutubeSabrExtractor';
 
 let botToken = process.env.DISCORD_TEST_TOKEN!;
 let botId = process.env.CLIENT_TEST_ID!;
@@ -31,17 +35,47 @@ if (process.env.NODE_ENV === 'production') {
    });
    const player = new Player(client);
 
-   await player.extractors.loadMulti(DefaultExtractors);
+   await player.extractors.register(YoutubeSabrExtractor, {
+      cookies: process.env.YOUTUBE_COOKIE,
+      logSabrEvents: true,
+   });
+   await player.extractors.register(YoutubeiExtractor, {
+      cookie: process.env.YOUTUBE_COOKIE,
+      useServerAbrStream: true,
+      streamOptions: {
+         useClient: 'IOS',
+      },
+   });
+   await player.extractors.register(SoundCloudExtractor, {});
+   await player.extractors.register(SpotifyExtractor, {
+      clientId: process.env.SPOTIFY_CLIENT_ID,
+      clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+   });
+   await player.extractors.register(AttachmentExtractor, {});
+
+   onBeforeCreateStream(async track => {
+      try {
+         if (track.extractor?.identifier === YoutubeSabrExtractor.identifier || track.extractor?.identifier === YoutubeiExtractor.identifier) {
+            const result = await track.extractor?.stream(track);
+            if (!result || !(result instanceof Readable)) return null;
+            return result;
+         }
+         return null;
+      } catch {
+         return null;
+      }
+   });
 
    player.events
       .on('playerStart', (queue, track) => {
-         queue.channel?.send(`▶️ | Reproduciendo **${track.title}**`);
+         queue.metadata?.channel?.send(`▶️ | Reproduciendo **${track.title}**`);
+      })
+      .on('error', (queue, error) => {
+         console.error('Error en la cola:', error);
       })
       .on('playerError', (queue, error) => {
          console.error('Error en el reproductor:', error);
-         if (queue.metadata && typeof queue.metadata.send === 'function') {
-            console.error(`❌ | Ocurrió un error: ${error.message}`);
-         }
+         queue.metadata?.channel?.send(`❌ | Ocurrió un error: ${error.message}`);
       });
 
    await commandHandler(client as CustomClient);
