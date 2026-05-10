@@ -65,7 +65,7 @@ function buildLabels(input: IssueAgentInput): string[] {
 export async function runIssueAgent(input: IssueAgentInput): Promise<IssueAgentResult> {
    try {
       const response = await client.chat.completions.create({
-         model: 'deepseek-chat',
+         model: 'deepseek-v4-flash',
          response_format: { type: 'json_object' },
          messages: [
             { role: 'system', content: SYSTEM_PROMPT },
