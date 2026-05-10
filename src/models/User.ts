@@ -79,4 +79,6 @@ const userSchema = new Schema({
    },
 });
 
+userSchema.index({ userId: 1, guildId: 1 }, { unique: true });
+
 export const User = model('User', userSchema);
