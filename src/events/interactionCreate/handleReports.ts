@@ -13,7 +13,7 @@ export default async function (interaction: Interaction) {
       if (type !== 'report') return;
 
       if (!interaction.memberPermissions?.has('Administrator')) {
-         await interaction.editReply('No tienes permisos para marcar como solucionado un informe.');
+         await interaction.editReply('No tienes permisos para confirmar un informe.');
          return;
       }
 
@@ -35,13 +35,13 @@ export default async function (interaction: Interaction) {
          return;
       }
 
-      if (action === 'solved') {
-         targetMessageEmbed.fields[2].value = '✅ Solucionado';
+      if (action === 'confirmed') {
+         targetMessageEmbed.fields[2].value = '✅ Confirmado';
          const updatedEmbed = EmbedBuilder.from(targetMessageEmbed).setColor(0x84e660);
 
-         await Report.findOneAndUpdate({ reportId }, { status: 'solved' });
+         await Report.findOneAndUpdate({ reportId }, { status: 'confirmed' });
 
-         interaction.editReply('Error solucionado. Muchas gracias por su informe.');
+         interaction.editReply('Error confirmado. Muchas gracias por su informe.');
 
          targetMessage?.edit({ embeds: [updatedEmbed], components: [] });
 
