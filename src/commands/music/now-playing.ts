@@ -1,12 +1,12 @@
 import { useQueue } from 'discord-player';
-import { EmbedBuilder, GuildMember, SlashCommandBuilder } from 'discord.js';
+import { EmbedBuilder, GuildMember, MessageFlags, SlashCommandBuilder } from 'discord.js';
 import { CommandProps } from '../../lib/types';
 
 export const run = async ({ interaction }: CommandProps) => {
    if (!interaction.guild) {
       interaction.reply({
          content: 'Solo puedes ejecutar este comando en un servidor.',
-         ephemeral: true,
+         flags: MessageFlags.Ephemeral,
       });
       return;
    }
@@ -17,7 +17,7 @@ export const run = async ({ interaction }: CommandProps) => {
    if (!interactionMember.voice.channelId) {
       await interaction.followUp({
          content: 'No estas en un canal de voz.',
-         ephemeral: true,
+         flags: MessageFlags.Ephemeral,
       });
       return;
    }
@@ -25,7 +25,7 @@ export const run = async ({ interaction }: CommandProps) => {
    if (interaction.guild.members.me?.voice.channelId && interactionMember.voice.channelId !== interaction.guild.members.me?.voice.channelId) {
       await interaction.followUp({
          content: 'No te encuentras en el mismo canal de voz que yo.',
-         ephemeral: true,
+         flags: MessageFlags.Ephemeral,
       });
       return;
    }
@@ -33,7 +33,7 @@ export const run = async ({ interaction }: CommandProps) => {
    if (!queue || !queue.isPlaying()) {
       interaction.reply({
          content: 'No hay musica reproduciendose.',
-         ephemeral: true,
+         flags: MessageFlags.Ephemeral,
       });
       return;
    }
