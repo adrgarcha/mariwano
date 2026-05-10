@@ -52,16 +52,20 @@ async function collectMessages(targetChannel: TextChannel, cutoffDate: Date) {
       return;
    }
 
-   memeMessages.sort((a, b) => b.reactions.cache.size - a.reactions.cache.size);
+   await Promise.all(memeMessages.map(message => Promise.all(message.reactions.cache.map(reaction => reaction.fetch()))));
+
+   const totalReactions = (message: Message) => message.reactions.cache.reduce((sum, reaction) => sum + reaction.count, 0);
+
+   memeMessages.sort((a, b) => totalReactions(b) - totalReactions(a));
    const firstWinner = memeMessages[0];
    const secondWinner = memeMessages[1];
    const thirdWinner = memeMessages[2];
 
    leaderboardEmbed
       .setDescription(
-         `🥇TOP 1: ${firstWinner.author} con ${firstWinner.reactions.cache.size} reacciones: ${firstWinner.url}` +
-            `\n🥈TOP 2: ${secondWinner.author} con ${secondWinner.reactions.cache.size} reacciones: ${secondWinner.url}` +
-            `\n🥉TOP 3: ${thirdWinner.author} con ${thirdWinner.reactions.cache.size} reacciones: ${thirdWinner.url}`
+         `🥇TOP 1: ${firstWinner.author} con ${totalReactions(firstWinner)} reacciones: ${firstWinner.url}` +
+            `\n🥈TOP 2: ${secondWinner.author} con ${totalReactions(secondWinner)} reacciones: ${secondWinner.url}` +
+            `\n🥉TOP 3: ${thirdWinner.author} con ${totalReactions(thirdWinner)} reacciones: ${thirdWinner.url}`
       )
       .setFooter({
          text: `Enhorabuena al ganador del top 1 por haber ganado el premio de ${
