@@ -1,42 +1,50 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { CommandProps } from '../../lib/types';
-import { AnonMessageModel } from '../../models/AnonMessage';
-import { AnonConfigModel } from '../../models/AnonConfig';
+import { AnonMessage } from '../../models/AnonMessage';
+import { AnonChannelConfig } from '../../models/AnonChannelConfig';
+
 export const run = async ({ interaction }: CommandProps) => {
-   const message = interaction.options.getString('mensaje');
+   const messageContent = interaction.options.getString('mensaje');
 
-   const query = {
+   const channelConfig = await AnonChannelConfig.findOne({
       guildId: interaction.guild?.id,
-      anonChannelGuild: interaction.channelId,
-   };
-
-   const messageChannel = await AnonConfigModel.findOne(query);
-
-   if (!messageChannel) {
-      await interaction.reply('No hay un canal de mensajes anónimos configurado.');
-      return;
-   }
-   const newAnonMessage = new AnonMessageModel({
-      authorId: interaction.user.id,
-      guildId: interaction.guildId,
-      anonChannelGuild: interaction.channelId,
-      content: message,
-      date: new Date(),
-      published: false,
    });
 
-   const query2 = {
-      content: message,
-   };
-
-   const messageInDatabase = await AnonMessageModel.findOne(query2);
-   if (messageInDatabase) {
-      await interaction.reply('El mensaje "' + message + '" ya existe.');
+   if (!channelConfig) {
+      await interaction.reply({
+         content: 'No hay un canal de mensajes anónimos configurado.',
+         ephemeral: true,
+      });
       return;
-   } else {
-      await newAnonMessage.save();
-      await interaction.reply('El mensaje "' + message + '" se ha guardado.');
    }
+
+   const existingMessage = await AnonMessage.findOne({
+      guildId: interaction.guildId,
+      content: messageContent,
+   });
+
+   if (existingMessage) {
+      await interaction.reply({
+         content: `El mensaje "${messageContent}" ya existe.`,
+         ephemeral: true,
+      });
+      return;
+   }
+
+   const newAnonMessage = new AnonMessage({
+      authorId: interaction.user.id,
+      guildId: interaction.guildId,
+      content: messageContent,
+   });
+
+   await newAnonMessage.save();
+
+   const successEmbed = new EmbedBuilder().setTitle('✅ Éxito').setDescription('Tu mensaje anónimo se ha guardado correctamente.').setColor(0x00ff00);
+
+   await interaction.reply({
+      embeds: [successEmbed],
+      ephemeral: true,
+   });
 };
 
 export const data = new SlashCommandBuilder()

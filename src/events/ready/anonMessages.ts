@@ -1,66 +1,52 @@
 import { Client, EmbedBuilder, TextChannel } from 'discord.js';
 import cron from 'node-cron';
-import { AnonMessageModel } from '../../models/AnonMessage';
-import { AnonConfigModel } from '../../models/AnonConfig';
+import { AnonMessage } from '../../models/AnonMessage';
+import { AnonChannelConfig } from '../../models/AnonChannelConfig';
 
-// Production: every Sunday at 21:00 -> '0 21 * * 0'
-// Development: every minute -> '* * * * *'
 const cronExpression = process.env.NODE_ENV === 'production' ? '0 21 * * 0' : '* * * * *';
 
 export default function (client: Client) {
-   cron.schedule(cronExpression, () => collectMessages(client), { timezone: 'Europe/Madrid' });
+   cron.schedule(cronExpression, () => sendAnonMessages(client), { timezone: 'Europe/Madrid' });
 }
 
-async function collectMessages(client: Client) {
+async function sendAnonMessages(client: Client) {
    try {
-      const AnonMessages = await AnonConfigModel.find();
-      const AnonMessage = await AnonMessageModel.find();
-      for (const message of AnonMessage) {
-         const cachedGuild = client.guilds.cache.get(message.guildId);
-         if (!cachedGuild) continue;
+      const configs = await AnonChannelConfig.find();
 
-         const targetChannel = cachedGuild.channels.cache.get(message.anonChannelGuild) as TextChannel;
-         if (!targetChannel) {
-            console.error(`No se ha encontrado el canal de mensajes anónimos con ID ${message.anonChannelGuild}`);
+      for (const config of configs) {
+         const guild = client.guilds.cache.get(config.guildId);
+         if (!guild) continue;
+
+         const channel = guild.channels.cache.get(config.channelId) as TextChannel;
+         if (!channel) {
+            console.error(`Canal no encontrado para servidor ${config.guildId}`);
             continue;
          }
 
-         await collectAll(targetChannel, new Date());
-         await message.updateOne({ published: true });
+         const messages = await AnonMessage.find({ guildId: config.guildId });
+
+         if (messages.length < 3) {
+            const embed = new EmbedBuilder()
+               .setTitle('👤 **MENSAJES ANÓNIMOS** 👤')
+               .setDescription('No se han enviado suficientes mensajes anónimos.')
+               .setColor(0x47d6fd);
+            await channel.send({ embeds: [embed] });
+            continue;
+         }
+
+         const embed = new EmbedBuilder()
+            .setTitle('👤 **MENSAJES ANÓNIMOS** 👤')
+            .setDescription(messages.map(msg => `🗣: ${msg.content}`).join('\n'))
+            .setColor(0x47d6fd)
+            .setFooter({
+               text: 'Los autores de los mensajes son totalmente anónimos (excepto para el admin).',
+            });
+
+         await channel.send({ embeds: [embed] });
+
+         await AnonMessage.deleteMany({ guildId: config.guildId });
       }
    } catch (error) {
-      console.error(`Hubo un error en el evento de ranking de memes: ${error}`);
+      console.error('Error en el manejador de mensajes anónimos:', error);
    }
-}
-
-async function collectAll(targetChannel: TextChannel, cutoffDate: Date) {
-   const anonMessages = new Array<string>();
-   const leaderboardEmbed = new EmbedBuilder().setTitle('👤 **MENSAJES ANÓNIMOS** 👤').setColor(0x47d6fd);
-
-   try {
-      const messages = await AnonMessageModel.find({
-         content: { $ne: '' },
-         date: { $lt: cutoffDate },
-      });
-      anonMessages.push(...messages.map(message => message.content));
-   } catch (error) {
-      console.error(`Hubo un error al recopilar los mensajes anónimos: ${error}`);
-      return;
-   }
-
-   if (anonMessages.length < 3) {
-      leaderboardEmbed.setDescription('No se han enviado suficientes mensajes anónimos.');
-      targetChannel.send({ embeds: [leaderboardEmbed] });
-      return;
-   }
-
-   leaderboardEmbed
-      .setDescription(anonMessages.map(message => `🗣: ${message}`).join('\n'))
-
-      .setFooter({
-         text: `Los autores de los mensajes son totalmente anónimos (excepto para el admin por supuesto).`,
-      });
-
-   targetChannel.send({ embeds: [leaderboardEmbed] });
-   AnonConfigModel.deleteMany({});
 }

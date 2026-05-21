@@ -1,11 +1,11 @@
 import { Schema, model } from 'mongoose';
 
-const AnonMessage = new Schema({
-   guildId: {
+const AnonMessageSchema = new Schema({
+   authorId: {
       type: String,
       required: true,
    },
-   anonChannelGuild: {
+   guildId: {
       type: String,
       required: true,
    },
@@ -13,14 +13,10 @@ const AnonMessage = new Schema({
       type: String,
       required: true,
    },
-   date: {
+   createdAt: {
       type: Date,
-      required: true,
-   },
-   published: {
-      type: Boolean,
-      default: false,
+      default: Date.now,
    },
 });
 
-export const AnonMessageModel = model('AnonMessage', AnonMessage);
+export const AnonMessage = model('AnonMessage', AnonMessageSchema);

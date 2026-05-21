@@ -1,15 +1,21 @@
-import { ChannelType, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
+import { ChannelType, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { CommandProps } from '../../lib/types';
-import { AnonConfigModel } from '../../models/AnonConfig';
+import { AnonChannelConfig } from '../../models/AnonChannelConfig';
 
 export const run = async ({ interaction }: CommandProps) => {
    if (!interaction.memberPermissions?.has('Administrator')) {
-      await interaction.reply('Solo los administradores pueden ejecutar este comando.');
+      await interaction.reply({
+         content: 'Solo los administradores pueden ejecutar este comando.',
+         ephemeral: true,
+      });
       return;
    }
 
    if (!interaction.guild) {
-      interaction.reply('Solo puedes ejecutar este comando en un servidor.');
+      await interaction.reply({
+         content: 'Solo puedes ejecutar este comando en un servidor.',
+         ephemeral: true,
+      });
       return;
    }
 
@@ -19,38 +25,52 @@ export const run = async ({ interaction }: CommandProps) => {
       const channel = interaction.options.getChannel('canal');
       const subcommand = interaction.options.getSubcommand();
 
-      const channelExists = await AnonConfigModel.exists({
-         guildId: interaction.guildId,
-         anonChannelGuild: channel?.id,
-      });
+      const existingConfig = await AnonChannelConfig.findOne({ guildId: interaction.guildId });
 
       switch (subcommand) {
-         case 'setup':
-            if (channelExists) {
-               await interaction.editReply(`Ya hay un canal de mensajes anónimos configurado.`);
+         case 'setup': {
+            if (existingConfig) {
+               const embed = new EmbedBuilder()
+                  .setTitle('❌ Error')
+                  .setDescription(`Ya hay un canal configurado: <#${existingConfig.channelId}>`)
+                  .setColor(0xff0000);
+               await interaction.editReply({ embeds: [embed] });
                return;
             }
 
-            await AnonConfigModel.create({
+            await AnonChannelConfig.create({
                guildId: interaction.guildId,
-               anonChannelGuild: channel?.id,
+               channelId: channel?.id,
             });
 
-            await interaction.editReply(`Se ha agregado ${channel} como canal de mensajes anónimos.`);
+            const setupEmbed = new EmbedBuilder()
+               .setTitle('✅ Éxito')
+               .setDescription(`Canal <#${channel?.id}> configurado correctamente.`)
+               .setColor(0x00ff00);
+            await interaction.editReply({ embeds: [setupEmbed] });
             return;
-         case 'disable':
-            if (!channelExists) {
-               await interaction.editReply(`No se ha configurado un canal de mensajes anónimos.`);
+         }
+
+         case 'disable': {
+            if (!existingConfig) {
+               const embed = new EmbedBuilder()
+                  .setTitle('❌ Error')
+                  .setDescription('No hay ningún canal configurado.')
+                  .setColor(0xff0000);
+               await interaction.editReply({ embeds: [embed] });
                return;
             }
 
-            await AnonConfigModel.findOneAndDelete({
-               guildId: interaction.guildId,
-               anonChannelGuild: channel?.id,
-            });
+            await AnonChannelConfig.findOneAndDelete({ guildId: interaction.guildId });
 
-            await interaction.editReply(`Se ha eliminado ${channel} como canal de mensajes anónimos.`);
+            const disableEmbed = new EmbedBuilder()
+               .setTitle('✅ Éxito')
+               .setDescription('Canal desconfigurado correctamente.')
+               .setColor(0x00ff00);
+            await interaction.editReply({ embeds: [disableEmbed] });
             return;
+         }
+
          default:
             return;
       }
@@ -65,17 +85,10 @@ export const data = new SlashCommandBuilder()
    .addSubcommand(subcommand =>
       subcommand
          .setName('setup')
-         .setDescription(`Configurar el canal de mensajes anónimos`)
+         .setDescription('Configurar el canal de mensajes anónimos')
          .addChannelOption(option =>
             option.setName('canal').setDescription('Canal de mensajes anónimos a configurar').addChannelTypes(ChannelType.GuildText).setRequired(true)
          )
    )
-   .addSubcommand(subcommand =>
-      subcommand
-         .setName('disable')
-         .setDescription('Elimina el canal de mensajes anónimos')
-         .addChannelOption(option =>
-            option.setName('canal').setDescription('El canal que quieres eliminar.').addChannelTypes(ChannelType.GuildText).setRequired(true)
-         )
-   )
+   .addSubcommand(subcommand => subcommand.setName('disable').setDescription('Elimina el canal de mensajes anónimos'))
    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
