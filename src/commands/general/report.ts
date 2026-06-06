@@ -111,16 +111,16 @@ export const run = async ({ interaction }: CommandProps) => {
          .addFields([
             { name: 'Comando', value: reportCommandText },
             { name: 'Informe', value: reportDescriptionText },
-            { name: 'Estado', value: '⚠ No solucionado' },
+            { name: 'Estado', value: '⚠ No confirmado' },
          ])
          .setColor('Red')
          .setTimestamp();
 
       const solveButton = new ButtonBuilder()
          .setEmoji('✅')
-         .setLabel('Solucinado')
+         .setLabel('Confirmado')
          .setStyle(ButtonStyle.Success)
-         .setCustomId(`report.${newReport.reportId}.solved`);
+         .setCustomId(`report.${newReport.reportId}.confirmed`);
 
       const fakeButton = new ButtonBuilder()
          .setEmoji('❕')

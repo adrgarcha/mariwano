@@ -30,7 +30,7 @@ const reportSchema = new Schema(
       },
       status: {
          type: String,
-         default: 'not-solved',
+         default: 'not-confirmed',
       },
    },
    { timestamps: true }

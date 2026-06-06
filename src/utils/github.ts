@@ -2,8 +2,10 @@ import { Octokit } from 'octokit';
 
 const GITHUB_OWNER = 'adrgarcha';
 const GITHUB_REPO = 'discord-bot';
+const GITHUB_ISSUES_REPO = 'mariwano';
 
 const octokit = new Octokit();
+const authenticatedOctokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
 export interface GitHubRelease {
    id: number;
@@ -33,4 +35,16 @@ export async function fetchLatestRelease(): Promise<GitHubRelease | null> {
       console.error(`Error al obtener el último release de GitHub: ${error}`);
       return null;
    }
+}
+
+export async function createIssue(title: string, body: string, labels: string[]): Promise<string> {
+   const { data } = await authenticatedOctokit.rest.issues.create({
+      owner: GITHUB_OWNER,
+      repo: GITHUB_ISSUES_REPO,
+      title,
+      body,
+      labels,
+   });
+
+   return data.html_url;
 }
