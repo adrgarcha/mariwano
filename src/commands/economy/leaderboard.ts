@@ -2,9 +2,11 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { CommandProps } from '../../lib/types';
 import { User } from '../../models/User';
 
+const TOP_USERS_LIMIT = 10;
+
 export const run = async ({ interaction }: CommandProps) => {
    if (!interaction.guild) {
-      interaction.reply({
+      await interaction.reply({
          content: 'Solo puedes ejecutar este comando en un servidor.',
          ephemeral: true,
       });
@@ -22,19 +24,28 @@ export const run = async ({ interaction }: CommandProps) => {
       const balance = user?.balance;
 
       const leaderboardEmbed = new EmbedBuilder()
-         .setTitle('**Top 10 usuarios con más gramos de cocaína**')
+         .setTitle(`**Top ${TOP_USERS_LIMIT} usuarios con más gramos de cocaína**`)
          .setColor(0x45d6fd)
          .setFooter({ text: 'No estás en el ranking.' });
 
-      const members = await User.find({
-         guildId: interaction.guild.id,
-      })
+      const topUsers = await User.find({ guildId: interaction.guild.id })
          .sort({ balance: -1 })
-         .catch(err => console.error(`Hubo un error al obtener al usuario del ranking: ${err}`));
+         .limit(TOP_USERS_LIMIT)
+         .catch(err => {
+            console.error(`Hubo un error al obtener al usuario del ranking: ${err}`);
+            return null;
+         });
 
-      const memberIndex = members?.findIndex(member => member.userId === id);
+      if (!topUsers || topUsers.length === 0) {
+         await interaction.editReply({
+            content: 'No hay usuarios en el ranking.',
+         });
+         return;
+      }
 
-      if (memberIndex === undefined || memberIndex === -1) {
+      const userRank = topUsers.findIndex(topUser => topUser.userId === id);
+
+      if (userRank === -1) {
          await interaction.editReply({
             content: 'No estás en el ranking. Prueba a utilizar el comando /daily.',
          });
@@ -42,37 +53,35 @@ export const run = async ({ interaction }: CommandProps) => {
       }
 
       leaderboardEmbed.setFooter({
-         text: `${username}, estás clasificado en el número #${memberIndex + 1} con ${balance}`,
+         text: `${username}, estás clasificado en el número #${userRank + 1} con ${balance}`,
       });
 
-      const topTen = members?.slice(0, 10);
+      const memberData = await Promise.all(
+         topUsers.map(async topUser => {
+            try {
+               const member = await interaction.guild!.members.fetch(topUser.userId);
+               return { userId: topUser.userId, balance: topUser.balance, member };
+            } catch {
+               return null;
+            }
+         })
+      );
 
-      if (!topTen) {
-         await interaction.editReply({
-            content: 'No hay usuarios en el ranking.',
-         });
-         return;
-      }
+      const description = memberData
+         .filter((data): data is NonNullable<typeof data> => data !== null)
+         .map((data, index) => `**${index + 1}) <@${data.userId}>:** ${data.balance} gramos de cocaína`)
+         .join('\n');
 
-      let description = '';
-      for (let i = 0; i < topTen.length; i++) {
-         const { user } = await interaction.guild.members.fetch(topTen[i].userId);
-
-         if (!user) continue;
-
-         if (description.includes(`<@${user.id}>`)) continue;
-
-         const userBalance = topTen[i].balance;
-         description += `**${i + 1}) <@${user.id}>:** ${userBalance} gramos de cocaína\n`;
-      }
-
-      if (description !== '') {
+      if (description) {
          leaderboardEmbed.setDescription(description);
       }
 
       await interaction.editReply({ embeds: [leaderboardEmbed] });
    } catch (error) {
       console.error(`Hubo un error al ejecutar el comando 'leaderboard': ${error}`);
+      await interaction.editReply({
+         content: 'Hubo un error al cargar el ranking. Inténtalo de nuevo más tarde.',
+      });
    }
 };
 
