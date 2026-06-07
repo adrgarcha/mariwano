@@ -1,16 +1,16 @@
-import 'dotenv/config';
-import { Readable } from 'stream';
-import mongoose from 'mongoose';
 import { AttachmentExtractor, SoundCloudExtractor } from '@discord-player/extractor';
 import { Player, onBeforeCreateStream } from 'discord-player';
 import { SpotifyExtractor } from 'discord-player-spotify';
 import { YoutubeiExtractor } from 'discord-player-youtubei';
 import { Client, GatewayIntentBits, Partials } from 'discord.js';
+import 'dotenv/config';
+import mongoose from 'mongoose';
+import { Readable } from 'stream';
 import { commandHandler } from './handlers/commandHandler';
 import { eventHandler } from './handlers/eventHandler';
 import { deployCommands } from './lib/deployCommands';
-import { CustomClient } from './lib/types';
 import { YoutubeSabrExtractor } from './lib/extractors/YoutubeSabrExtractor';
+import { CustomClient } from './lib/types';
 
 let botToken = process.env.DISCORD_TEST_TOKEN!;
 let botId = process.env.CLIENT_TEST_ID!;
@@ -57,12 +57,12 @@ if (process.env.NODE_ENV === 'production') {
       try {
          if (track.extractor?.identifier === YoutubeSabrExtractor.identifier || track.extractor?.identifier === YoutubeiExtractor.identifier) {
             const result = await track.extractor?.stream(track);
-            if (!result || !(result instanceof Readable)) return null;
+            if (!result || !(result instanceof Readable)) return undefined;
             return result;
          }
-         return null;
+         return undefined;
       } catch {
-         return null;
+         return undefined;
       }
    });
 

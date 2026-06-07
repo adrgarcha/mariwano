@@ -1,4 +1,5 @@
-import { PassThrough, once } from 'stream';
+import { PassThrough } from 'stream';
+import { once } from 'events';
 import https from 'https';
 import http from 'http';
 
