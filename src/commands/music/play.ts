@@ -72,13 +72,13 @@ export const run = async ({ interaction }: CommandProps) => {
                guild: interaction.guild,
             },
             selfDeaf: true,
-            bufferingTimeout: 15000,
+            bufferingTimeout: 150000,
             leaveOnStop: true,
-            leaveOnStopCooldown: 5000,
+            leaveOnStopCooldown: 50000,
             leaveOnEnd: true,
-            leaveOnEndCooldown: 15000,
+            leaveOnEndCooldown: 150000,
             leaveOnEmpty: true,
-            leaveOnEmptyCooldown: 3000,
+            leaveOnEmptyCooldown: 30000,
          },
       });
 
